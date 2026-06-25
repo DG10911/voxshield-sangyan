@@ -1,0 +1,23 @@
+# --- VoxShield backend requirements ---
+# Core API
+fastapi==0.111.0
+uvicorn[standard]==0.30.1
+python-multipart==0.0.9
+
+# Audio + DSP (in your declared stack)
+numpy>=1.24
+librosa==0.10.2.post1
+soundfile==0.12.1
+scipy>=1.10
+matplotlib==3.8.4
+pydub==0.25.1
+
+# Dataset downloader (In-the-Wild via HuggingFace)
+huggingface_hub>=0.23
+
+# OPTIONAL — real deep-learning detector (HuggingFace wav2vec2).
+# The system runs WITHOUT these using the explainable acoustic detector.
+# Install to enable the neural model:
+#   pip install torch transformers
+# torch>=2.1
+# transformers>=4.40

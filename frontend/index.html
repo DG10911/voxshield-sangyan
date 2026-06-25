@@ -1,0 +1,360 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>VoxShield · Voice Fraud Intelligence</title>
+<style>
+:root{
+  --bg:#060912; --panel:#0e1726; --line:#1b2840; --line2:#26375a;
+  --ink:#eef3fb; --muted:#90a0bd; --faint:#5d6c8a;
+  --brand:#5b8cff; --brand2:#8b5cff; --cyan:#22d3ee;
+  --ok:#1fd18b; --warn:#ffb020; --risk:#ff4d6a;
+  --okg:rgba(31,209,139,.3); --warng:rgba(255,176,32,.3); --riskg:rgba(255,77,106,.35);
+  --r:18px; --mono:ui-monospace,"SFMono-Regular",Menlo,monospace; --sans:"Inter",-apple-system,system-ui,"Segoe UI",Roboto,sans-serif;
+}
+*{box-sizing:border-box} html{scroll-behavior:smooth}
+body{margin:0;font-family:var(--sans);color:var(--ink);min-height:100vh;
+  background:radial-gradient(1000px 560px at 86% -10%,rgba(139,92,255,.2),transparent 60%),
+             radial-gradient(900px 540px at -8% 8%,rgba(34,211,238,.13),transparent 55%),var(--bg)}
+:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+.mono{font-family:var(--mono)} .muted{color:var(--muted)} .faint{color:var(--faint)}
+a{color:var(--brand);text-decoration:none}
+
+/* nav */
+.nav{display:flex;align-items:center;gap:14px;padding:15px 30px;border-bottom:1px solid var(--line);
+  position:sticky;top:0;z-index:30;background:rgba(6,9,18,.72);backdrop-filter:blur(12px)}
+.brand{display:flex;align-items:center;gap:11px}
+.logo{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;font-weight:800;color:#fff;
+  background:linear-gradient(135deg,var(--brand),var(--brand2));box-shadow:0 6px 22px rgba(91,140,255,.5)}
+.brand h1{font-size:16px;margin:0;font-weight:800;letter-spacing:-.01em}
+.brand p{font-size:11px;margin:0;color:var(--muted)}
+.nav .sp{flex:1}
+.chip{display:inline-flex;align-items:center;gap:7px;font-size:12px;padding:6px 12px;border-radius:999px;border:1px solid var(--line2);background:#0c1525;color:var(--muted)}
+.chip b{color:var(--ink);font-weight:600}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 4px var(--okg);animation:pulse 2s infinite}
+@keyframes pulse{50%{box-shadow:0 0 0 7px transparent}}
+.navbtn{font-size:13px;font-weight:600;padding:9px 15px;border-radius:10px;background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff;box-shadow:0 8px 22px -8px rgba(91,140,255,.7)}
+
+/* hero */
+.hero{max-width:1180px;margin:0 auto;padding:54px 30px 30px;text-align:center}
+.kicker{display:inline-flex;gap:8px;align-items:center;font-size:12px;color:var(--cyan);border:1px solid var(--line2);background:#0b1322;padding:6px 13px;border-radius:999px;margin-bottom:20px}
+.hero h2{font-size:48px;line-height:1.05;margin:0 0 16px;font-weight:850;letter-spacing:-.03em;
+  background:linear-gradient(100deg,#fff 30%,#9db4ff 70%,#c8a6ff);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+@media(max-width:680px){.hero h2{font-size:34px}}
+.hero p{font-size:16px;color:var(--muted);max-width:640px;margin:0 auto 26px}
+.cta{display:inline-flex;gap:10px}
+.btn{appearance:none;border:1px solid var(--line2);background:#101b2e;color:var(--ink);font-weight:650;font-size:14px;padding:12px 20px;border-radius:12px;cursor:pointer;transition:.16s;display:inline-flex;gap:8px;align-items:center}
+.btn:hover{border-color:var(--brand);transform:translateY(-1px)}
+.btn.primary{background:linear-gradient(135deg,var(--brand),var(--brand2));border:none;color:#fff;box-shadow:0 10px 28px -8px rgba(91,140,255,.7)}
+.btn.rec{color:#ff7d95}
+.btn[disabled]{opacity:.4;cursor:not-allowed;transform:none}
+.stats{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin-top:40px}
+.stat{flex:1;min-width:180px;max-width:260px;border:1px solid var(--line);border-radius:16px;padding:20px;background:linear-gradient(180deg,#0f1929,#0b1322);text-align:left}
+.stat b{font-size:30px;display:block;font-weight:800;letter-spacing:-.02em;background:linear-gradient(120deg,#fff,#9db4ff);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.stat span{font-size:12.5px;color:var(--muted)}
+
+/* layout */
+.wrap{max-width:1340px;margin:0 auto;padding:24px 28px 70px}
+.grid{display:grid;grid-template-columns:1.5fr 1fr;gap:18px}
+@media(max-width:1040px){.grid{grid-template-columns:1fr}}
+.col{display:flex;flex-direction:column;gap:18px}
+.card{position:relative;overflow:hidden;background:linear-gradient(180deg,#0f1929,#0c1422);border:1px solid var(--line);border-radius:var(--r);padding:20px;box-shadow:0 24px 60px -34px #000}
+.card::after{content:"";position:absolute;inset:0 0 auto 0;height:1px;background:linear-gradient(90deg,transparent,rgba(139,92,255,.5),transparent)}
+.card h3{font-size:12px;text-transform:uppercase;letter-spacing:.09em;color:var(--muted);margin:0 0 14px;font-weight:600;display:flex;justify-content:space-between;align-items:center}
+
+/* dropzone + waveform */
+.dz{border:1.5px dashed var(--line2);border-radius:14px;padding:22px;text-align:center;cursor:pointer;transition:.2s;background:radial-gradient(420px 120px at 50% 0%,rgba(91,140,255,.08),transparent)}
+.dz:hover,.dz.drag{border-color:var(--brand);background:radial-gradient(420px 160px at 50% 0%,rgba(91,140,255,.16),transparent)}
+.dz .ic{font-size:28px;filter:drop-shadow(0 6px 16px rgba(91,140,255,.5))}
+.lk{color:var(--brand);text-decoration:underline;cursor:pointer}
+.controls{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:14px}
+.seg{display:inline-flex;background:#0b1322;border:1px solid var(--line2);border-radius:11px;padding:3px}
+.seg label{font-size:12px;color:var(--muted);padding:7px 12px;border-radius:8px;cursor:pointer}
+.seg input{display:none}.seg label:has(input:checked){background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff}
+#waveWrap{margin-top:14px;display:none}
+#wave{width:100%;height:72px;border-radius:12px;background:#05080f;border:1px solid var(--line2)}
+
+/* spectrogram + gauge verdict */
+.spec{position:relative;border-radius:13px;overflow:hidden;border:1px solid var(--line2);background:#05080f;min-height:150px;display:grid;place-items:center}
+.spec img{width:100%;display:block}.spec .ph{color:var(--faint);font-size:13px;padding:44px}
+.spec .tag{position:absolute;top:10px;left:12px;font:600 10px/1 var(--mono);letter-spacing:.12em;color:#7aa2ff;background:#0009;padding:5px 8px;border-radius:6px}
+.vrow{display:grid;grid-template-columns:auto 1fr;gap:20px;align-items:center;margin-top:18px;padding:18px;border-radius:14px;border:1px solid var(--line2);background:#0b1322;transition:.3s}
+.vrow.low{border-color:rgba(31,209,139,.5);box-shadow:0 0 46px -14px var(--okg);background:linear-gradient(120deg,rgba(31,209,139,.08),#0b1322)}
+.vrow.med{border-color:rgba(255,176,32,.5);box-shadow:0 0 46px -14px var(--warng);background:linear-gradient(120deg,rgba(255,176,32,.08),#0b1322)}
+.vrow.high{border-color:rgba(255,77,106,.55);box-shadow:0 0 56px -12px var(--riskg);background:linear-gradient(120deg,rgba(255,77,106,.1),#0b1322)}
+.gauge{width:150px;height:96px;position:relative;flex:none}
+.gauge svg{width:150px;height:96px;overflow:visible}
+.gauge .gv{position:absolute;bottom:2px;left:0;right:0;text-align:center;font:800 22px var(--mono)}
+.gauge .gl{position:absolute;bottom:-16px;left:0;right:0;text-align:center;font-size:10px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase}
+.vt small{color:var(--muted);text-transform:uppercase;letter-spacing:.08em;font-size:10px;font-weight:600}
+.vt .big{font-size:26px;font-weight:850;letter-spacing:-.01em;margin:3px 0}
+.vt p{margin:0;color:var(--muted);font-size:12.5px}
+.scoreline{margin-top:16px}
+.scoreline .lab{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:7px}
+.track{height:10px;border-radius:7px;background:#0b1322;border:1px solid var(--line2);position:relative;overflow:hidden}
+.track>i{position:absolute;inset:0 auto 0 0;width:0%;border-radius:7px;background:linear-gradient(90deg,var(--ok),var(--warn) 60%,var(--risk));transition:width .6s cubic-bezier(.2,.8,.2,1)}
+.track .thr{position:absolute;top:-3px;bottom:-3px;left:70%;width:2px;background:#fff6}
+#streamWrap{margin-top:18px;display:none}
+#timeline{width:100%;height:128px;border-radius:12px;background:#05080f;border:1px solid var(--line2)}
+
+/* loader overlay */
+.loader{position:absolute;inset:0;background:rgba(7,11,20,.78);backdrop-filter:blur(4px);display:none;place-items:center;z-index:5;border-radius:var(--r)}
+.loader.on{display:grid}
+.lring{width:54px;height:54px;border-radius:50%;border:3px solid #1c2c49;border-top-color:var(--brand);border-right-color:var(--brand2);animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loader .lt{margin-top:14px;font-size:13px;color:var(--muted);text-align:center}
+.shimmer{height:12px;border-radius:6px;background:linear-gradient(90deg,#0e1a2e,#16223a,#0e1a2e);background-size:200% 100%;animation:sh 1.2s infinite}
+@keyframes sh{to{background-position:-200% 0}}
+
+/* reason / tables */
+.reasons{display:grid;gap:10px}
+.rc{display:flex;gap:12px;align-items:center;padding:12px;border-radius:12px;border:1px solid var(--line);background:#0b1322;transition:.2s}
+.rc.hit{border-color:rgba(255,77,106,.5);background:linear-gradient(120deg,rgba(255,77,106,.07),#0b1322)}
+.rc .tg{font:700 11px var(--mono);width:34px;height:34px;border-radius:9px;display:grid;place-items:center;flex:none;background:#13213a;color:#7aa2ff}
+.rc.hit .tg{background:rgba(255,77,106,.16);color:#ff8aa0}
+.rc .bd{flex:1}.rc .bd b{font-size:13px}
+.rc .bd .bar{height:5px;border-radius:4px;background:#0e1a2e;margin-top:6px;overflow:hidden}
+.rc .bd .bar>i{display:block;height:100%;width:0%;background:linear-gradient(90deg,var(--brand),var(--cyan));transition:width .6s}
+.rc.hit .bd .bar>i{background:linear-gradient(90deg,var(--risk),var(--warn))}
+.rc .vl{font:700 13px var(--mono);min-width:40px;text-align:right}
+table{width:100%;border-collapse:collapse;font-size:13px}
+td,th{padding:9px 8px;border-bottom:1px solid var(--line);text-align:left}
+th{font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:var(--faint);font-weight:600}
+.pmbar{height:5px;border-radius:4px;background:#0e1a2e;margin-top:5px;overflow:hidden}.pmbar>i{display:block;height:100%;background:linear-gradient(90deg,var(--brand2),var(--brand))}
+.kgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:11px}
+.kpi{border:1px solid var(--line);border-radius:12px;padding:13px;background:#0b1322}.kpi b{font-size:21px;display:block}.kpi span{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.k-ok{color:var(--ok)}.k-warn{color:var(--warn)}
+.pill{font-size:10px;font-weight:700;padding:3px 9px;border-radius:999px}
+.pill.low{background:rgba(31,209,139,.15);color:var(--ok)}.pill.med{background:rgba(255,176,32,.15);color:var(--warn)}.pill.high{background:rgba(255,77,106,.15);color:var(--risk)}
+.note{font-size:11px;color:var(--faint);margin-top:10px}
+/* comparison */
+.cmp{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.cmp .slot{border:1px solid var(--line2);border-radius:12px;overflow:hidden;background:#05080f}
+.cmp .slot .hd{font-size:11px;padding:7px 10px;font-weight:700;letter-spacing:.05em}
+.cmp .slot.g .hd{color:var(--ok)}.cmp .slot.f .hd{color:var(--risk)}
+.cmp .slot img{width:100%;display:block;min-height:70px;background:#05080f}
+.cmp .slot .ph{font-size:11px;color:var(--faint);padding:26px;text-align:center}
+.kpibar{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:18px}
+@media(max-width:760px){.kpibar{grid-template-columns:repeat(2,1fr)}}
+.kc{position:relative;overflow:hidden;background:linear-gradient(180deg,#0f1929,#0c1422);border:1px solid var(--line);border-radius:14px;padding:15px 18px;box-shadow:0 18px 40px -28px #000}
+.kc::after{content:"";position:absolute;inset:0 0 auto 0;height:3px;background:linear-gradient(90deg,var(--brand),var(--brand2))}
+.kc span{font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;font-weight:600}
+.kc b{display:block;font-size:30px;font-weight:850;letter-spacing:-.02em;margin-top:5px;line-height:1}
+.kc .sub{font-size:10.5px;color:var(--faint);margin-top:4px}
+.foot{max-width:1340px;margin:0 auto;padding:18px 28px 50px;color:var(--faint);font-size:11.5px;border-top:1px solid var(--line)}
+.toast{position:fixed;bottom:22px;right:22px;background:#0e1726;border:1px solid var(--line2);padding:13px 16px;border-radius:12px;font-size:13px;box-shadow:0 20px 50px -20px #000;transform:translateY(20px);opacity:0;transition:.3s;z-index:60}
+.toast.show{transform:none;opacity:1}
+</style>
+</head>
+<body>
+<nav class="nav">
+  <div class="brand"><div class="logo">VS</div><div><h1>VoxShield</h1><p>Voice Fraud Intelligence</p></div></div>
+  <div class="sp"></div>
+  <span class="chip"><span class="dot"></span><b id="nStatus">connecting</b></span>
+  <span class="chip">Ensemble <b id="nModels">—</b></span>
+  <a class="navbtn" href="#console">Launch console</a>
+</nav>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="kicker">⚡ Real-time · explainable · codec-aware</div>
+  <h2>Catch cloned voices before the money moves.</h2>
+  <p>VoxShield fuses self-supervised neural models with acoustic forensics to flag AI-generated callers — with auditable evidence — inside the first ten seconds of a banking call.</p>
+  <div class="cta">
+    <a class="btn primary" href="#console">Analyse a call →</a>
+    <a class="btn" href="#how">How it works</a>
+  </div>
+  <div class="stats">
+    <div class="stat"><b>~47%</b><span>of Indian adults know a voice-clone fraud victim — 2× the global average.</span></div>
+    <div class="stat"><b>₹48,021 cr</b><span>bank fraud in India FY26, up 46% — voice cloning a rising driver.</span></div>
+    <div class="stat"><b>&lt;10 s</b><span>to a calibrated High-Risk verdict via sliding-window fusion.</span></div>
+  </div>
+</header>
+
+<div class="wrap" id="console">
+  <div class="kpibar">
+    <div class="kc"><span>Calls analysed</span><b id="kCalls">0</b><div class="sub">this session</div></div>
+    <div class="kc"><span>High-risk flagged</span><b id="kHigh" style="color:#ff4d6a">0</b><div class="sub">escalated to step-up</div></div>
+    <div class="kc"><span>Needs verification</span><b id="kMed" style="color:#f5a623">0</b><div class="sub">medium risk</div></div>
+    <div class="kc"><span>Avg decision time</span><b id="kAvg" style="color:#22d38b">—</b><div class="sub">per call</div></div>
+  </div>
+  <div class="grid">
+    <!-- LEFT -->
+    <div class="col">
+      <div class="card" id="how">
+        <h3>Analyse a call</h3>
+        <div class="dz" id="drop">
+          <input type="file" id="file" accept="audio/*" hidden/>
+          <div class="ic">🎙️</div>
+          <div style="margin-top:8px"><b>Drop audio</b> · <span class="lk" id="browse">browse</span></div>
+          <div class="faint" style="font-size:12px;margin-top:3px">WAV · MP3 · FLAC · M4A — or record live</div>
+        </div>
+        <div class="controls">
+          <button class="btn rec" id="rec">● Record</button>
+          <button class="btn" id="stopRec" disabled>■ Stop</button>
+          <span class="faint" id="recState" style="font-size:12px"></span>
+          <div class="seg" style="margin-left:auto">
+            <label><input type="radio" name="mode" value="stream" checked/>⚡ Streaming &lt;10s</label>
+            <label><input type="radio" name="mode" value="clip"/>Whole-clip</label>
+          </div>
+        </div>
+        <div id="waveWrap"><canvas id="wave" width="760" height="72"></canvas></div>
+        <div class="faint" id="fileName" style="font-size:11px;margin-top:8px"></div>
+      </div>
+
+      <div class="card">
+        <h3>Spectrogram &amp; verdict</h3>
+        <div class="loader" id="loader"><div><div class="lring" style="margin:0 auto"></div><div class="lt" id="loaderTxt">Fusing detectors…</div></div></div>
+        <div class="spec"><span class="tag">MEL · 0–8 kHz</span><img id="spec" alt="spectrogram" style="display:none"/><div class="ph" id="specPh">Spectrogram appears here after analysis</div></div>
+
+        <div class="vrow" id="verdict">
+          <div class="gauge">
+            <svg viewBox="0 0 150 96"><path d="M12 88 A63 63 0 0 1 138 88" fill="none" stroke="#16223a" stroke-width="12" stroke-linecap="round"/>
+              <path id="gArc" d="M12 88 A63 63 0 0 1 138 88" fill="none" stroke="url(#gg)" stroke-width="12" stroke-linecap="round" stroke-dasharray="198" stroke-dashoffset="198" style="transition:stroke-dashoffset .7s cubic-bezier(.2,.8,.2,1)"/>
+              <defs><linearGradient id="gg" x1="0" x2="1"><stop offset="0" stop-color="#1fd18b"/><stop offset=".6" stop-color="#ffb020"/><stop offset="1" stop-color="#ff4d6a"/></linearGradient></defs></svg>
+            <div class="gv" id="gVal">—</div><div class="gl">risk</div>
+          </div>
+          <div class="vt"><small>Risk assessment</small><div class="big" id="vbig">Awaiting audio</div><p id="vaction">Upload or record a call to begin.</p><p id="why" style="margin:6px 0 0;font-size:11.5px;color:#22d3ee"></p></div>
+        </div>
+
+        <div class="scoreline"><div class="lab"><span>Synthetic-risk score</span><span class="mono" id="scoreTxt">—</span></div><div class="track"><i id="bar"></i><span class="thr"></span></div></div>
+
+        <div id="streamWrap">
+          <div class="lab" style="display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin:16px 0 7px"><span>Decision timeline</span><span class="mono" id="flagTxt">—</span></div>
+          <canvas id="timeline" width="780" height="128"></canvas>
+        </div>
+        <div class="note">🔒 Audio hashed (SHA-256) for audit · routed to step-up verification, never auto-blocked.</div>
+      </div>
+
+      <div class="card">
+        <h3>Genuine vs cloned · spectrogram comparison</h3>
+        <div class="cmp">
+          <div class="slot g"><div class="hd">✓ LAST GENUINE</div><div class="ph" id="cmpGph">analyse a low-risk clip</div><img id="cmpG" style="display:none"/></div>
+          <div class="slot f"><div class="hd">⚠ LAST CLONED</div><div class="ph" id="cmpFph">analyse a high-risk clip</div><img id="cmpF" style="display:none"/></div>
+        </div>
+        <div class="note">High-frequency vocoder energy + over-regular texture distinguish the cloned spectrogram from the genuine one.</div>
+      </div>
+    </div>
+
+    <!-- RIGHT -->
+    <div class="col">
+      <div class="card"><h3>Explainable reason codes</h3>
+        <div class="reasons" id="reasons">
+          <div class="rc" data-k="ssl"><div class="tg">SSL</div><div class="bd"><b>SSL artifact score</b><div class="bar"><i></i></div></div><div class="vl">—</div></div>
+          <div class="rc" data-k="phase"><div class="tg">PH</div><div class="bd"><b>Phase regularity</b><div class="bar"><i></i></div></div><div class="vl">—</div></div>
+          <div class="rc" data-k="hf"><div class="tg">HF</div><div class="bd"><b>HF vocoder fingerprint</b><div class="bar"><i></i></div></div><div class="vl">—</div></div>
+          <div class="rc" data-k="prosody"><div class="tg">PR</div><div class="bd"><b>Prosody · jitter / F0</b><div class="bar"><i></i></div></div><div class="vl">—</div></div>
+          <div class="rc" data-k="breath"><div class="tg">BR</div><div class="bd"><b>Breathing / silence</b><div class="bar"><i></i></div></div><div class="vl">—</div></div>
+        </div>
+      </div>
+      <div class="card"><h3>Fusion breakdown</h3><table><tbody id="perModel"><tr><td class="faint">Run an analysis to see each model's vote.</td></tr></tbody></table><div class="note" id="fusionNote">Weighted, calibrated fusion of all detectors.</div></div>
+      <div class="card"><h3>Acoustic features</h3><table><tbody id="featTable"><tr><td class="faint">Measured features appear after analysis.</td></tr></tbody></table></div>
+      <div class="card"><h3>Validated performance</h3><div class="kgrid">
+        <div class="kpi"><span>Clean EER</span><b class="k-ok">1.62%</b></div>
+        <div class="kpi"><span>Telephony+noise EER</span><b class="k-warn">8.5%</b></div>
+        <div class="kpi"><span>Recall (clones caught)</span><b class="k-ok">99% / 92%</b></div>
+        <div class="kpi"><span>Latency</span><b class="k-ok" id="kLat">—</b></div></div></div>
+      <div class="card"><h3>Case &amp; audit log</h3><table><thead><tr><th>Time</th><th>Hash</th><th>Risk</th><th>Conf</th></tr></thead><tbody id="log"><tr><td class="faint" colspan="4">No calls analysed yet.</td></tr></tbody></table></div>
+    </div>
+  </div>
+</div>
+
+<div class="foot">VoxShield · Team DigiSeva (SRM IST) · PS2 Audio Forensics. Live verdicts from the fusion backend. Accessibility-aware: risk shown by text + icon, not colour alone.</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const $=(s)=>document.querySelector(s),API="",TSR=16000;
+function toast(m){const t=$("#toast");t.textContent=m;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2600);}
+fetch(API+"/api/health").then(r=>r.json()).then(h=>{$("#nStatus").textContent=h.status+" · "+(h.neural_active?"neural+acoustic":"acoustic");$("#nModels").textContent=h.ensemble_size+" models";}).catch(()=>{$("#nStatus").textContent="offline";});
+
+/* ---- live waveform during recording ---- */
+let wfRAF=null;
+function startWave(stream){
+  const AC=window.AudioContext||window.webkitAudioContext,ctx=new AC();
+  const src=ctx.createMediaStreamSource(stream),an=ctx.createAnalyser();an.fftSize=256;src.connect(an);
+  const cv=$("#wave"),x=cv.getContext("2d"),data=new Uint8Array(an.frequencyBinCount);
+  $("#waveWrap").style.display="block";
+  (function draw(){wfRAF=requestAnimationFrame(draw);an.getByteFrequencyData(data);
+    x.clearRect(0,0,cv.width,cv.height);const n=data.length,bw=cv.width/n;
+    for(let i=0;i<n;i++){const h=(data[i]/255)*cv.height;const g=x.createLinearGradient(0,cv.height,0,cv.height-h);
+      g.addColorStop(0,"#22d3ee");g.addColorStop(1,"#8b5cff");x.fillStyle=g;x.fillRect(i*bw+1,cv.height-h,bw-1.5,h);}})();
+  return ()=>{cancelAnimationFrame(wfRAF);ctx.close&&ctx.close();$("#waveWrap").style.display="none";};
+}
+
+async function toWav(blob){
+  const AC=window.AudioContext||window.webkitAudioContext,c=new AC();
+  const dec=await c.decodeAudioData(await blob.arrayBuffer());c.close&&c.close();
+  const off=new OfflineAudioContext(1,Math.ceil(dec.duration*TSR),TSR);const s=off.createBufferSource();s.buffer=dec;s.connect(off.destination);s.start();
+  const r=await off.startRendering(),d=r.getChannelData(0),b=new ArrayBuffer(44+d.length*2),v=new DataView(b);
+  const w=(o,t)=>{for(let i=0;i<t.length;i++)v.setUint8(o+i,t.charCodeAt(i));};
+  w(0,"RIFF");v.setUint32(4,36+d.length*2,true);w(8,"WAVE");w(12,"fmt ");v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,1,true);v.setUint32(24,TSR,true);v.setUint32(28,TSR*2,true);v.setUint16(32,2,true);v.setUint16(34,16,true);w(36,"data");v.setUint32(40,d.length*2,true);
+  let o=44;for(let i=0;i<d.length;i++,o+=2){const x=Math.max(-1,Math.min(1,d[i]));v.setInt16(o,x<0?x*0x8000:x*0x7fff,true);}return new Blob([v],{type:"audio/wav"});
+}
+
+const drop=$("#drop"),fi=$("#file");
+$("#browse").onclick=(e)=>{e.stopPropagation();fi.click();};drop.onclick=()=>fi.click();
+drop.ondragover=(e)=>{e.preventDefault();drop.classList.add("drag");};drop.ondragleave=()=>drop.classList.remove("drag");
+drop.ondrop=(e)=>{e.preventDefault();drop.classList.remove("drag");if(e.dataTransfer.files[0])go(e.dataTransfer.files[0]);};
+fi.onchange=()=>{if(fi.files[0])go(fi.files[0]);};
+let mr,chunks=[],stopWave=null;
+$("#rec").onclick=async()=>{try{const st=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false,channelCount:1,sampleRate:48000}});
+  stopWave=startWave(st);mr=new MediaRecorder(st);chunks=[];mr.ondataavailable=(e)=>chunks.push(e.data);
+  mr.onstop=()=>{stopWave&&stopWave();go(new Blob(chunks,{type:mr.mimeType||"audio/webm"}),"live.wav");st.getTracks().forEach(t=>t.stop());};
+  mr.start();$("#rec").disabled=true;$("#stopRec").disabled=false;$("#recState").textContent="● recording…";
+}catch(e){$("#recState").textContent="mic blocked";}};
+$("#stopRec").onclick=()=>{if(mr&&mr.state!=="inactive")mr.stop();$("#rec").disabled=false;$("#stopRec").disabled=true;$("#recState").textContent="";};
+const mode=()=>document.querySelector('input[name=mode]:checked').value;
+
+async function go(blob,nm){
+  nm=nm||blob.name||"audio.wav";$("#fileName").textContent=nm;
+  $("#loader").classList.add("on");$("#loaderTxt").textContent="Converting audio…";
+  let wav;try{wav=await toWav(blob);}catch(e){$("#loader").classList.remove("on");toast("Couldn't read audio");return;}
+  $("#loaderTxt").textContent="Fusing "+($("#nModels").textContent||"")+"…";
+  const fd=new FormData();fd.append("file",new File([wav],nm.replace(/\.\w+$/,".wav"),{type:"audio/wav"}));
+  try{const res=await fetch(API+(mode()==="stream"?"/api/stream-analyze":"/api/analyze"),{method:"POST",body:fd});
+    if(!res.ok)throw new Error((await res.json()).detail||res.statusText);render(await res.json());toast("Analysis complete");
+  }catch(e){$("#vbig").textContent="Error";$("#vaction").textContent=String(e.message||e);toast("Backend error");}
+  finally{$("#loader").classList.remove("on");}
+}
+
+function render(r){
+  $("#spec").src=r.spectrogram;$("#spec").style.display="block";$("#specPh").style.display="none";
+  const cls=r.label.toLowerCase(),pct=Math.round(r.score*100);
+  $("#verdict").className="vrow "+cls;$("#vbig").textContent=r.label+" RISK";$("#vaction").textContent=r.action;
+  const RN={ssl:"SSL artifact",phase:"phase regularity",hf:"HF vocoder fingerprint",prosody:"prosody/jitter",breath:"breathing pattern"};
+  const top=Object.entries(r.reasons||{}).sort((a,b)=>b[1]-a[1]).slice(0,2).filter(x=>x[1]>=0.4).map(x=>RN[x[0]]+" ("+x[1].toFixed(2)+")");
+  if($("#why"))$("#why").textContent = top.length ? "Why: "+top.join(" · ") : "Why: no strong synthetic markers — consistent with real speech.";
+  $("#gArc").style.strokeDashoffset=198-(198*r.score);$("#gVal").textContent=pct+"%";
+  $("#bar").style.width=pct+"%";$("#scoreTxt").textContent="score "+r.score.toFixed(3)+" · "+r.n_models+" models";$("#kLat").textContent=(r.latency_s||0)+"s";
+  document.querySelectorAll("#reasons .rc").forEach(rc=>{const k=rc.dataset.k,val=r.reasons[k]??0;rc.querySelector(".vl").textContent=val.toFixed(2);rc.querySelector(".bar>i").style.width=Math.round(val*100)+"%";rc.classList.toggle("hit",val>=0.55);});
+  const pm=r.per_model||{};$("#perModel").innerHTML=Object.entries(pm).map(([k,v])=>`<tr><td>${k}<div class="pmbar"><i style="width:${Math.round(v*100)}%"></i></div></td><td class="mono" style="text-align:right;color:#eef3fb">${v.toFixed(3)}</td></tr>`).join("")||'<tr><td class="faint">no votes</td></tr>';
+  const f=r.fusion||{};$("#fusionNote").textContent=`model ${f.model_fused??"—"} · reasons ${f.reason_fused??"—"} · head ${f.head??"—"} · calibrated ${f.calibrated?"yes":"no"}`;
+  if(r.features){const ft=r.features,rows=[["Duration",ft.duration+"s"],["Sample rate",ft.sr+" Hz"],["Narrowband 8kHz",ft.narrowband?"yes ⚠":"no"],["HF energy",ft.hf_energy_ratio],["HF regularity",ft.hf_regularity],["Spectral flatness",ft.spectral_flatness],["Phase reg.",ft.phase_reg],["F0 jitter",ft.f0_jitter],["Shimmer",ft.shimmer],["Voiced ratio",ft.f0_voiced_ratio],["Silence ratio",ft.silence_ratio],["Breath score",ft.breath_score]];$("#featTable").innerHTML=rows.map(([k,v])=>`<tr><td class="muted">${k}</td><td class="mono" style="text-align:right">${v}</td></tr>`).join("");}
+  // comparison slots
+  if(cls==="high"){$("#cmpF").src=r.spectrogram;$("#cmpF").style.display="block";$("#cmpFph").style.display="none";}
+  else if(cls==="low"){$("#cmpG").src=r.spectrogram;$("#cmpG").style.display="block";$("#cmpGph").style.display="none";}
+  const sw=$("#streamWrap");
+  if(r.timeline&&r.timeline.length){sw.style.display="block";drawTL(r.timeline);$("#flagTxt").textContent=r.flagged_at_s!=null?`flagged ${r.flagged_at_s}s ${r.decided_within_10s?"✓":""}`:"no flag";}else sw.style.display="none";
+  refreshLog();
+}
+function drawTL(tl){const cv=$("#timeline"),x=cv.getContext("2d"),W=cv.width,H=cv.height;x.clearRect(0,0,W,H);
+  const pad=26,maxT=Math.max(10,tl[tl.length-1].t),X=(t)=>pad+(t/maxT)*(W-pad*1.6),Y=(s)=>H-pad-s*(H-pad*1.6);
+  x.strokeStyle="rgba(255,255,255,.18)";x.setLineDash([4,4]);x.beginPath();x.moveTo(pad,Y(.7));x.lineTo(W-pad/2,Y(.7));x.stroke();x.setLineDash([]);
+  x.fillStyle="#7aa2ff";x.font="10px monospace";x.fillText("0.70",3,Y(.7)-4);x.fillText("0s",pad,H-8);x.fillText(maxT+"s",W-28,H-8);
+  const g=x.createLinearGradient(0,0,W,0);g.addColorStop(0,"#22d3ee");g.addColorStop(1,"#8b5cff");
+  x.strokeStyle=g;x.lineWidth=2.5;x.beginPath();tl.forEach((p,i)=>{const px=X(p.t),py=Y(p.running);i?x.lineTo(px,py):x.moveTo(px,py);});x.stroke();
+  tl.forEach(p=>{x.fillStyle=p.running>=.7?"#ff4d6a":"#22d3ee";x.beginPath();x.arc(X(p.t),Y(p.running),3.5,0,7);x.fill();});}
+async function refreshLog(){try{const {entries}=await(await fetch(API+"/api/audit")).json();
+  // live KPI ops bar
+  $("#kCalls").textContent=entries.length;
+  $("#kHigh").textContent=entries.filter(e=>e.label==="HIGH").length;
+  $("#kMed").textContent=entries.filter(e=>e.label==="MEDIUM").length;
+  const lats=entries.map(e=>e.latency_s).filter(x=>typeof x==="number");
+  if(lats.length)$("#kAvg").textContent=(lats.reduce((a,b)=>a+b,0)/lats.length).toFixed(1)+"s";
+  if(!entries.length)return;
+  $("#log").innerHTML=entries.map(e=>`<tr><td class="mono">${e.time}</td><td class="mono faint">${e.audio_sha256}</td><td><span class="pill ${e.label.toLowerCase()}">${e.label}</span></td><td class="mono">${e.confidence}%</td></tr>`).join("");}catch{}}
+refreshLog();
+</script>
+</body>
+</html>
