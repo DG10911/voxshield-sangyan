@@ -923,10 +923,57 @@ table.deploy-t tbody tr:hover{background:rgba(59,130,246,.05)}
   </div>
 </section>
 
-<!-- ================= CH 7 · REAL PRODUCT ================= -->
-<section id="product" aria-label="Chapter 7 — Real Product">
+<!-- ================= CH 7 · INTELLIGENCE LAYER ================= -->
+<section id="intelligence" aria-label="Chapter 7 — Beyond Detection">
   <div class="ch-head" data-reveal>
-    <span class="ch-kicker">Chapter 07 · Real Product, Running Today</span>
+    <span class="ch-kicker">Chapter 07 · Beyond Detection</span>
+    <h2>Catch the <span class="grad">fraud</span>, not just the fake.</h2>
+    <p class="ch-sub">Real/fake is table stakes. The layer that wins a bank is the intelligence on top — is this voice running a scam script? is it really the account holder? has this same clone hit other victims? Every capability below is live in the system today.</p>
+  </div>
+
+  <div class="cards">
+    <div class="card tilt" data-reveal>
+      <div><div class="ic">🚨</div>
+      <h3>Digital Arrest Shield</h3>
+      <p>Fuses the voice-clone score with a <b>scam-intent</b> read of the transcript (authority-impersonation, arrest threat, secrecy, OTP theft). A cloned voice running the digital-arrest playbook → <b>CRITICAL</b>. Now covers <b>English, Hindi &amp; Hinglish</b> (Devanagari + romanized) — the languages the ₹19,000 cr scam is actually run in.</p></div>
+    </div>
+    <div class="card tilt" data-reveal style="--d:.1s">
+      <div><div class="ic">🪪</div>
+      <h3>Voice enrolment &amp; verification</h3>
+      <p>A real <b>ECAPA speaker embedding</b> (VoxCeleb-trained) answers two questions at once: <i>is this the enrolled customer?</i> and <i>is the voice live-human?</i> A clone <em>of</em> the customer passes identity but fails liveness — the decisive <span class="mono">REJECTED-CLONE</span> case no biometric-alone system catches.</p></div>
+    </div>
+    <div class="card tilt" data-reveal style="--d:.2s">
+      <div><div class="ic">🕸</div>
+      <h3>Fraud-ring linkage</h3>
+      <p>Scam call-centres reuse one cloned voice across dozens of victims. VoxShield keeps a rolling <b>speaker-print</b> of flagged calls and links the same voice across calls — <b>even across the 8 kHz phone codec</b> — turning isolated verdicts into an operation-level signal.</p></div>
+    </div>
+    <div class="card tilt" data-reveal style="--d:.3s">
+      <div><div class="ic">🔬</div>
+      <h3>Attribution &amp; localization</h3>
+      <p>When a voice reads synthetic, VoxShield names the likely <b>generator family</b> and, for spliced calls, <b>localizes which seconds</b> are AI on a timeline — forensic intelligence for the fraud team, not just a yes/no.</p></div>
+    </div>
+  </div>
+
+  <div style="height:8vh"></div>
+  <h3 class="sub-h" data-reveal>Identity <span class="grad">×</span> liveness — the decision no single check makes</h3>
+  <p class="ch-sub" data-reveal style="margin-top:0;margin-bottom:28px">Voice biometrics alone say "it's the customer's voice" — and a clone passes. Detection alone says "it's synthetic" — but not whose. VoxShield fuses both; all three outcomes verified end-to-end.</p>
+  <div class="card" data-reveal style="padding:0;overflow-x:auto">
+    <table class="deploy-t">
+      <thead><tr><th>Voice presented</th><th>Matches enrolled identity?</th><th>Reads live-human?</th><th>VoxShield decision</th></tr></thead>
+      <tbody>
+        <tr><td>The genuine customer</td><td class="ok">✓ yes</td><td class="ok">✓ yes</td><td><span class="t-pill g">VERIFIED</span></td></tr>
+        <tr><td>A clone <em>of</em> the customer</td><td class="ok">✓ yes</td><td class="no">✕ synthetic</td><td><span class="t-pill r">REJECTED — CLONE</span></td></tr>
+        <tr><td>A different person / attacker</td><td class="no">✕ no</td><td>—</td><td><span class="t-pill a">REJECTED — IDENTITY</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="footnote" data-reveal>Endpoints live today: <span class="mono">/api/analyze-call</span> (voice×intent), <span class="mono">/api/enroll</span> &amp; <span class="mono">/api/verify-speaker</span> (ECAPA identity×liveness), <span class="mono">/api/localize</span> (partial-fake). Speaker matching survives the 8 kHz codec because it runs on a speaker-identity embedding, not the detection features.</p>
+</section>
+
+<!-- ================= CH 8 · REAL PRODUCT ================= -->
+<section id="product" aria-label="Chapter 8 — Real Product">
+  <div class="ch-head" data-reveal>
+    <span class="ch-kicker">Chapter 08 · Real Product, Running Today</span>
     <h2>Not a deck. <span class="grad">A working system.</span></h2>
     <p class="ch-sub">Everything below is a live screenshot of VoxShield running — FastAPI backend, five-model ensemble, streaming analysis, liveness, and a two-party live call demo. TRL-5: validated in a relevant environment.</p>
   </div>
@@ -1036,7 +1083,7 @@ table.deploy-t tbody tr:hover{background:rgba(59,130,246,.05)}
 <!-- ================= CH 8 · MEASURED RESULTS ================= -->
 <section id="results" aria-label="Chapter 8 — Measured Results">
   <div class="ch-head" data-reveal>
-    <span class="ch-kicker">Chapter 08 · Measured Results</span>
+    <span class="ch-kicker">Chapter 09 · Measured Results</span>
     <h2>Numbers we can <span class="grad">defend.</span></h2>
     <p class="ch-sub">Every figure below comes from held-out evaluation — test clips the system never trained on. No cherry-picking, no “up to”, no projections dressed as measurements.</p>
   </div>
@@ -1106,7 +1153,7 @@ table.deploy-t tbody tr:hover{background:rgba(59,130,246,.05)}
 <!-- ================= CH 9 · DEPLOYMENT ================= -->
 <section id="deploy" aria-label="Chapter 9 — Deployment">
   <div class="ch-head" data-reveal>
-    <span class="ch-kicker">Chapter 09 · Deployment &amp; Trust</span>
+    <span class="ch-kicker">Chapter 10 · Deployment &amp; Trust</span>
     <h2>Built for a bank's <span class="grad">basement, not our cloud.</span></h2>
     <p class="ch-sub">A stateless API a bank can run on-premise or air-gapped. Audio is hashed, never stored in clear. And by design, VoxShield advises the fraud flow — it never acts alone.</p>
   </div>
@@ -1220,7 +1267,7 @@ table.deploy-t tbody tr:hover{background:rgba(59,130,246,.05)}
 <!-- ================= CH 10 · MARKET ================= -->
 <section id="market" aria-label="Chapter 10 — Market">
   <div class="ch-head" data-reveal>
-    <span class="ch-kicker">Chapter 10 · The Market</span>
+    <span class="ch-kicker">Chapter 11 · The Market</span>
     <h2>India's banking future is <span class="grad">voice-first.</span></h2>
   </div>
   <p class="market-hero" data-reveal>Phone banking, IVR, and voice-led payments reach customers that apps never will — across languages, literacy levels, and feature phones. <span class="grad">Every one of those calls needs to be trusted.</span></p>
@@ -1257,7 +1304,7 @@ table.deploy-t tbody tr:hover{background:rgba(59,130,246,.05)}
 <!-- ================= CH 11 · VISION ================= -->
 <section id="vision" aria-label="Chapter 11 — Vision">
   <div class="ch-head" data-reveal>
-    <span class="ch-kicker">Chapter 11 · Vision</span>
+    <span class="ch-kicker">Chapter 12 · Vision</span>
     <h2>The generators will improve. <span class="grad">So will the shield.</span></h2>
     <p class="ch-sub">VoxShield is TRL-5 today — a validated working system. Here is the honest path from prototype to national infrastructure.</p>
   </div>
@@ -1827,8 +1874,8 @@ if(fine && !reduced){
 }
 
 /* ============ chapters: dots nav, page number, keyboard ============ */
-var chapters = ['hero','threat','failure','innovation','models','fairness','liveness','product','results','deploy','market','vision','thanks'];
-var labels   = ['VoxShield','01 · The Threat','02 · Why Banks Fail','03 · Our Innovation','04 · Five AI Models','05 · Fairness','06 · Liveness','07 · Real Product','08 · Measured Results','09 · Deployment','10 · Market','11 · Vision','Thank You'];
+var chapters = ['hero','threat','failure','innovation','models','fairness','liveness','intelligence','product','results','deploy','market','vision','thanks'];
+var labels   = ['VoxShield','01 · The Threat','02 · Why Banks Fail','03 · Our Innovation','04 · Five AI Models','05 · Fairness','06 · Liveness','07 · Beyond Detection','08 · Real Product','09 · Measured Results','10 · Deployment','11 · Market','12 · Vision','Thank You'];
 var dotsNav = document.getElementById('dots');
 var pagenum = document.getElementById('pagenum');
 var current = 0;
