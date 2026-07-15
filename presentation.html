@@ -617,6 +617,81 @@ table.deploy-t tbody tr:hover{background:rgba(59,130,246,.05)}
 @keyframes chipIn{from{opacity:0;transform:translateY(8px) scale(.9)}to{opacity:1;transform:none}}
 .sim-replay{margin-top:20px;font-size:13.5px;padding:12px 24px}
 
+/* == ENTERPRISE MODE CSS (added) == */
+.ent-hub-wrap{border-radius:22px;border:1px solid var(--line);overflow:hidden;overflow-x:auto;position:relative;
+  background:radial-gradient(900px 460px at 50% 46%,rgba(59,130,246,.10),transparent 62%),linear-gradient(170deg,#0a1526,#070f1d);
+  box-shadow:0 40px 100px -40px rgba(0,0,0,.9);padding:clamp(10px,2vw,24px)}
+.ent-hub-wrap svg{width:100%;min-width:920px;height:auto;display:block}
+.ent-core{fill:rgba(13,27,48,.96);stroke:rgba(59,130,246,.65);stroke-width:1.6}
+.ent-core-ring{fill:none;stroke:rgba(59,130,246,.3);stroke-width:1;stroke-dasharray:4 8;animation:entspin 24s linear infinite;transform-origin:600px 360px}
+@keyframes entspin{to{transform:rotate(360deg)}}
+.ent-inode{fill:rgba(13,27,48,.92);stroke:rgba(147,169,200,.3);stroke-width:1}
+.ent-glow{filter:drop-shadow(0 0 22px rgba(59,130,246,.5))}
+.ent-ind{display:grid;grid-template-columns:repeat(auto-fit,minmax(255px,1fr));gap:18px}
+.ent-icard{position:relative;border-radius:var(--r);padding:24px 22px;overflow:hidden;
+  background:linear-gradient(160deg,rgba(13,27,48,.94),rgba(11,23,40,.78));border:1px solid var(--line);
+  box-shadow:0 24px 60px -30px rgba(0,0,0,.75), inset 0 1px 0 rgba(232,240,255,.06);
+  transition:transform .5s var(--ease),border-color .5s,box-shadow .5s}
+.ent-icard:hover{transform:translateY(-6px);border-color:var(--line-strong);box-shadow:0 34px 80px -30px rgba(2,8,20,.9),0 0 0 1px rgba(59,130,246,.12)}
+.ent-icard .eic{width:46px;height:46px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:21px;
+  background:var(--acc-soft);border:1px solid var(--line-strong);color:#8ab6ff}
+.ent-icard h4{font-size:16.5px;font-weight:700;margin:14px 0 4px}
+.ent-badge{position:absolute;top:18px;right:18px;font-family:var(--mono);font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;
+  color:#7fe0a2;border:1px solid rgba(34,197,94,.35);background:rgba(34,197,94,.08);padding:4px 9px;border-radius:100px}
+.ent-icard .ehint{font-size:12px;color:var(--t3);margin-top:6px}
+.ent-uses{list-style:none;margin-top:10px;max-height:0;overflow:hidden;opacity:0;transition:max-height .55s var(--ease),opacity .4s,margin .4s}
+.ent-icard:hover .ent-uses{max-height:240px;opacity:1;margin-top:12px}
+.ent-icard:hover .ehint{opacity:0;height:0;margin:0;transition:.3s}
+.ent-uses li{font-size:12.5px;color:var(--t2);padding:3px 0;display:flex;gap:9px;align-items:baseline}
+.ent-uses li::before{content:"›";color:var(--acc);flex:none}
+.ent-arch{display:flex;flex-direction:column;align-items:center;gap:0}
+.ent-anode{width:min(600px,100%);border-radius:14px;border:1px solid var(--line);text-align:center;padding:15px 22px;
+  background:linear-gradient(160deg,rgba(13,27,48,.94),rgba(11,23,40,.72));box-shadow:0 20px 50px -32px rgba(0,0,0,.8)}
+.ent-anode.core{border-color:var(--line-strong);box-shadow:0 0 42px -14px rgba(59,130,246,.4)}
+.ent-anode h5{font-size:15px;font-weight:700}
+.ent-anode p{font-size:11.5px;color:var(--t3);font-family:var(--mono);margin-top:2px;letter-spacing:.04em}
+.ent-micro{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:10px}
+.ent-micro span{font-family:var(--mono);font-size:10.5px;color:#a9c8ff;border:1px solid var(--line-strong);background:var(--acc-soft);padding:5px 10px;border-radius:8px}
+.ent-conn{width:2px;height:24px;background:repeating-linear-gradient(180deg,var(--acc) 0 5px,transparent 5px 11px);animation:entdash .8s linear infinite;opacity:.7}
+@keyframes entdash{to{background-position:0 11px}}
+.ent-work{display:flex;flex-wrap:wrap;align-items:stretch;gap:8px}
+.ent-wstep{flex:1 1 130px;border-radius:12px;border:1px solid var(--line);background:rgba(13,27,48,.86);padding:14px 12px;text-align:center;transition:.4s var(--ease)}
+.ent-wstep:hover{border-color:var(--line-strong);transform:translateY(-3px)}
+.ent-wstep .wn{font-family:var(--mono);font-size:10px;color:var(--t3)}
+.ent-wstep h5{font-size:12.5px;font-weight:600;margin-top:4px}
+.ent-dec{display:flex;gap:12px;justify-content:center;margin-top:16px;flex-wrap:wrap}
+.ent-dec span{font-family:var(--mono);font-size:12.5px;font-weight:700;padding:9px 18px;border-radius:10px;border:1px solid}
+.ent-dec .ap{color:#7fe0a2;border-color:rgba(34,197,94,.4);background:rgba(34,197,94,.08)}
+.ent-dec .fl{color:#f2c266;border-color:rgba(245,158,11,.4);background:rgba(245,158,11,.08)}
+.ent-dec .rj{color:#ff9a9a;border-color:rgba(239,68,68,.45);background:rgba(239,68,68,.08)}
+.ent-rev{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:16px}
+.ent-rcard{border-radius:14px;border:1px solid var(--line);background:linear-gradient(160deg,rgba(13,27,48,.92),rgba(11,23,40,.72));padding:22px 20px;transition:.5s var(--ease);position:relative;overflow:hidden}
+.ent-rcard::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(180deg,var(--grn),transparent)}
+.ent-rcard:hover{transform:translateY(-6px);border-color:var(--line-strong)}
+.ent-rcard .rt{font-family:var(--mono);font-size:10px;color:#7fe0a2;letter-spacing:.14em;text-transform:uppercase}
+.ent-rcard h5{font-size:16px;font-weight:700;margin:8px 0 6px}
+.ent-rcard p{font-size:12px;color:var(--t2);line-height:1.55}
+.ent-logos{display:grid;grid-template-columns:repeat(auto-fit,minmax(128px,1fr));gap:12px}
+.ent-logo{border-radius:11px;border:1px solid var(--line);background:var(--glass);padding:16px 12px;text-align:center;
+  font-family:var(--mono);font-size:12.5px;color:var(--t2);letter-spacing:.02em;transition:.4s var(--ease)}
+.ent-logo:hover{border-color:var(--line-strong);color:#a9c8ff;transform:translateY(-3px)}
+.ent-journey{display:flex;flex-wrap:wrap;gap:0;align-items:flex-start}
+.ent-jstep{flex:1 1 130px;text-align:center;position:relative;padding:0 6px}
+.ent-jdot{width:16px;height:16px;border-radius:50%;background:var(--bg);border:2px solid var(--acc);margin:0 auto 14px;box-shadow:0 0 14px rgba(59,130,246,.7);position:relative;z-index:2}
+.ent-jline{position:absolute;top:7px;left:55%;width:90%;height:2px;background:linear-gradient(90deg,var(--acc),rgba(59,130,246,.12))}
+.ent-jstep:last-child .ent-jline{display:none}
+.ent-jstep h5{font-size:13.5px;font-weight:700}
+.ent-jstep p{font-size:11px;color:var(--t3);margin-top:3px;line-height:1.4}
+.ent-scale{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+@media(max-width:760px){.ent-scale{grid-template-columns:repeat(2,1fr)}}
+.ent-scard{border-radius:12px;border:1px solid var(--line);background:rgba(13,27,48,.86);padding:18px 14px;text-align:center}
+.ent-scard .sv{font-family:var(--mono);font-size:clamp(17px,1.9vw,25px);font-weight:700;color:#8ab6ff}
+.ent-scard .sk{font-size:10.5px;color:var(--t3);margin-top:4px;font-family:var(--mono);letter-spacing:.08em;text-transform:uppercase}
+.ent-scard .sbar{height:6px;border-radius:100px;background:rgba(147,169,200,.12);margin-top:12px;overflow:hidden;border:1px solid rgba(147,169,200,.08)}
+.ent-scard .sbar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#2f6fe0,#8ab6ff);transition:width 1.4s var(--ease);box-shadow:0 0 12px -2px rgba(59,130,246,.7)}
+.in .ent-scard .sbar i{width:var(--w)}
+/* == /ENTERPRISE MODE CSS == */
+
 /* ---------- reduced motion ---------- */
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.001s!important;animation-iteration-count:1!important;transition-duration:.2s!important}
@@ -930,8 +1005,8 @@ table.deploy-t tbody tr:hover{background:rgba(59,130,246,.05)}
     </div>
     <div class="brow">
       <div class="bl">DistilHuBERT<small>alone</small></div>
-      <div class="btrack"><i class="bfill c-mut" style="--w:35.4%;--d:.35s"></i></div>
-      <div class="bv">23.0% EER</div>
+      <div class="btrack"><i class="bfill c-mut" style="--w:38.3%;--d:.35s"></i></div>
+      <div class="bv">24.9% EER</div>
     </div>
     <div class="brow">
       <div class="bl">XLS-R 300M<small>alone — best single</small></div>
@@ -1032,14 +1107,14 @@ table.deploy-t tbody tr:hover{background:rgba(59,130,246,.05)}
   <h3 class="sub-h" data-reveal>Fairness cuts <span class="grad">both ways</span> — we also catch Indian-language fakes</h3>
   <p class="ch-sub" data-reveal style="margin-top:0;margin-bottom:26px">The English-trained detectors were blind to <em>synthetic</em> Indian speech too. We synthesized an Indian-language deepfake set (MMS-TTS, 8 languages), trained an Indic-aware fusion path, and route to it with on-device language-ID — English stays on the main model.</p>
   <div class="stats" data-reveal>
-    <div class="stat good"><div class="v"><span class="cnt" data-to="75" data-dec="0">0</span><span class="u">%</span></div>
+    <div class="stat good"><div class="v"><span class="cnt" data-to="82" data-dec="0">0</span><span class="u">%</span></div>
       <div class="k">Indian-language voice-clone recall — up from 42%. The Indic-aware path nearly doubles how often synthetic Indic speech is caught.</div>
       <div class="m">Held-out · MMS-TTS Indic deepfakes</div></div>
-    <div class="stat good" style="--d:.08s"><div class="v"><span class="cnt" data-to="9.0" data-dec="1">0.0</span><span class="u">%</span></div>
+    <div class="stat good" style="--d:.08s"><div class="v"><span class="cnt" data-to="6.3" data-dec="1">0.0</span><span class="u">%</span></div>
       <div class="k">Genuine Indic false positives — <em>improved</em> from 11.7%. Catching more fakes did not cost genuine customers.</div>
       <div class="m">IndicVoices · 10 languages</div></div>
-    <div class="stat blue" style="--d:.16s"><div class="v"><span class="cnt" data-to="5.5" data-dec="1">0.0</span><span class="u">%</span></div>
-      <div class="k">English EER — unchanged (5.5% vs 5.75%). English audio routes to the main stacker; only Indic audio takes the Indic path.</div>
+    <div class="stat blue" style="--d:.16s"><div class="v"><span class="cnt" data-to="5.9" data-dec="1">0.0</span><span class="u">%</span></div>
+      <div class="k">English EER — unchanged by routing (5.9% held-out). English audio routes to the main stacker; only Indic audio takes the Indic path.</div>
       <div class="m">Held-out In-the-Wild</div></div>
   </div>
   <p class="footnote" data-reveal>Language-routed fusion: an on-device language-ID (Whisper) sends Indian-language audio to a stacker trained with a synthesized Indic deepfake class, while English keeps the main model — so both error rates fall at once. The fakes here are TTS-synthesized (a genuine synthetic-speech class); adversarial voice-conversion clones are the next hardening step.</p>
@@ -1261,8 +1336,8 @@ table.deploy-t tbody tr:hover{background:rgba(59,130,246,.05)}
     <div class="stat good" data-reveal style="--d:.24s"><div class="v"><span class="cnt" data-to="3.0" data-dec="1">0.0</span><span class="u">s</span></div>
       <div class="k">Time-to-flag on a synthetic call in streaming mode — well inside the 10-second design target.</div>
       <div class="m">Verified end-to-end</div></div>
-    <div class="stat good" data-reveal style="--d:.32s"><div class="v"><span class="cnt" data-to="11.7" data-dec="1">0.0</span><span class="u">%</span></div>
-      <div class="k">False-positive rate on genuine Indian-language speech — down from 36.3% before Indic-aware retraining.</div>
+    <div class="stat good" data-reveal style="--d:.32s"><div class="v"><span class="cnt" data-to="6.3" data-dec="1">0.0</span><span class="u">%</span></div>
+      <div class="k">False-positive rate on genuine Indian-language speech — down from 36.3% (English-only) via Indic-aware retraining, then channel-aware thresholds.</div>
       <div class="m">IndicVoices · 10 languages · 300 clips</div></div>
     <div class="stat blue" data-reveal style="--d:.4s"><div class="v"><span class="cnt" data-to="5" data-dec="0">0</span><span class="u">+1</span></div>
       <div class="k">Detector families fused by one learned meta-stacker — decorrelated errors, calibrated output.</div>
@@ -1281,9 +1356,9 @@ table.deploy-t tbody tr:hover{background:rgba(59,130,246,.05)}
         <tr><td>Wav2Vec2 detector — alone</td><td>62.4%</td><td>0.356</td><td>38.6%</td><td><span class="t-pill r">weak alone</span></td></tr>
         <tr><td>Acoustic DSP — alone</td><td>46.9%</td><td>0.521</td><td>50.0%</td><td><span class="t-pill r">weak alone</span></td></tr>
         <tr><td>LFCC + CQCC head — alone</td><td>26.8%</td><td>0.786</td><td>70.9%</td><td><span class="t-pill a">partial</span></td></tr>
-        <tr><td>DistilHuBERT — alone</td><td>23.0%</td><td>0.828</td><td>74.0%</td><td><span class="t-pill a">good</span></td></tr>
+        <tr><td>DistilHuBERT — alone</td><td>24.9%</td><td>0.828</td><td>73.8%</td><td><span class="t-pill a">good</span></td></tr>
         <tr><td>XLS-R 300M — alone</td><td>16.0%</td><td>0.901</td><td>84.0%</td><td><span class="t-pill a">best single</span></td></tr>
-        <tr><td>Simple-average fusion — unweighted</td><td>19.0%</td><td>0.839</td><td>57.6%</td><td><span class="t-pill a">naive blend</span></td></tr>
+        <tr><td>Simple-average fusion — unweighted</td><td>19.0%</td><td>0.839</td><td>50.1%</td><td><span class="t-pill a">naive blend</span></td></tr>
         <tr class="hl"><td>VoxShield meta-fusion — all five, stacked</td><td>5.9%</td><td>0.983</td><td>93.4%</td><td><span class="t-pill g">deployed</span></td></tr>
       </tbody>
     </table>
@@ -1308,6 +1383,25 @@ table.deploy-t tbody tr:hover{background:rgba(59,130,246,.05)}
     </table>
   </div>
   <p class="footnote" data-reveal>Capability comparison against the common commercial pattern — a single neural detector behind a cloud endpoint. It is an architecture comparison, not a benchmark of any specific vendor.</p>
+
+  <div style="height:9vh"></div>
+  <h3 class="sub-h" data-reveal>We red-teamed ourselves — <span class="grad">robustness under channel &amp; evasion</span></h3>
+  <p class="ch-sub" data-reveal style="margin-top:0;margin-bottom:30px">The uncomfortable table a bank CISO asks for: we re-scored the held-out test set through real phone/VoIP codecs and benign audio manipulations, and report how far each moves the detector. Degradations included, not hidden.</p>
+  <div class="card" data-reveal style="padding:0;overflow-x:auto">
+    <table class="deploy-t">
+      <thead><tr><th>Condition</th><th>EER ↓</th><th>Δ EER vs clean</th><th>Accuracy ↑</th><th>Standing</th></tr></thead>
+      <tbody>
+        <tr><td>Clean — baseline</td><td>7.5%</td><td>—</td><td>92.5%</td><td><span class="t-pill g">reference</span></td></tr>
+        <tr class="hl"><td>Opus 12k — VoIP codec</td><td>2.5%</td><td>−5.0 pts</td><td>95.0%</td><td><span class="t-pill g">robust</span></td></tr>
+        <tr><td>G.711 8k — Indian telephony</td><td>15.0%</td><td>+7.5 pts</td><td>77.5%</td><td><span class="t-pill g">robust</span></td></tr>
+        <tr><td>MP3 16k — lossy codec</td><td>20.0%</td><td>+12.5 pts</td><td>82.5%</td><td><span class="t-pill a">holds</span></td></tr>
+        <tr><td>Tempo 0.9× — benign stretch</td><td>32.5%</td><td>+25.0 pts</td><td>70.0%</td><td><span class="t-pill r">degrades</span></td></tr>
+        <tr><td>Noise @15 dB SNR</td><td>45.0%</td><td>+37.5 pts</td><td>62.5%</td><td><span class="t-pill r">degrades</span></td></tr>
+        <tr><td>Pitch +2 st — benign shift</td><td>56.3%</td><td>+48.8 pts</td><td>58.8%</td><td><span class="t-pill r">degrades</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="footnote" data-reveal>80 held-out clips per condition, threshold 0.70. The honest split: VoxShield is <b>robust to the real phone/VoIP codecs it was hardened against</b> — Opus even improves on clean, and 8 kHz G.711 (the Indian-telephony case) moves only +7.5 pts. The open surface is <b>benign DSP manipulation</b> — pitch, tempo and noise each cost +25 to +49 pts EER, which is exactly why customer action is gated on liveness, not detection alone. White-box gradient attacks (FGSM/PGD) are a stated roadmap item, not claimed here.</p>
 </section>
 
 <!-- ================= CH 9 · DEPLOYMENT ================= -->
@@ -1422,6 +1516,19 @@ table.deploy-t tbody tr:hover{background:rgba(59,130,246,.05)}
       <div class="m">Architecture</div></div>
   </div>
   <p class="footnote" data-reveal>A concurrent-call load-test harness ships with the repo (multipart POST flood with latency percentiles) so capacity on the bank's own hardware is measured, not promised.</p>
+
+  <div style="height:10vh"></div>
+  <h3 class="sub-h" data-reveal>India-ready — <span class="grad">built to the DPDP Act, by design</span></h3>
+  <p class="ch-sub" data-reveal style="margin-top:0;margin-bottom:30px">VoxShield's architecture maps onto India's <b>Digital Personal Data Protection Act, 2023</b> and RBI fraud-risk expectations — not as a certificate, but as engineering choices already in the repository. Six principles, six design facts you can inspect.</p>
+  <div class="trust-list">
+    <div class="trust" data-reveal><div class="tk">⧗</div><div><h5>Data minimisation &amp; retention limits</h5><p>A call's audio is processed to return one risk score, then discarded. Raw audio is <b>never persisted in clear</b> — only a SHA-256 hash enters the audit ledger. <span class="mono">DPDP §8</span> — accuracy &amp; storage limitation.</p></div></div>
+    <div class="trust" data-reveal style="--d:.08s"><div class="tk">◎</div><div><h5>Purpose limitation</h5><p>Audio is used <b>solely</b> for fraud-risk scoring inside the bank's existing anti-fraud workflow — no secondary use, no profiling, and no training on customer calls.</p></div></div>
+    <div class="trust" data-reveal style="--d:.16s"><div class="tk">⌂</div><div><h5>Data localisation</h5><p>On-prem / air-gapped deployment means personal data <b>never leaves the bank's own infrastructure</b> — no cross-border transfer, no third-party processor. The container makes zero external calls at runtime.</p></div></div>
+    <div class="trust" data-reveal style="--d:.24s"><div class="tk">⊘</div><div><h5>No solely-automated decision</h5><p>VoxShield advises; it <b>never auto-blocks</b>. A human fraud officer makes every customer-affecting call — no adverse action rests on a model score alone.</p></div></div>
+    <div class="trust" data-reveal style="--d:.32s"><div class="tk">✎</div><div><h5>Transparency &amp; explainability</h5><p>Every verdict carries reason codes and a plain-language <span class="mono">/api/why-fusion</span> account — supporting a Data Principal's right to understand a decision that affects them.</p></div></div>
+    <div class="trust" data-reveal style="--d:.40s"><div class="tk">#</div><div><h5>Accountability &amp; auditability</h5><p>A tamper-evident SHA-256 ledger plus a per-decision action log give the Data Fiduciary a defensible trail for grievance redressal and regulatory review.</p></div></div>
+  </div>
+  <p class="footnote" data-reveal>Alignment by design, not a legal certification: final DPDP compliance depends on the deploying bank's own notice, consent and Data Fiduciary obligations. VoxShield is engineered to make meeting them straightforward — data it never keeps is data neither it nor the bank must protect.</p>
 </section>
 
 <!-- ================= CH 10 · MARKET ================= -->
@@ -1460,6 +1567,163 @@ table.deploy-t tbody tr:hover{background:rgba(59,130,246,.05)}
   </div>
   <p class="footnote" data-reveal>Internal benchmarking. The Docker image bakes all five detectors plus Whisper (~2 GB of models) in at build time — a running container never re-downloads anything, which is what makes the air-gapped deployment real rather than aspirational.</p>
 </section>
+
+<!-- == ENTERPRISE MODE (added chapter) == -->
+<!-- ================= ENTERPRISE / BUSINESS MODE ================= -->
+<section id="enterprise" aria-label="Enterprise & Business Mode">
+  <div class="ch-head" data-reveal>
+    <span class="ch-kicker">Enterprise · Business Mode</span>
+    <h2>One AI platform. <span class="grad">Every voice. Every industry.</span></h2>
+    <p class="ch-sub">The banking fraud desk is the beachhead. The same drop-in engine — detection, liveness, risk — secures every sector where a voice must be provably human. Here is the deployment ecosystem, the architecture, and the business model behind it.</p>
+  </div>
+
+  <h3 class="sub-h" data-reveal>Enterprise deployment <span class="grad">ecosystem</span></h3>
+  <div class="ent-hub-wrap" data-reveal><svg viewBox="0 0 1200 720" role="img" aria-label="VoxShield enterprise ecosystem: a central AI core connected to twelve industry sectors"><path id="entp0" class="pline" d="M600 208 L600 92"/><path id="entp1" class="pline" d="M676 228 L835 128"/><path id="entp2" class="pline" d="M732 284 L1007 226"/><path id="entp3" class="pline" d="M752 360 L1070 360"/><path id="entp4" class="pline" d="M732 436 L1007 494"/><path id="entp5" class="pline" d="M676 492 L835 592"/><path id="entp6" class="pline" d="M600 512 L600 628"/><path id="entp7" class="pline" d="M524 492 L365 592"/><path id="entp8" class="pline" d="M468 436 L193 494"/><path id="entp9" class="pline" d="M448 360 L130 360"/><path id="entp10" class="pline" d="M468 284 L193 226"/><path id="entp11" class="pline" d="M524 228 L365 128"/><circle class="ent-core-ring" cx="600" cy="360" r="200"/><circle class="ent-core ent-glow" cx="600" cy="360" r="152"/><text x="600" y="300" text-anchor="middle" class="ptext" font-size="17" font-weight="700">VOXSHIELD AI CORE</text><text x="600" y="330" text-anchor="middle" class="ptext2" font-size="11">Voice Authentication</text><text x="600" y="350" text-anchor="middle" class="ptext2" font-size="11">AI Deepfake Detection</text><text x="600" y="370" text-anchor="middle" class="ptext2" font-size="11">Liveness Detection</text><text x="600" y="390" text-anchor="middle" class="ptext2" font-size="11">Risk Engine</text><text x="600" y="410" text-anchor="middle" class="ptext2" font-size="11">Fraud Intelligence</text><text x="600" y="430" text-anchor="middle" class="ptext2" font-size="11">API Gateway</text><g class="ent-inode-g"><rect class="ent-inode" x="516" y="67" width="168" height="50" rx="11"/><text x="600" y="89" text-anchor="middle" class="ptext" font-size="12.5">🏦  Banking</text><text x="600" y="105" text-anchor="middle" class="ptext2" font-size="8.5">PRIMARY MARKET</text></g><g class="ent-inode-g"><rect class="ent-inode" x="751" y="103" width="168" height="50" rx="11"/><text x="835" y="125" text-anchor="middle" class="ptext" font-size="12.5">📡  Telecom</text><text x="835" y="141" text-anchor="middle" class="ptext2" font-size="8.5">ANTI-VISHING</text></g><g class="ent-inode-g"><rect class="ent-inode" x="923" y="201" width="168" height="50" rx="11"/><text x="1007" y="223" text-anchor="middle" class="ptext" font-size="12.5">🏛  Government</text><text x="1007" y="239" text-anchor="middle" class="ptext2" font-size="8.5">DIGITAL INDIA</text></g><g class="ent-inode-g"><rect class="ent-inode" x="986" y="335" width="168" height="50" rx="11"/><text x="1070" y="357" text-anchor="middle" class="ptext" font-size="12.5">⚕  Healthcare</text><text x="1070" y="373" text-anchor="middle" class="ptext2" font-size="8.5">TELEHEALTH</text></g><g class="ent-inode-g"><rect class="ent-inode" x="923" y="469" width="168" height="50" rx="11"/><text x="1007" y="491" text-anchor="middle" class="ptext" font-size="12.5">📋  Insurance</text><text x="1007" y="507" text-anchor="middle" class="ptext2" font-size="8.5">CLAIMS FRAUD</text></g><g class="ent-inode-g"><rect class="ent-inode" x="751" y="567" width="168" height="50" rx="11"/><text x="835" y="589" text-anchor="middle" class="ptext" font-size="12.5">🎧  BPO</text><text x="835" y="605" text-anchor="middle" class="ptext2" font-size="8.5">AGENT ASSIST</text></g><g class="ent-inode-g"><rect class="ent-inode" x="516" y="603" width="168" height="50" rx="11"/><text x="600" y="625" text-anchor="middle" class="ptext" font-size="12.5">📰  Media</text><text x="600" y="641" text-anchor="middle" class="ptext2" font-size="8.5">DEEPFAKE</text></g><g class="ent-inode-g"><rect class="ent-inode" x="281" y="567" width="168" height="50" rx="11"/><text x="365" y="589" text-anchor="middle" class="ptext" font-size="12.5">⚖  Legal</text><text x="365" y="605" text-anchor="middle" class="ptext2" font-size="8.5">EVIDENCE</text></g><g class="ent-inode-g"><rect class="ent-inode" x="109" y="469" width="168" height="50" rx="11"/><text x="193" y="491" text-anchor="middle" class="ptext" font-size="12.5">🏢  Enterprise</text><text x="193" y="507" text-anchor="middle" class="ptext2" font-size="8.5">EXEC IMPERSONATION</text></g><g class="ent-inode-g"><rect class="ent-inode" x="46" y="335" width="168" height="50" rx="11"/><text x="130" y="357" text-anchor="middle" class="ptext" font-size="12.5">🎓  Education</text><text x="130" y="373" text-anchor="middle" class="ptext2" font-size="8.5">EXAM INTEGRITY</text></g><g class="ent-inode-g"><rect class="ent-inode" x="109" y="201" width="168" height="50" rx="11"/><text x="193" y="223" text-anchor="middle" class="ptext" font-size="12.5">🔐  Cybersecurity</text><text x="193" y="239" text-anchor="middle" class="ptext2" font-size="8.5">SOC</text></g><g class="ent-inode-g"><rect class="ent-inode" x="281" y="103" width="168" height="50" rx="11"/><text x="365" y="125" text-anchor="middle" class="ptext" font-size="12.5">🛰  Defense</text><text x="365" y="141" text-anchor="middle" class="ptext2" font-size="8.5">COMMAND AUTH</text></g><circle class="pdot" r="3"><animateMotion dur="2.6s" begin="0.00s" repeatCount="indefinite"><mpath href="#entp0"/></animateMotion></circle><circle class="pdot" r="3"><animateMotion dur="2.6s" begin="0.36s" repeatCount="indefinite"><mpath href="#entp2"/></animateMotion></circle><circle class="pdot" r="3"><animateMotion dur="2.6s" begin="0.72s" repeatCount="indefinite"><mpath href="#entp4"/></animateMotion></circle><circle class="pdot" r="3"><animateMotion dur="2.6s" begin="1.08s" repeatCount="indefinite"><mpath href="#entp6"/></animateMotion></circle><circle class="pdot" r="3"><animateMotion dur="2.6s" begin="1.44s" repeatCount="indefinite"><mpath href="#entp8"/></animateMotion></circle><circle class="pdot" r="3"><animateMotion dur="2.6s" begin="1.80s" repeatCount="indefinite"><mpath href="#entp10"/></animateMotion></circle></svg></div>
+
+  <div style="height:6vh"></div>
+  <h3 class="sub-h" data-reveal>Twelve sectors, <span class="grad">one API</span></h3>
+  <div class="ent-ind">
+    <div class="ent-icard" data-reveal><span class="ent-badge">PRIMARY MARKET</span><div class="eic">🏦</div><h4>Banking & Finance</h4><div class="ehint">Hover to see use-cases →</div><ul class="ent-uses"><li>Call centres</li><li>mobile & net banking</li><li>UPI verification</li><li>loan approval</li><li>KYC</li></ul></div>
+<div class="ent-icard" data-reveal><span class="ent-badge">ANTI-VISHING</span><div class="eic">📡</div><h4>Telecom</h4><div class="ehint">Hover to see use-cases →</div><ul class="ent-uses"><li>Customer care</li><li>SIM verification</li><li>voice auth</li><li>fraud-call screening</li></ul></div>
+<div class="ent-icard" data-reveal><span class="ent-badge">DIGITAL INDIA</span><div class="eic">🏛</div><h4>Government</h4><div class="ehint">Hover to see use-cases →</div><ul class="ent-uses"><li>Citizen helplines</li><li>police</li><li>emergency calls</li><li>Aadhaar verification</li></ul></div>
+<div class="ent-icard" data-reveal><span class="ent-badge">TELEHEALTH</span><div class="eic">⚕</div><h4>Healthcare</h4><div class="ehint">Hover to see use-cases →</div><ul class="ent-uses"><li>Telemedicine</li><li>medical helplines</li><li>insurance & doctor authentication</li></ul></div>
+<div class="ent-icard" data-reveal><span class="ent-badge">CLAIMS FRAUD</span><div class="eic">📋</div><h4>Insurance</h4><div class="ehint">Hover to see use-cases →</div><ul class="ent-uses"><li>Claims intake</li><li>customer & agent verification</li><li>call investigation</li></ul></div>
+<div class="ent-icard" data-reveal><span class="ent-badge">AGENT ASSIST</span><div class="eic">🎧</div><h4>BPO / Contact</h4><div class="ehint">Hover to see use-cases →</div><ul class="ent-uses"><li>Contact centres</li><li>quality monitoring</li><li>AI-agent verification</li></ul></div>
+<div class="ent-icard" data-reveal><span class="ent-badge">DEEPFAKE</span><div class="eic">📰</div><h4>Media</h4><div class="ehint">Hover to see use-cases →</div><ul class="ent-uses"><li>News verification</li><li>fake-audio detection</li><li>journalist authentication</li></ul></div>
+<div class="ent-icard" data-reveal><span class="ent-badge">EVIDENCE</span><div class="eic">⚖</div><h4>Legal</h4><div class="ehint">Hover to see use-cases →</div><ul class="ent-uses"><li>Court evidence</li><li>audio verification</li><li>digital forensics</li><li>investigation</li></ul></div>
+<div class="ent-icard" data-reveal><span class="ent-badge">EXEC IMPERSONATION</span><div class="eic">🏢</div><h4>Enterprise</h4><div class="ehint">Hover to see use-cases →</div><ul class="ent-uses"><li>Internal meetings</li><li>HR interviews</li><li>executive & secure comms</li></ul></div>
+<div class="ent-icard" data-reveal><span class="ent-badge">EXAM INTEGRITY</span><div class="eic">🎓</div><h4>Education</h4><div class="ehint">Hover to see use-cases →</div><ul class="ent-uses"><li>Online exams</li><li>viva authentication</li><li>remote interviews</li><li>voice identity</li></ul></div>
+<div class="ent-icard" data-reveal><span class="ent-badge">SOC</span><div class="eic">🔐</div><h4>Cybersecurity</h4><div class="ehint">Hover to see use-cases →</div><ul class="ent-uses"><li>SOC signal</li><li>incident response</li><li>threat hunting</li><li>digital evidence</li></ul></div>
+<div class="ent-icard" data-reveal><span class="ent-badge">COMMAND AUTH</span><div class="eic">🛰</div><h4>Defense</h4><div class="ehint">Hover to see use-cases →</div><ul class="ent-uses"><li>Secure comms</li><li>intelligence</li><li>tactical & command authentication</li></ul></div>
+  </div>
+  <p class="footnote" data-reveal>Banking is live today (TRL-5). The other sectors are the same engine applied to adjacent voice-fraud problems — the addressable expansion, not current deployments.</p>
+
+  <div style="height:8vh"></div>
+  <h3 class="sub-h" data-reveal>Deployment <span class="grad">architecture</span></h3>
+  <div class="ent-arch" data-reveal>
+    <div class="ent-anode"><h5>Client</h5><p>User · web · mobile · IVR · SIP trunk</p></div>
+<div class="ent-conn" aria-hidden="true"></div>
+<div class="ent-anode"><h5>API Gateway</h5><p>auth · routing · rate-limit</p></div>
+<div class="ent-conn" aria-hidden="true"></div>
+<div class="ent-anode"><h5>Load Balancer</h5><p>horizontal fan-out · health checks</p></div>
+<div class="ent-conn" aria-hidden="true"></div>
+<div class="ent-anode core"><h5>VoxShield AI Cluster</h5><p>stateless replicas</p><div class="ent-micro"><span>Detection Engine</span><span>Speaker Verification</span><span>Liveness</span><span>Risk Engine</span><span>Audio Processing</span></div></div>
+<div class="ent-conn" aria-hidden="true"></div>
+<div class="ent-anode"><h5>Message Queue</h5><p>async jobs · backpressure</p></div>
+<div class="ent-conn" aria-hidden="true"></div>
+<div class="ent-anode"><h5>GPU Cluster</h5><p>batched neural inference · sub-second</p></div>
+<div class="ent-conn" aria-hidden="true"></div>
+<div class="ent-anode"><h5>Database + Analytics</h5><p>hash-keyed audit ledger · metrics</p></div>
+<div class="ent-conn" aria-hidden="true"></div>
+<div class="ent-anode"><h5>Dashboard + Enterprise API</h5><p>operator console · webhooks · SDK</p></div>
+  </div>
+
+  <div style="height:8vh"></div>
+  <h3 class="sub-h" data-reveal>Deployment <span class="grad">modes</span></h3>
+  <div class="cards">
+    <div class="card tilt" data-reveal><div><div class="ic">☁</div><h3>Cloud SaaS</h3><p>Multi-tenant, elastic, zero-ops. Fastest path to pilot — spin up and integrate in days.</p></div></div>
+<div class="card tilt" data-reveal><div><div class="ic">⬢</div><h3>Private Cloud</h3><p>Single-tenant VPC in the customer's cloud account. Data residency + isolation.</p></div></div>
+<div class="card tilt" data-reveal><div><div class="ic">🏛</div><h3>On-Premise</h3><p>Air-gapped in the bank's data centre. Docker image bakes every model — no runtime downloads.</p></div></div>
+<div class="card tilt" data-reveal><div><div class="ic">▣</div><h3>Edge Deployment</h3><p>Quantised models at the branch / gateway for lowest-latency, offline-capable screening.</p></div></div>
+  </div>
+
+  <div style="height:8vh"></div>
+  <h3 class="sub-h" data-reveal>Enterprise <span class="grad">workflow</span></h3>
+  <div class="ent-work">
+    <div class="ent-wstep" data-reveal style="--d:0.0s"><div class="wn">01</div><h5>Incoming Voice</h5></div><div class="ent-wstep" data-reveal style="--d:0.05s"><div class="wn">02</div><h5>Noise Removal</h5></div><div class="ent-wstep" data-reveal style="--d:0.1s"><div class="wn">03</div><h5>Speaker Verification</h5></div><div class="ent-wstep" data-reveal style="--d:0.15000000000000002s"><div class="wn">04</div><h5>Liveness Check</h5></div><div class="ent-wstep" data-reveal style="--d:0.2s"><div class="wn">05</div><h5>Deepfake Detection</h5></div><div class="ent-wstep" data-reveal style="--d:0.25s"><div class="wn">06</div><h5>Risk Score</h5></div><div class="ent-wstep" data-reveal style="--d:0.30000000000000004s"><div class="wn">07</div><h5>Decision Engine</h5></div>
+  </div>
+  <div class="ent-dec" data-reveal>
+    <span class="ap">✓ APPROVE</span><span class="fl">⚑ FLAG → step-up</span><span class="rj">✕ REJECT</span>
+  </div>
+  <p class="footnote" data-reveal>Every hop is a boundary a security team can inspect. The decision engine never auto-blocks — HIGH routes to step-up verification, a human stays in charge.</p>
+
+  <div style="height:8vh"></div>
+  <h3 class="sub-h" data-reveal>Business <span class="grad">model</span></h3>
+  <div class="ent-rev">
+    <div class="ent-rcard" data-reveal><div class="rt">RECURRING</div><h5>Enterprise SaaS</h5><p>Per-seat / per-line subscriptions for banks, BPOs and enterprises.</p></div>
+<div class="ent-rcard" data-reveal><div class="rt">USAGE</div><h5>API Usage Pricing</h5><p>Metered per voice-analysis call — scales with the customer's call volume.</p></div>
+<div class="ent-rcard" data-reveal><div class="rt">LICENSE</div><h5>On-Prem Licensing</h5><p>Annual license for air-gapped, self-hosted deployments (banking / defense).</p></div>
+<div class="ent-rcard" data-reveal><div class="rt">CONTRACT</div><h5>Government Contracts</h5><p>Citizen-helpline & Digital-India anti-fraud programs; multi-year tenders.</p></div>
+<div class="ent-rcard" data-reveal><div class="rt">CONTRACT</div><h5>Banking Contracts</h5><p>Fraud-desk integration alongside CNAP / caller-ID; the beachhead market.</p></div>
+<div class="ent-rcard" data-reveal><div class="rt">VERTICAL</div><h5>Healthcare & Insurance</h5><p>Telehealth doctor auth and claims-call investigation packages.</p></div>
+<div class="ent-rcard" data-reveal><div class="rt">PARTNER</div><h5>OEM Partnerships</h5><p>Embed the engine inside contact-centre / telecom platforms.</p></div>
+<div class="ent-rcard" data-reveal><div class="rt">PARTNER</div><h5>White-Label</h5><p>Rebrandable detection for MSSPs and cloud-comms vendors.</p></div>
+<div class="ent-rcard" data-reveal><div class="rt">PLATFORM</div><h5>Marketplace</h5><p>Cloud-marketplace listings (AWS / Azure) for frictionless procurement.</p></div>
+  </div>
+
+  <div style="height:8vh"></div>
+  <h3 class="sub-h" data-reveal>Customer <span class="grad">journey</span></h3>
+  <div class="ent-journey">
+    <div class="ent-jstep" data-reveal style="--d:0.0s"><div class="ent-jline"></div><div class="ent-jdot"></div><h5>Prospect</h5><p>discovery + threat assessment</p></div><div class="ent-jstep" data-reveal style="--d:0.06s"><div class="ent-jline"></div><div class="ent-jdot"></div><h5>Pilot</h5><p>sandbox on recorded traffic</p></div><div class="ent-jstep" data-reveal style="--d:0.12s"><div class="ent-jline"></div><div class="ent-jdot"></div><h5>Integration</h5><p>drop-in API / SIP hook</p></div><div class="ent-jstep" data-reveal style="--d:0.18s"><div class="ent-jline"></div><div class="ent-jdot"></div><h5>Training</h5><p>tune thresholds to their FP budget</p></div><div class="ent-jstep" data-reveal style="--d:0.24s"><div class="ent-jline"></div><div class="ent-jdot"></div><h5>Production</h5><p>live fraud-desk signal</p></div><div class="ent-jstep" data-reveal style="--d:0.3s"><div class="ent-jline"></div><div class="ent-jdot"></div><h5>Monitoring</h5><p>24×7 dashboards + audit</p></div><div class="ent-jstep" data-reveal style="--d:0.36s"><div class="ent-jline"></div><div class="ent-jdot"></div><h5>Expansion</h5><p>new lines, new sectors</p></div>
+  </div>
+
+  <div style="height:8vh"></div>
+  <h3 class="sub-h" data-reveal>Integrations &amp; <span class="grad">channels</span></h3>
+  <div class="ent-logos">
+    <div class="ent-logo" data-reveal>AWS</div>
+<div class="ent-logo" data-reveal>Azure</div>
+<div class="ent-logo" data-reveal>Google Cloud</div>
+<div class="ent-logo" data-reveal>Twilio</div>
+<div class="ent-logo" data-reveal>Zoom</div>
+<div class="ent-logo" data-reveal>Microsoft Teams</div>
+<div class="ent-logo" data-reveal>Genesys</div>
+<div class="ent-logo" data-reveal>Cisco</div>
+<div class="ent-logo" data-reveal>Salesforce</div>
+<div class="ent-logo" data-reveal>Zendesk</div>
+<div class="ent-logo" data-reveal>WhatsApp Business</div>
+<div class="ent-logo" data-reveal>Slack</div>
+<div class="ent-logo" data-reveal>REST API</div>
+<div class="ent-logo" data-reveal>Webhooks</div>
+<div class="ent-logo" data-reveal>SIP</div>
+<div class="ent-logo" data-reveal>SDK</div>
+  </div>
+
+  <div style="height:8vh"></div>
+  <h3 class="sub-h" data-reveal>Security <span class="grad">architecture</span></h3>
+  <div class="reason-chips">
+    <div class="chip" data-reveal><span class="code">✓</span><span class="d">TLS 1.3</span></div>
+<div class="chip" data-reveal><span class="code">✓</span><span class="d">JWT</span></div>
+<div class="chip" data-reveal><span class="code">✓</span><span class="d">OAuth 2.0</span></div>
+<div class="chip" data-reveal><span class="code">✓</span><span class="d">RBAC</span></div>
+<div class="chip" data-reveal><span class="code">✓</span><span class="d">Audit Logs</span></div>
+<div class="chip" data-reveal><span class="code">✓</span><span class="d">SIEM</span></div>
+<div class="chip" data-reveal><span class="code">✓</span><span class="d">SOC</span></div>
+<div class="chip" data-reveal><span class="code">✓</span><span class="d">Zero Trust</span></div>
+<div class="chip" data-reveal><span class="code">✓</span><span class="d">HSM Keys</span></div>
+<div class="chip" data-reveal><span class="code">✓</span><span class="d">API Keys</span></div>
+<div class="chip" data-reveal><span class="code">✓</span><span class="d">Rate Limiting</span></div>
+<div class="chip" data-reveal><span class="code">✓</span><span class="d">Threat Intelligence</span></div>
+<div class="chip" data-reveal><span class="code">✓</span><span class="d">AES-256 at rest</span></div>
+  </div>
+
+  <div style="height:8vh"></div>
+  <h3 class="sub-h" data-reveal>Scales like a web service, <span class="grad">because it is one</span></h3>
+  <div class="ent-scale">
+    <div class="ent-scard" data-reveal><div class="sv">10</div><div class="sk">pilot</div><div class="sbar"><i style="--w:6%"></i></div></div>
+<div class="ent-scard" data-reveal><div class="sv">1K</div><div class="sk">branch</div><div class="sbar"><i style="--w:20%"></i></div></div>
+<div class="ent-scard" data-reveal><div class="sv">100K</div><div class="sk">regional</div><div class="sbar"><i style="--w:45%"></i></div></div>
+<div class="ent-scard" data-reveal><div class="sv">1M</div><div class="sk">national bank</div><div class="sbar"><i style="--w:72%"></i></div></div>
+<div class="ent-scard" data-reveal><div class="sv">100M</div><div class="sk">multi-bank</div><div class="sbar"><i style="--w:100%"></i></div></div>
+  </div>
+
+  <div style="height:8vh"></div>
+  <h3 class="sub-h" data-reveal>Enterprise <span class="grad">SLAs &amp; readiness</span></h3>
+  <div class="stats">
+    <div class="stat blue" data-reveal><div class="v"><span class="cnt" data-to="99.9" data-dec="1">0.0</span><span class="u">%</span></div><div class="k">Availability target for the managed service — stateless replicas + health-checked load balancing.</div><div class="m">Target SLA</div></div>
+    <div class="stat good" data-reveal style="--d:.08s"><div class="v">&lt;<span class="cnt" data-to="300" data-dec="0">0</span><span class="u">ms</span></div><div class="k">Detection latency target on GPU — a fresh fused verdict inside the live call.</div><div class="m">Target · GPU</div></div>
+    <div class="stat blue" data-reveal style="--d:.16s"><div class="v"><span class="cnt" data-to="24" data-dec="0">0</span><span class="u">×7</span></div><div class="k">Monitoring, audit and alerting — every decision hash-keyed for the ledger.</div><div class="m">Operations</div></div>
+    <div class="stat good" data-reveal style="--d:.24s"><div class="v">N<span class="u">×</span></div><div class="k">Linear horizontal scale — add replicas, capacity grows. No shared session state.</div><div class="m">Architecture</div></div>
+  </div>
+  <div class="reason-chips" data-reveal style="margin-top:22px">
+    <div class="chip"><span class="code">SOC 2</span><span class="d">controls — roadmap</span></div>
+    <div class="chip"><span class="code">GDPR</span><span class="d">/ DPDP-aligned by design</span></div>
+    <div class="chip"><span class="code">ISO 27001</span><span class="d">— roadmap</span></div>
+    <div class="chip"><span class="code">WCAG 2.1 AA</span><span class="d">accessible UI today</span></div>
+  </div>
+  <p class="footnote" data-reveal>SLAs and certifications are targets for the managed service as it hardens from the TRL-5 core — stated as goals, not current certifications. Accessibility (WCAG 2.1 AA) and the hash-keyed audit trail are implemented today.</p>
+</section>
+
+<!-- == /ENTERPRISE MODE == -->
 
 <!-- ================= CH 11 · VISION ================= -->
 <section id="vision" aria-label="Chapter 11 — Vision">
@@ -2147,8 +2411,8 @@ if(fine && !reduced){
 }
 
 /* ============ chapters: dots nav, page number, keyboard ============ */
-var chapters = ['hero','threat','failure','innovation','models','fairness','liveness','intelligence','product','results','deploy','market','vision','thanks'];
-var labels   = ['VoxShield','01 · The Threat','02 · Why Banks Fail','03 · Our Innovation','04 · Five AI Models','05 · Fairness','06 · Liveness','07 · Beyond Detection','08 · Real Product','09 · Measured Results','10 · Deployment','11 · Market','12 · Vision','Thank You'];
+var chapters = ['hero','threat','failure','innovation','models','fairness','liveness','intelligence','product','results','deploy','market','enterprise','vision','thanks'];
+var labels   = ['VoxShield','01 · The Threat','02 · Why Banks Fail','03 · Our Innovation','04 · Five AI Models','05 · Fairness','06 · Liveness','07 · Beyond Detection','08 · Real Product','09 · Measured Results','10 · Deployment','11 · Market','Enterprise · Scale','12 · Vision','Thank You'];
 var dotsNav = document.getElementById('dots');
 var pagenum = document.getElementById('pagenum');
 var current = 0;
