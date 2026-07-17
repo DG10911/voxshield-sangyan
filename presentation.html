@@ -893,7 +893,7 @@ table.deploy-t tbody tr:hover{background:rgba(59,130,246,.05)}
   </div>
 </section>
 
-<!-- ================= CH 4 · FIVE AI MODELS ================= -->
+<!-- ================= CH 4 · SIX AI MODELS ================= -->
 <section id="models" aria-label="Chapter 4, Six AI Models">
   <div class="ch-head" data-reveal>
     <span class="ch-kicker">Chapter 04 · Six AI Models, One Brain</span>
@@ -902,7 +902,7 @@ table.deploy-t tbody tr:hover{background:rgba(59,130,246,.05)}
   </div>
 
   <div class="pipe-wrap" data-reveal>
-    <svg viewBox="0 0 1400 700" role="img" aria-label="VoxShield full pipeline: a live call streams through sliding windows and a feature bank into five detectors with their measured error rates and learned stacker weights, then through the calibrated meta-learner to a thresholded risk verdict">
+    <svg viewBox="0 0 1400 700" role="img" aria-label="VoxShield full pipeline: a live call streams through sliding windows and a feature bank into five general detectors with their measured error rates and learned stacker weights, then through the calibrated meta-learner to a thresholded risk verdict. On Indian-language audio a sixth detector, an Indic anti-spoof booster, can escalate the fused verdict upward before the threshold, never lowering it.">
       <!-- ── stage 1: incoming voice ── -->
       <rect class="pnode hot" x="15" y="300" width="150" height="100" rx="14"/>
       <text class="ptext" x="90" y="330" text-anchor="middle" font-size="14">Incoming call</text>
@@ -994,6 +994,21 @@ table.deploy-t tbody tr:hover{background:rgba(59,130,246,.05)}
       <text class="ptext2" x="1290" y="373" text-anchor="middle" font-size="10.5" fill="#22c55e">LOW → pass</text>
       <text class="ptext2" x="1290" y="403" text-anchor="middle" font-size="9">+ reason codes · SHA-256 audit</text>
       <text class="ptext2" x="1290" y="421" text-anchor="middle" font-size="9">never auto-block</text>
+      <!-- ── 6th detector: Indic anti-spoof booster, a post-fusion escalation gate on the Indian-language path ── -->
+      <path id="ipin" class="pline" d="M1052 270 C1052 224 1058 168 1092 168" style="stroke:#a99bff;opacity:.85"/>
+      <path id="ipout" class="pline" d="M1243 168 C1286 168 1290 214 1290 255" style="stroke:#a99bff;opacity:.85"/>
+      <rect class="pnode" x="1008" y="46" width="318" height="124" rx="12" style="stroke:#a99bff;stroke-width:1.6"/>
+      <text class="ptext" x="1026" y="72" font-size="12.5" fill="#c9bcff">Indic anti-spoof booster</text>
+      <text class="ptext2" x="1026" y="91" font-size="9">6th detector · fine-tuned XLS-R-300M</text>
+      <text class="ptext2" x="1026" y="106" font-size="9">trained on Indian-language deepfakes</text>
+      <text class="ptext2" x="1026" y="121" font-size="9">language-gated: fires only on Indic audio</text>
+      <text class="ptext2" x="1026" y="136" font-size="9" fill="#c9bcff">escalate-only: score = max(score, p), p ≥ 0.85</text>
+      <text class="ptext2" x="1026" y="151" font-size="9">never lowers a verdict · fail-safe no-op</text>
+      <text class="ptext2" x="1150" y="207" font-size="9" fill="#a99bff" text-anchor="middle">Indian-language path · escalate ↑</text>
+      <g aria-hidden="true">
+        <circle class="pdot" r="3.2" fill="#b39dff"><animateMotion dur="2.6s" begin="0.3s" repeatCount="indefinite"><mpath href="#ipin"/></animateMotion></circle>
+        <circle class="pdot" r="3.2" fill="#b39dff"><animateMotion dur="2.6s" begin="1.6s" repeatCount="indefinite"><mpath href="#ipout"/></animateMotion></circle>
+      </g>
       <!-- flowing packets -->
       <g aria-hidden="true">
         <circle class="pdot" r="3.2"><animateMotion dur="2.4s" repeatCount="indefinite"><mpath href="#fp1"/></animateMotion></circle>
