@@ -786,7 +786,7 @@ table.deploy-t tbody tr:hover{background:rgba(59,130,246,.05)}
     <h1 class="hero-title" aria-label="VoxShield">
       <span class="vox"><span class="l" style="--i:0">V</span><span class="l" style="--i:1">o</span><span class="l" style="--i:2">x</span></span><span class="shield"><span class="l" style="--i:3;--lc:#7cb0ff">S</span><span class="l" style="--i:4;--lc:#639ff8">h</span><span class="l" style="--i:5;--lc:#4b8df7">i</span><span class="l" style="--i:6;--lc:#3b82f6">e</span><span class="l" style="--i:7;--lc:#6e9cf9">l</span><span class="l" style="--i:8;--lc:#a5c6ff">d</span></span>
     </h1>
-    <p class="hero-sub">Real-time <b>AI voice-clone detection</b> for Indian banking, five detectors, one learned meta-brain, language fairness, and challenge-response liveness. <b>Flags a fraud call within the first 10 seconds.</b></p>
+    <p class="hero-sub">Real-time <b>AI voice-clone detection</b> for Indian banking, six detectors, one learned meta-brain, language fairness, and challenge-response liveness. <b>Flags a fraud call within the first 10 seconds.</b></p>
     <div class="hero-ctas">
       <button class="btn btn-primary magnetic" data-goto="threat"><span class="sweep"></span>Watch the story unfold <span aria-hidden="true">↓</span></button>
       <button class="btn btn-ghost magnetic" data-goto="results"><span class="sweep"></span>Jump to measured results</button>
@@ -873,7 +873,7 @@ table.deploy-t tbody tr:hover{background:rgba(59,130,246,.05)}
     <div class="card tilt" data-reveal>
       <div><div class="ic">🛡</div>
       <h3>01, Detection</h3>
-      <p>Five decorrelated detector families, signal-processing artifacts, hand-crafted anti-spoofing features, and three neural models, fused by a <b>learned meta-stacker</b> with calibrated, probability-true scores.</p></div>
+      <p>Six decorrelated detectors: signal-processing artifacts, hand-crafted anti-spoofing features, three neural models, and an Indic-language specialist, fused by a <b>learned meta-stacker</b> with calibrated, probability-true scores.</p></div>
     </div>
     <div class="card tilt" data-reveal style="--d:.1s">
       <div><div class="ic">⚖</div>
@@ -894,9 +894,9 @@ table.deploy-t tbody tr:hover{background:rgba(59,130,246,.05)}
 </section>
 
 <!-- ================= CH 4 · FIVE AI MODELS ================= -->
-<section id="models" aria-label="Chapter 4, Five AI Models">
+<section id="models" aria-label="Chapter 4, Six AI Models">
   <div class="ch-head" data-reveal>
-    <span class="ch-kicker">Chapter 04 · Five AI Models, One Brain</span>
+    <span class="ch-kicker">Chapter 04 · Six AI Models, One Brain</span>
     <h2>Weak alone. <span class="grad">Strong together.</span></h2>
     <p class="ch-sub">Each detector fails differently, that's the point. A logistic meta-learner, trained on a disjoint split, learns exactly how much to trust each one. It even learns to <b>down-weight two of its own models</b>. That honesty is the architecture.</p>
   </div>
@@ -1040,7 +1040,7 @@ table.deploy-t tbody tr:hover{background:rgba(59,130,246,.05)}
       <div class="bv">16.0% EER</div>
     </div>
     <div class="brow meta">
-      <div class="bl">VoxShield meta-fusion<small>all five, stacked</small></div>
+      <div class="bl">VoxShield meta-fusion<small>five general, stacked</small></div>
       <div class="btrack"><i class="bfill c-grn" style="--w:9.1%;--d:.65s"></i></div>
       <div class="bv">5.9% EER</div>
     </div>
@@ -1059,7 +1059,7 @@ table.deploy-t tbody tr:hover{background:rgba(59,130,246,.05)}
 
   <div style="height:10vh"></div>
   <h3 class="sub-h" data-reveal>Watch one detection happen, <span class="grad">second by second</span></h3>
-  <p class="ch-sub" data-reveal style="margin-top:0;margin-bottom:30px">A cloned voice dials in. Every second, a new 3-second window is scored by all five detectors and fused. Watch the evidence build until the flag fires.</p>
+  <p class="ch-sub" data-reveal style="margin-top:0;margin-bottom:30px">A cloned voice dials in. Every second, a new 3-second window is scored by the full detector ensemble and fused. Watch the evidence build until the flag fires.</p>
   <div class="sim card" data-reveal id="sim">
     <div class="sim-grid">
       <div class="sim-call">
@@ -1137,7 +1137,7 @@ table.deploy-t tbody tr:hover{background:rgba(59,130,246,.05)}
       <div class="k">Indian-language voice-clone recall, up from 42%. The Indic-aware path nearly doubles how often synthetic Indic speech is caught.</div>
       <div class="m">Held-out · MMS-TTS Indic deepfakes</div></div>
     <div class="stat good" style="--d:.08s"><div class="v"><span class="cnt" data-to="6.3" data-dec="1">0.0</span><span class="u">%</span></div>
-      <div class="k">Genuine Indic false positives, <em>improved</em> from 11.7%. Catching more fakes did not cost genuine customers.</div>
+      <div class="k">Genuine Indic false positives stayed at 6.3%, no worse. Catching more Indic fakes did not cost genuine customers.</div>
       <div class="m">IndicVoices · 10 languages</div></div>
     <div class="stat blue" style="--d:.16s"><div class="v"><span class="cnt" data-to="5.9" data-dec="1">0.0</span><span class="u">%</span></div>
       <div class="k">English EER, unchanged by routing (5.9% held-out). English audio routes to the main stacker; only Indic audio takes the Indic path.</div>
@@ -1153,7 +1153,7 @@ table.deploy-t tbody tr:hover{background:rgba(59,130,246,.05)}
     <div class="chip"><span class="code">VETO ↑</span><span class="d">A <b>one-sided escalation</b>: it can only raise a verdict on a confident fake (P ≥ 0.85), never lower one.</span></div>
     <div class="chip"><span class="code">SAFE</span><span class="d">Because it can only escalate a confident fake, it lifts Indic clone recall <b>without adding a single false positive</b> on genuine speakers.</span></div>
   </div>
-  <p class="footnote" data-reveal>Result: Indian-language voice-clone recall 42% → 82%, genuine-Indic false-positives 36.3% → 6.3%, English EER unchanged. The booster is confidence- and language-gated and fully fail-safe, if its model is absent it is a silent no-op and the five-model verdict is untouched.</p>
+  <p class="footnote" data-reveal>Result: Indian-language voice-clone recall 42% → 82%, genuine-Indic false-positives 36.3% → 6.3%, English EER unchanged. The booster is confidence- and language-gated and fully fail-safe, if its model is absent it is a silent no-op and the base-model verdict is untouched.</p>
 </section>
 
 <!-- ================= CH 6 · LIVENESS ================= -->
@@ -1246,7 +1246,7 @@ table.deploy-t tbody tr:hover{background:rgba(59,130,246,.05)}
   <div class="ch-head" data-reveal>
     <span class="ch-kicker">Chapter 08 · Real Product, Running Today</span>
     <h2>Not a deck. <span class="grad">A working system.</span></h2>
-    <p class="ch-sub">Everything below is a live screenshot of VoxShield running, FastAPI backend, five-model ensemble, streaming analysis, liveness, and a two-party live call demo. TRL-5: validated in a relevant environment.</p>
+    <p class="ch-sub">Everything below is a live screenshot of VoxShield running, FastAPI backend, multi-model ensemble, streaming analysis, liveness, and a two-party live call demo. TRL-5: validated in a relevant environment.</p>
   </div>
 
   <div class="shot-row">
@@ -1395,7 +1395,7 @@ table.deploy-t tbody tr:hover{background:rgba(59,130,246,.05)}
         <tr><td>DistilHuBERT, alone</td><td>24.9%</td><td>0.828</td><td>73.8%</td><td><span class="t-pill a">good</span></td></tr>
         <tr><td>XLS-R 300M, alone</td><td>16.0%</td><td>0.901</td><td>84.0%</td><td><span class="t-pill a">best single</span></td></tr>
         <tr><td>Simple-average fusion, unweighted</td><td>19.0%</td><td>0.839</td><td>50.1%</td><td><span class="t-pill a">naive blend</span></td></tr>
-        <tr class="hl"><td>VoxShield meta-fusion, all five, stacked</td><td>5.9%</td><td>0.983</td><td>93.4%</td><td><span class="t-pill g">deployed</span></td></tr>
+        <tr class="hl"><td>VoxShield meta-fusion, five general, stacked</td><td>5.9%</td><td>0.983</td><td>93.4%</td><td><span class="t-pill g">deployed</span></td></tr>
       </tbody>
     </table>
   </div>
@@ -1451,7 +1451,7 @@ table.deploy-t tbody tr:hover{background:rgba(59,130,246,.05)}
   <div class="deploy-flow" data-reveal>
     <div class="dnode"><span class="tag">Input</span><h4>☎ Bank telephony</h4><p>IVR, phone banking, agent calls, 8 kHz G.711 lines. VoxShield trains with codec augmentation so this is home turf, not hostile territory.</p></div>
     <div class="dlink" aria-hidden="true"></div>
-    <div class="dnode core"><span class="tag">On-prem · air-gapped capable</span><h4>🛡 VoxShield engine</h4><p>FastAPI + five-detector ensemble + meta-fusion, models baked into a Docker image, the container never phones home. Stateless, so it scales horizontally. Sub-second on GPU.</p></div>
+    <div class="dnode core"><span class="tag">On-prem · air-gapped capable</span><h4>🛡 VoxShield engine</h4><p>FastAPI + six-detector ensemble + meta-fusion, models baked into a Docker image, the container never phones home. Stateless, so it scales horizontally. Sub-second on GPU.</p></div>
     <div class="dlink" aria-hidden="true"></div>
     <div class="dnode"><span class="tag">Output, never auto-block</span><h4>⇢ Step-up verification</h4><p>High risk routes the caller to additional verification inside the bank's existing fraud workflow, alongside CNAP and caller-ID signals. A human stays in charge.</p></div>
   </div>
@@ -1526,7 +1526,7 @@ table.deploy-t tbody tr:hover{background:rgba(59,130,246,.05)}
     <div class="arch-layer">
       <div class="arch-name">05 · Ops &amp; scale<small>how it runs</small></div>
       <div class="arch-boxes">
-        <span class="abox"><b>Docker image</b>, all five detectors + Whisper baked in (~2 GB)</span>
+        <span class="abox"><b>Docker image</b>, all six detectors + Whisper baked in (~2 GB)</span>
         <span class="abox"><b>Stateless API</b>, replicas behind a load balancer, linear scale-out</span>
         <span class="abox"><b>uvicorn workers</b>, multi-core per node</span>
         <span class="abox"><b>GPU</b> sub-second · <b>CPU</b> 3-8 s per analysis</span>
@@ -1602,7 +1602,7 @@ table.deploy-t tbody tr:hover{background:rgba(59,130,246,.05)}
       </tbody>
     </table>
   </div>
-  <p class="footnote" data-reveal>Internal benchmarking. The Docker image bakes all five detectors plus Whisper (~2 GB of models) in at build time, a running container never re-downloads anything, which is what makes the air-gapped deployment real rather than aspirational.</p>
+  <p class="footnote" data-reveal>Internal benchmarking. The Docker image bakes all six detectors plus Whisper (~2 GB of models) in at build time, a running container never re-downloads anything, which is what makes the air-gapped deployment real rather than aspirational.</p>
 </section>
 
 <!-- == ENTERPRISE MODE (added chapter) == -->
@@ -2479,7 +2479,7 @@ if(fine && !reduced){
 
 /* ============ chapters: dots nav, page number, keyboard ============ */
 var chapters = ['hero','threat','failure','innovation','models','fairness','liveness','intelligence','product','results','deploy','market','enterprise','vision','thanks'];
-var labels   = ['VoxShield','01 · The Threat','02 · Why Banks Fail','03 · Our Innovation','04 · Five AI Models','05 · Fairness','06 · Liveness','07 · Beyond Detection','08 · Real Product','09 · Measured Results','10 · Deployment','11 · Market','Enterprise · Scale','12 · Vision','Thank You'];
+var labels   = ['VoxShield','01 · The Threat','02 · Why Banks Fail','03 · Our Innovation','04 · Six AI Models','05 · Fairness','06 · Liveness','07 · Beyond Detection','08 · Real Product','09 · Measured Results','10 · Deployment','11 · Market','Enterprise · Scale','12 · Vision','Thank You'];
 var dotsNav = document.getElementById('dots');
 var pagenum = document.getElementById('pagenum');
 var current = 0;
