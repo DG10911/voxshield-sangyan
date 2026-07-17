@@ -275,6 +275,40 @@ body.reduce [data-reveal]{opacity:1;transform:none;filter:none}
 .p2-hook .t{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--cyan)}
 .p2-hook .d{font-size:14px;color:var(--t3);margin-top:8px}
 
+/* ==========================================================================
+   PHASE 2 · Cinematic set-pieces
+   ========================================================================== */
+/* Real vs AI-Clone split-screen */
+.vs{display:grid;grid-template-columns:1fr 240px 1fr;gap:18px;align-items:stretch}
+@media (max-width:960px){.vs{grid-template-columns:1fr;gap:14px}}
+.vs-panel{position:relative;border-radius:18px;overflow:hidden;border:1px solid var(--line);
+  background:linear-gradient(165deg,rgba(12,26,46,.82),rgba(8,16,30,.7));box-shadow:0 24px 60px -32px rgba(0,0,0,.85)}
+.vs-panel.real{border-color:rgba(34,197,94,.28)}
+.vs-panel.fake{border-color:rgba(239,68,68,.32)}
+.vs-head{display:flex;align-items:center;gap:12px;padding:16px 20px 10px}
+.vs-head .avatar{width:40px;height:40px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:18px;flex:none}
+.vs-panel.real .avatar{background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.4);color:#7fe0a2}
+.vs-panel.fake .avatar{background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.4);color:#ff9a9a}
+.vs-head b{font-size:15px;font-weight:700}
+.vs-head small{display:block;font-family:var(--mono);font-size:10.5px;color:var(--t3);letter-spacing:.05em;margin-top:2px}
+.vs-tag{margin-left:auto;font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;padding:5px 11px;border-radius:100px}
+.vs-panel.real .vs-tag{color:#7fe0a2;border:1px solid rgba(34,197,94,.4);background:rgba(34,197,94,.08)}
+.vs-panel.fake .vs-tag{color:#ff9a9a;border:1px solid rgba(239,68,68,.45);background:rgba(239,68,68,.1)}
+.vs-wave{width:100%;height:88px;display:block}
+.vs-spec{width:100%;height:96px;display:block;background:#040a13}
+.vs-spec-label{font-family:var(--mono);font-size:9.5px;color:var(--t3);letter-spacing:.1em;text-transform:uppercase;padding:8px 20px 4px}
+.vs-mid{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center}
+.vs-radial{width:170px;height:170px;display:block}
+.vs-mid .vt{font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--cyan)}
+.vs-mid .vscore{font-family:var(--mono);font-size:13px;color:var(--t2)}
+.vs-arts{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:2px}
+.vs-arts span{font-family:var(--mono);font-size:10px;font-weight:700;padding:5px 9px;border-radius:7px;border:1px solid rgba(239,68,68,.45);color:#ff9a9a;background:rgba(239,68,68,.1)}
+
+/* Three.js holographic shield (finale) */
+#holo{position:absolute;left:50%;top:8%;width:min(560px,86vw);height:min(560px,60vh);transform:translateX(-50%);z-index:-1;pointer-events:none}
+#holo canvas{width:100%!important;height:100%!important;display:block}
+body.holo-on .fin-shield{display:none}
+
 /* ---------- reduced motion ---------- */
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.001s!important;animation-iteration-count:1!important;transition-duration:.2s!important}
@@ -354,8 +388,30 @@ body.reduce [data-reveal]{opacity:1;transform:none;filter:none}
     <div class="card tilt-c" data-reveal style="--d:.24s"><div class="ic">⧗</div><h3>The damage happens fast</h3><p>Voice-authorised transfers act in minutes. A verdict after the call ends is forensics, not protection. Detection must happen in the first seconds.</p></div>
   </div>
   <p class="foot" data-reveal>Detection alone loses to a replay attack: a clone played through a speaker launders the digital artifacts. It needs layers.</p>
-  <!-- PHASE 2 HOOK: holographic AI clone face + real-vs-clone split-screen slots here -->
-  <div style="margin-top:7vh" data-reveal><div class="p2-hook"><div class="t">▣ Phase 2 · Holographic AI-Clone Reveal</div><div class="d">A wireframe deepfake face + a live Real-vs-AI waveform split-screen mount here.</div></div></div>
+  <!-- PHASE 2 · Real vs AI-Clone split-screen (canvas: waveform + live spectrogram + radial visualizer) -->
+  <div style="height:7vh"></div>
+  <h3 class="mono" data-reveal style="font-size:13px;letter-spacing:.24em;text-transform:uppercase;color:var(--cyan);margin-bottom:20px">Real voice vs AI clone, read live</h3>
+  <div class="vs" id="vs" data-reveal>
+    <div class="vs-panel real">
+      <div class="vs-head"><span class="avatar">🧑</span><div><b>Genuine human</b><small>micro-variation · breath</small></div><span class="vs-tag">Real</span></div>
+      <canvas class="vs-wave" data-vs="real-wave" aria-hidden="true"></canvas>
+      <div class="vs-spec-label">Mel spectrogram · natural, irregular harmonics</div>
+      <canvas class="vs-spec" data-vs="real-spec" aria-hidden="true"></canvas>
+    </div>
+    <div class="vs-mid">
+      <canvas class="vs-radial" data-vs="radial" aria-hidden="true"></canvas>
+      <div class="vt">VoxShield reads</div>
+      <div class="vscore">the difference</div>
+      <div class="vs-arts"><span>PH phase</span><span>HF vocoder</span><span>PR prosody</span></div>
+    </div>
+    <div class="vs-panel fake">
+      <div class="vs-head"><span class="avatar">🤖</span><div><b>AI voice clone</b><small>eerily regular · no breath</small></div><span class="vs-tag">Fake</span></div>
+      <canvas class="vs-wave" data-vs="fake-wave" aria-hidden="true"></canvas>
+      <div class="vs-spec-label">Mel spectrogram · unnaturally smooth, banded</div>
+      <canvas class="vs-spec" data-vs="fake-spec" aria-hidden="true"></canvas>
+    </div>
+  </div>
+  <p class="foot" data-reveal>Human speech carries jitter, shimmer and breath. A clone's waveform and spectrum are unnaturally regular. That regularity is the fingerprint the six detectors read. Animation is illustrative; the artifacts (phase, vocoder-fingerprint, prosody) are the real reason codes.</p>
 </section>
 
 <!-- ===================== 02 · PIPELINE ===================== -->
@@ -468,6 +524,7 @@ body.reduce [data-reveal]{opacity:1;transform:none;filter:none}
 
 <!-- ===================== FINALE ===================== -->
 <section id="finale" aria-label="Thank You">
+  <div id="holo" aria-hidden="true"></div>
   <svg class="fin-shield" viewBox="0 0 64 68" aria-hidden="true">
     <defs><linearGradient id="fg" x1="0" x2="1"><stop offset="0" stop-color="#22d3ee"/><stop offset="1" stop-color="#8b5cf6"/></linearGradient></defs>
     <path d="M32 3 L58 13 V33 C58 48 47 60 32 65 C17 60 6 48 6 33 V13 Z" fill="rgba(34,211,238,.08)" stroke="url(#fg)" stroke-width="2"/>
@@ -725,6 +782,163 @@ try{
     document.querySelectorAll('.pipe,.bars,.stats').forEach(function(el){ gsap.from(el,{y:40,ease:'none',scrollTrigger:{trigger:el,start:'top bottom',end:'top 60%',scrub:true}}); });
   }
 }catch(e){}
+
+/* expose the engine + helpers so Phase-2 modules can gate on quality */
+window.__VOX={ Quality:Quality, reduced:reduced, fine:fine, onView:function(el,cb,once){
+  if(!('IntersectionObserver' in window)){ cb(true); return; }
+  var io=new IntersectionObserver(function(es){ es.forEach(function(en){ cb(en.isIntersecting); if(en.isIntersecting&&once) io.unobserve(el); }); },{rootMargin:'120px'});
+  io.observe(el);
+}};
+})();
+
+/* ==========================================================================
+   PHASE 2 · Cinematic set-pieces (additive; each gated by the Quality engine
+   and paused when off-screen; every effect has a clean 2D / static fallback)
+   ========================================================================== */
+(function(){
+'use strict';
+var VOX = window.__VOX || {Quality:{tier:'high',f:{dpr:1,particles:80,bloom:true},mobile:false}, reduced:false, onView:function(e,cb){cb(true);}};
+var Q = VOX.Quality, reduced = VOX.reduced;
+var DPR = (Q.f&&Q.f.dpr)||Math.min(2,devicePixelRatio||1);
+
+/* -------- MODULE · Compare (Real vs AI-Clone split-screen) --------
+   Canvas only. Left = human (jittery + breath), right = clone (regular, banded).
+   Live scrolling mel-style spectrograms + a radial audio visualiser. */
+(function(){
+  var root=document.getElementById('vs'); if(!root) return;
+  function C(sel){ return root.querySelector('[data-vs="'+sel+'"]'); }
+  var canv={ rw:C('real-wave'), fw:C('fake-wave'), rs:C('real-spec'), fs:C('fake-spec'), rad:C('radial') };
+  var ctx={}; for(var k in canv){ if(canv[k]) ctx[k]=canv[k].getContext('2d'); }
+  function fit(cv){ if(!cv) return; var r=cv.getBoundingClientRect(); cv.width=Math.max(80,r.width)*DPR; cv.height=Math.max(40,r.height)*DPR; }
+  function fitAll(){ for(var k in canv) fit(canv[k]); }
+  fitAll(); addEventListener('resize',fitAll);
+  // deterministic jitter table
+  var jit=[]; for(var i=0;i<512;i++) jit.push(Math.random()*2-1);
+  var visible=false; VOX.onView(root,function(v){ visible=v; if(v) fitAll(); });
+  var t=0;
+  var lowFPS = (Q.tier==='low');
+  var specEvery = lowFPS?3:1, specTick=0;
+  function wave(cv,c,fake){
+    if(!cv||!c) return; var W=cv.width,H=cv.height,cy=H/2,N=fake?200:220;
+    c.clearRect(0,0,W,H); c.lineWidth=2*DPR;
+    c.strokeStyle=fake?'rgba(239,68,68,.9)':'rgba(34,197,94,.9)';
+    c.beginPath();
+    for(var i=0;i<=N;i++){ var x=i/N*W, env=Math.sin(Math.PI*i/N);
+      var clean=Math.sin(i*0.16+t*3.0)*H*0.30*env;
+      var y=fake ? cy+clean                                  // clone: clean, regular
+                 : cy+clean + jit[i%512]*H*0.18*env*Math.sin(t*7+i) + Math.sin(i*0.9+t*11)*H*0.05*env; // human: jitter+breath
+      if(i===0) c.moveTo(x,y); else c.lineTo(x,y); }
+    // glow pass (skip on low)
+    if(!lowFPS){ c.save(); c.globalAlpha=.5; c.lineWidth=6*DPR; c.strokeStyle=fake?'rgba(239,68,68,.18)':'rgba(34,197,94,.18)'; c.stroke(); c.restore(); }
+    c.stroke();
+  }
+  function specCol(cv,c,fake){
+    if(!cv||!c) return; var W=cv.width,H=cv.height, cw=Math.max(1,2*DPR);
+    c.drawImage(cv,-cw,0);                        // scroll left
+    var x=W-cw;
+    for(var y=0;y<H;y+=Math.max(1,Math.floor(2*DPR))){
+      var f=1-y/H;                                // 0 low freq .. 1 high
+      var base=Math.sin(f*10+t*4)*0.5+0.5;
+      var v = fake ? (base*(f<0.55?1:0.15))       // clone: strong low bands, dead highs
+                   : (base*0.6 + jit[(y+((t*40)|0))%512]*0.35 + f*0.25); // human: noisy, energy in highs
+      v=Math.max(0,Math.min(1,v));
+      var r=Math.round(20+v*(fake?235:60)), g=Math.round(30+v*(fake?60:200)), b=Math.round(60+v*200);
+      c.fillStyle='rgb('+r+','+g+','+b+')'; c.fillRect(x,y,cw,Math.max(1,Math.floor(2*DPR)));
+    }
+  }
+  function radial(cv,c){
+    if(!cv||!c) return; var W=cv.width,H=cv.height,cx=W/2,cy=H/2,R=Math.min(W,H)*0.24, N=lowFPS?28:56;
+    c.clearRect(0,0,W,H);
+    c.beginPath(); c.arc(cx,cy,R,0,7); c.strokeStyle='rgba(34,211,238,.35)'; c.lineWidth=1.4*DPR; c.stroke();
+    for(var i=0;i<N;i++){ var a=i/N*Math.PI*2, amp=(Math.sin(a*3+t*3)*0.5+0.5)*(0.4+Math.abs(Math.sin(t*2+i))*0.6);
+      var len=R*(0.28+amp*0.7), x1=cx+Math.cos(a)*R, y1=cy+Math.sin(a)*R, x2=cx+Math.cos(a)*(R+len), y2=cy+Math.sin(a)*(R+len);
+      var mix=i/N; c.strokeStyle='rgba('+Math.round(34+mix*105)+','+Math.round(211-mix*119)+','+Math.round(238+0)+',.9)';
+      c.lineWidth=2*DPR; c.beginPath(); c.moveTo(x1,y1); c.lineTo(x2,y2); c.stroke(); }
+    c.beginPath(); c.arc(cx,cy,R*0.14,0,7); c.fillStyle='rgba(34,211,238,.85)'; c.fill();
+  }
+  function loop(){
+    if(visible && !document.hidden){
+      t+=0.02;
+      wave(canv.rw,ctx.rw,false); wave(canv.fw,ctx.fw,true);
+      if((specTick++%specEvery)===0){ specCol(canv.rs,ctx.rs,false); specCol(canv.fs,ctx.fs,true); }
+      radial(canv.rad,ctx.rad);
+    }
+    requestAnimationFrame(loop);
+  }
+  if(reduced){ // static frame
+    fitAll(); t=1; wave(canv.rw,ctx.rw,false); wave(canv.fw,ctx.fw,true);
+    for(var s=0;s<40;s++){ specCol(canv.rs,ctx.rs,false); specCol(canv.fs,ctx.fs,true); t+=0.05; }
+    radial(canv.rad,ctx.rad);
+  } else { loop(); }
+})();
+
+/* -------- MODULE · Shield3D (Three.js holographic shield, finale) --------
+   Lazy-loaded only when the finale is near AND the device can handle it.
+   Falls back silently to the SVG shield on low-end / no-WebGL / offline. */
+(function(){
+  var mount=document.getElementById('holo'); if(!mount) return;
+  if(reduced || Q.tier==='low'){ return; }                 // keep the SVG shield
+  // WebGL capability check
+  try{ var tc=document.createElement('canvas'); if(!(tc.getContext('webgl2')||tc.getContext('webgl'))) return; }catch(e){ return; }
+  var started=false;
+  VOX.onView(document.getElementById('finale'), function(v){ if(v && !started){ started=true; boot(); } }, true);
+
+  function boot(){
+    import('https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js')
+      .then(function(THREE){ build(THREE); })
+      .catch(function(){ /* offline / blocked → SVG shield stays */ });
+  }
+  function build(THREE){
+    var w=mount.clientWidth||480, h=mount.clientHeight||480;
+    var scene=new THREE.Scene();
+    var cam=new THREE.PerspectiveCamera(42, w/h, 0.1, 100); cam.position.z=6.2;
+    var rnd=new THREE.WebGLRenderer({antialias:Q.tier==='high', alpha:true, powerPreference:'high-performance'});
+    rnd.setPixelRatio(Math.min(Q.tier==='high'?2:1.4, devicePixelRatio||1));
+    rnd.setSize(w,h); mount.appendChild(rnd.domElement);
+    document.body.classList.add('holo-on');
+
+    var grp=new THREE.Group(); scene.add(grp);
+    // faceted core
+    var geo=new THREE.IcosahedronGeometry(1.9, 1);
+    var core=new THREE.Mesh(geo, new THREE.MeshBasicMaterial({color:0x0b2740, transparent:true, opacity:0.55}));
+    grp.add(core);
+    // wireframe shell
+    var wire=new THREE.LineSegments(new THREE.WireframeGeometry(geo),
+      new THREE.LineBasicMaterial({color:0x22d3ee, transparent:true, opacity:0.85}));
+    grp.add(wire);
+    var wire2=new THREE.LineSegments(new THREE.WireframeGeometry(new THREE.IcosahedronGeometry(2.35,1)),
+      new THREE.LineBasicMaterial({color:0x8b5cf6, transparent:true, opacity:0.35}));
+    grp.add(wire2);
+    // vertex glow points
+    var pg=new THREE.BufferGeometry(); pg.setAttribute('position', geo.getAttribute('position').clone());
+    var pts=new THREE.Points(pg, new THREE.PointsMaterial({color:0xbff4ff, size:0.06, transparent:true, opacity:0.95}));
+    grp.add(pts);
+    // orbiting ring of particles
+    var N=Q.tier==='high'?140:70, rp=new Float32Array(N*3);
+    for(var i=0;i<N;i++){ var a=i/N*Math.PI*2, rr=3.0+Math.random()*0.25; rp[i*3]=Math.cos(a)*rr; rp[i*3+1]=(Math.random()-0.5)*0.5; rp[i*3+2]=Math.sin(a)*rr; }
+    var rg=new THREE.BufferGeometry(); rg.setAttribute('position', new THREE.BufferAttribute(rp,3));
+    var ring=new THREE.Points(rg, new THREE.PointsMaterial({color:0x22d3ee, size:0.04, transparent:true, opacity:0.8}));
+    scene.add(ring);
+
+    var mx=0,my=0; addEventListener('mousemove',function(e){ mx=(e.clientX/innerWidth-0.5); my=(e.clientY/innerHeight-0.5); },{passive:true});
+    function resize(){ var w=mount.clientWidth,h=mount.clientHeight; if(!w||!h) return; cam.aspect=w/h; cam.updateProjectionMatrix(); rnd.setSize(w,h); }
+    addEventListener('resize',resize);
+    var vis=true; VOX.onView(document.getElementById('finale'), function(v){ vis=v; });
+    var t=0;
+    (function anim(){
+      if(vis && !document.hidden){
+        t+=0.01;
+        grp.rotation.y+=0.004; grp.rotation.x=Math.sin(t*0.6)*0.15;
+        grp.rotation.y += (mx*0.5 - grp.rotation.y*0 )*0; // (parallax applied via camera)
+        cam.position.x += (mx*1.4 - cam.position.x)*0.05; cam.position.y += (-my*1.0 - cam.position.y)*0.05; cam.lookAt(0,0,0);
+        ring.rotation.y-=0.006; wire2.rotation.y-=0.003;
+        var s=1+Math.sin(t*1.4)*0.02; grp.scale.set(s,s,s);
+        rnd.render(scene,cam);
+      }
+      requestAnimationFrame(anim);
+    })();
+  }
+})();
 })();
 </script>
 </body>
