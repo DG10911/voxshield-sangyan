@@ -176,7 +176,7 @@ stats = [
     ("0.983", "ROC AUC", "near-perfect fake-vs-genuine ranking on unseen data", ACC2),
     ("93.4%", "Accuracy @0.70", "precision 93.5% · recall 92.9%", ACC2),
     ("3.0 s", "Time-to-flag", "synthetic call flagged in streaming, well inside 10 s", GRN),
-    ("36.3→11.7%", "Fairness FP rate", "genuine Indic speech, after Indic-aware retraining", GRN),
+    ("36.3→6.3%", "Fairness FP rate", "genuine Indic speech, Indic-aware + channel-aware", GRN),
     ("5+1", "Fused detectors", "one learned meta-stacker · calibrated output", ACC2),
 ]
 for i, (v, k, b, col) in enumerate(stats):
@@ -196,7 +196,7 @@ title(s, [("A detector that flags honest customers is a failed detector.", T1)],
 rect(s, 0.7, 2.4, 12, 2.0, fill=CARD, line=LINE)
 txt(s, 1.2, 2.9, 5, 1.2, [[("36.3%", 44, T3, True, MONO)]], anchor=MSO_ANCHOR.MIDDLE)
 txt(s, 4.4, 2.9, 1.4, 1.2, [[("→", 40, ACC, True)]], align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.MIDDLE)
-txt(s, 5.6, 2.75, 6, 1.4, [[("11.7%", 60, GRN, True, MONO)]], anchor=MSO_ANCHOR.MIDDLE)
+txt(s, 5.6, 2.75, 6, 1.4, [[("6.3%", 60, GRN, True, MONO)]], anchor=MSO_ANCHOR.MIDDLE)
 txt(s, 1.2, 3.95, 11, 0.5, [[("False-positive rate on genuine Indian-language speech, before → after Indic-aware retraining.", 13, T2, False)]])
 txt(s, 0.7, 4.7, 12, 0.9,
     [[("Evaluated across 10 Indian languages (Hindi, Tamil, Bengali, Telugu, Marathi, Kannada, Malayalam, Gujarati, Punjabi, Assamese), ", 13.5, T2, False)],
