@@ -1083,25 +1083,25 @@ table.deploy-t tbody tr:hover{background:rgba(59,130,246,.05)}
     <div class="morph-row">
       <span class="morph-from">36.3%</span>
       <span class="morph-arrow">→</span>
-      <span id="morphNum" data-from="36.3" data-to="11.7">36.3<span class="u">%</span></span>
+      <span id="morphNum" data-from="36.3" data-to="6.3">36.3<span class="u">%</span></span>
     </div>
-    <p class="morph-cap">False-positive rate on genuine Indian-language speech, before → after Indic-aware retraining.<br>
+    <p class="morph-cap">False-positive rate on genuine Indian-language speech, before → after Indic-aware retraining and channel-aware thresholds.<br>
     <span class="mono" style="font-size:11.5px;color:var(--t3)">Internal benchmarking · IndicVoices genuine speech · 30 clips per language · threshold 0.70</span></p>
   </div>
 
   <div class="bars" data-reveal>
     <div class="brow"><div class="bl">Marathi</div><div class="btrack"><i class="bfill c-fair" style="--w:3%;--d:.05s"></i></div><div class="bv">0.0%</div></div>
-    <div class="brow"><div class="bl">Tamil</div><div class="btrack"><i class="bfill c-fair" style="--w:26.8%;--d:.12s"></i></div><div class="bv">6.7%</div></div>
-    <div class="brow"><div class="bl">Assamese</div><div class="btrack"><i class="bfill c-fair" style="--w:26.8%;--d:.19s"></i></div><div class="bv">6.7%</div></div>
-    <div class="brow"><div class="bl">Kannada</div><div class="btrack"><i class="bfill c-fair end-a" style="--w:40%;--d:.26s"></i></div><div class="bv">10.0%</div></div>
-    <div class="brow"><div class="bl">Gujarati</div><div class="btrack"><i class="bfill c-fair end-a" style="--w:40%;--d:.33s"></i></div><div class="bv">10.0%</div></div>
-    <div class="brow"><div class="bl">Punjabi</div><div class="btrack"><i class="bfill c-fair end-a" style="--w:40%;--d:.40s"></i></div><div class="bv">10.0%</div></div>
-    <div class="brow"><div class="bl">Hindi</div><div class="btrack"><i class="bfill c-fair end-a" style="--w:66.8%;--d:.47s"></i></div><div class="bv">16.7%</div></div>
-    <div class="brow"><div class="bl">Bengali</div><div class="btrack"><i class="bfill c-fair end-a" style="--w:66.8%;--d:.54s"></i></div><div class="bv">16.7%</div></div>
-    <div class="brow"><div class="bl">Malayalam</div><div class="btrack"><i class="bfill c-fair end-a" style="--w:66.8%;--d:.61s"></i></div><div class="bv">16.7%</div></div>
-    <div class="brow"><div class="bl">Telugu</div><div class="btrack"><i class="bfill c-fair end-r" style="--w:93.2%;--d:.68s"></i></div><div class="bv">23.3%</div></div>
+    <div class="brow"><div class="bl">Tamil</div><div class="btrack"><i class="bfill c-fair" style="--w:13.2%;--d:.10s"></i></div><div class="bv">3.3%</div></div>
+    <div class="brow"><div class="bl">Bengali</div><div class="btrack"><i class="bfill c-fair" style="--w:13.2%;--d:.15s"></i></div><div class="bv">3.3%</div></div>
+    <div class="brow"><div class="bl">Punjabi</div><div class="btrack"><i class="bfill c-fair" style="--w:13.2%;--d:.20s"></i></div><div class="bv">3.3%</div></div>
+    <div class="brow"><div class="bl">Kannada</div><div class="btrack"><i class="bfill c-fair" style="--w:26.8%;--d:.25s"></i></div><div class="bv">6.7%</div></div>
+    <div class="brow"><div class="bl">Gujarati</div><div class="btrack"><i class="bfill c-fair" style="--w:26.8%;--d:.30s"></i></div><div class="bv">6.7%</div></div>
+    <div class="brow"><div class="bl">Assamese</div><div class="btrack"><i class="bfill c-fair" style="--w:26.8%;--d:.35s"></i></div><div class="bv">6.7%</div></div>
+    <div class="brow"><div class="bl">Hindi</div><div class="btrack"><i class="bfill c-fair end-a" style="--w:40%;--d:.40s"></i></div><div class="bv">10.0%</div></div>
+    <div class="brow"><div class="bl">Malayalam</div><div class="btrack"><i class="bfill c-fair end-a" style="--w:40%;--d:.45s"></i></div><div class="bv">10.0%</div></div>
+    <div class="brow"><div class="bl">Telugu</div><div class="btrack"><i class="bfill c-fair end-a" style="--w:53.2%;--d:.50s"></i></div><div class="bv">13.3%</div></div>
   </div>
-  <p class="footnote" data-reveal>Per-language false-positive rate on clean genuine speech, threshold 0.70, measured, not projected. We publish the uncomfortable numbers too: Telugu is still our weakest language, and under 8 kHz telephony the rates rise further, which is exactly why the pipeline trains with G.711 codec augmentation, why verdicts are channel-aware (a detected phone line must clear a stricter 0.85 bar before a HIGH, protecting genuine callers while real clones at ~0.96 still flag), and why liveness, not detection alone, gates any customer action.</p>
+  <p class="footnote" data-reveal>Per-language false-positive rate on clean genuine speech, threshold 0.70, measured, not projected. We publish the uncomfortable numbers too: Telugu is still our weakest language at 13.3%, and under 8 kHz telephony the rates rise further, which is exactly why the pipeline trains with G.711 codec augmentation, why verdicts are channel-aware (a detected phone line must clear a stricter 0.85 bar before a HIGH, protecting genuine callers while real clones at ~0.96 still flag), and why liveness, not detection alone, gates any customer action.</p>
 
   <div style="height:7vh"></div>
   <h3 class="sub-h" data-reveal>Fairness cuts <span class="grad">both ways</span>, we also catch Indian-language fakes</h3>
@@ -2007,7 +2007,7 @@ if('IntersectionObserver' in window){
   document.querySelectorAll('.cnt').forEach(animCount);
 }
 
-/* ============ 36.3 → 11.7 morph ============ */
+/* ============ 36.3 -> 6.3 fairness morph ============ */
 var morph = document.getElementById('morphNum');
 if(morph){
   function runMorph(){
