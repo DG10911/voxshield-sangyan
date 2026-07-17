@@ -304,6 +304,19 @@ body.reduce [data-reveal]{opacity:1;transform:none;filter:none}
 .vs-arts{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:2px}
 .vs-arts span{font-family:var(--mono);font-size:10px;font-weight:700;padding:5px 9px;border-radius:7px;border:1px solid rgba(239,68,68,.45);color:#ff9a9a;background:rgba(239,68,68,.1)}
 
+/* AI-clone materialising (canvas particle head) */
+.clone-stage{position:relative;border-radius:22px;overflow:hidden;border:1px solid var(--line);height:min(58vh,540px);
+  background:radial-gradient(720px 420px at 64% 42%,rgba(34,211,238,.12),transparent 62%),linear-gradient(160deg,#07131f,#04090f);
+  box-shadow:0 40px 100px -40px rgba(0,0,0,.9)}
+#cloneCanvas{position:absolute;inset:0;width:100%;height:100%}
+.clone-ui{position:absolute;left:6%;top:0;bottom:0;display:flex;flex-direction:column;justify-content:center;gap:20px;max-width:42%;z-index:2;pointer-events:none}
+@media(max-width:820px){.clone-ui{max-width:78%;left:5%}}
+.clone-call{display:inline-flex;align-items:center;gap:10px;font-family:var(--mono);font-size:12px;color:#ff9a9a;border:1px solid rgba(239,68,68,.4);background:rgba(239,68,68,.09);padding:8px 14px;border-radius:100px;width:fit-content}
+.cc-dot{width:8px;height:8px;border-radius:50%;background:#ff5a5a;box-shadow:0 0 12px #ff5a5a;animation:pulse 1.2s infinite}
+.clone-cap{font-size:clamp(19px,2.3vw,28px);font-weight:800;line-height:1.32;color:var(--ink);letter-spacing:-.01em}
+.clone-cap .cy{background:linear-gradient(100deg,var(--cyan),var(--violet));-webkit-background-clip:text;background-clip:text;color:transparent}
+.clone-cap small{display:block;margin-top:12px;font-size:.52em;font-weight:400;color:var(--t2);line-height:1.5}
+
 /* Three.js holographic shield (finale) */
 #holo{position:absolute;left:50%;top:8%;width:min(560px,86vw);height:min(560px,60vh);transform:translateX(-50%);z-index:-1;pointer-events:none}
 #holo canvas{width:100%!important;height:100%!important;display:block}
@@ -388,6 +401,16 @@ body.holo-on .fin-shield{display:none}
     <div class="card tilt-c" data-reveal style="--d:.24s"><div class="ic">⧗</div><h3>The damage happens fast</h3><p>Voice-authorised transfers act in minutes. A verdict after the call ends is forensics, not protection. Detection must happen in the first seconds.</p></div>
   </div>
   <p class="foot" data-reveal>Detection alone loses to a replay attack: a clone played through a speaker launders the digital artifacts. It needs layers.</p>
+  <!-- PHASE 2 · signature scene: the AI clone materialising from particles -->
+  <div style="height:7vh"></div>
+  <div class="clone-stage" data-reveal>
+    <canvas id="cloneCanvas" aria-hidden="true"></canvas>
+    <div class="clone-ui">
+      <div class="clone-call"><span class="cc-dot"></span>Incoming call · +91 ●●●●● ●●●●●</div>
+      <div class="clone-cap"><span class="cy">A voice is being cloned.</span><small>Assembled from seconds of public audio. It sounds human, it knows the customer's name, and it is calling the bank right now.</small></div>
+    </div>
+  </div>
+
   <!-- PHASE 2 · Real vs AI-Clone split-screen (canvas: waveform + live spectrogram + radial visualizer) -->
   <div style="height:7vh"></div>
   <h3 class="mono" data-reveal style="font-size:13px;letter-spacing:.24em;text-transform:uppercase;color:var(--cyan);margin-bottom:20px">Real voice vs AI clone, read live</h3>
@@ -938,6 +961,54 @@ var DPR = (Q.f&&Q.f.dpr)||Math.min(2,devicePixelRatio||1);
       requestAnimationFrame(anim);
     })();
   }
+})();
+
+/* -------- MODULE · CloneHead (canvas particle head, the signature scene) --------
+   A holographic AI-clone head that scatters, assembles from particles, glitches,
+   with glowing eyes and voice-energy pulsing from the mouth. Canvas 2D (no WebGL),
+   quality-tiered particle count, paused off-screen, calm in reduced-motion. */
+(function(){
+  var cv=document.getElementById('cloneCanvas'); if(!cv) return;
+  var ctx=cv.getContext('2d'), D=Math.min(2,(Q.f&&Q.f.dpr)||1), W=0,H=0,P=[],built=false,visible=false,assemble=0,t=0,calm=reduced;
+  function widthAt(ny,maxW){ if(ny<-0.05) return Math.sqrt(Math.max(0,1-ny*ny))*maxW; var tt=(ny+0.05)/1.05; return Math.cos(tt*1.15)*maxW*0.98; }
+  function build(){
+    var r=cv.getBoundingClientRect(); W=cv.width=Math.max(240,r.width)*D; H=cv.height=Math.max(180,r.height)*D;
+    P=[]; var cx=W*0.64, cy=H*0.47, hh=Math.min(H*0.60,W*0.34), maxW=hh*0.62;
+    var count = Q.tier==='high'?(Q.mobile?520:1000):(Q.tier==='medium'?560:320);
+    var oN=Math.floor(count*0.62);
+    for(var i=0;i<oN;i++){ var ny=-1+2*(i/oN), w=widthAt(ny,maxW); if(w<=1) continue; var side=(i%2)?1:-1;
+      P.push({tx:cx+side*w+(Math.random()-0.5)*3, ty:cy+ny*hh, type:3, b:0.85+Math.random()*0.15}); }
+    for(var j=0;j<count-oN;j++){ var ny2=-1+2*Math.random(), w2=widthAt(ny2,maxW); if(w2<=1) continue;
+      P.push({tx:cx+(Math.random()*2-1)*w2*0.9, ty:cy+ny2*hh, type:0, b:0.24+Math.random()*0.3}); }
+    for(var e=0;e<2;e++){ var ex=cx+(e?1:-1)*maxW*0.34, ey=cy-hh*0.16;
+      for(var k=0;k<16;k++){ var a=Math.random()*6.28, rr=Math.random()*maxW*0.10; P.push({tx:ex+Math.cos(a)*rr, ty:ey+Math.sin(a)*rr*0.7, type:1, b:1}); } }
+    var mn=22, mw=maxW*0.5, my=cy+hh*0.42;
+    for(var m=0;m<mn;m++) P.push({tx:cx+(-0.5+m/(mn-1))*mw, ty:my, mi:m, type:2, b:0.9});
+    for(var p=0;p<P.length;p++){ if(calm){ P[p].x=P[p].tx; P[p].y=P[p].ty; } else { P[p].x=cx+(Math.random()*2-1)*maxW*3.0; P[p].y=cy+(Math.random()*2-1)*hh*1.7; } }
+    built=true; assemble=calm?1:0;
+  }
+  build(); addEventListener('resize',build);
+  VOX.onView(cv,function(v){ visible=v; });
+  function frame(){
+    if(built && (visible||calm) && !document.hidden){
+      t+=0.016; if(assemble<1) assemble=Math.min(1,assemble+0.012); var ease=1-Math.pow(1-assemble,3);
+      ctx.clearRect(0,0,W,H); var scanY=Math.sin(t*0.6)*0.5+0.5, jitter=calm?0:0.6;
+      for(var i=0;i<P.length;i++){ var p=P[i];
+        p.x+=(p.tx-p.x)*0.06*ease+(Math.random()-0.5)*jitter; p.y+=(p.ty-p.y)*0.06*ease+(Math.random()-0.5)*jitter;
+        var near=1-Math.min(1,Math.abs(p.y/H-scanY)*7), bb=p.b*(0.6+0.4*Math.abs(Math.sin(t*2+i)))*(0.7+0.3*near);
+        if(p.type===1){ ctx.fillStyle='rgba(190,244,255,'+(0.8+0.2*Math.abs(Math.sin(t*3)))+')'; ctx.beginPath(); ctx.arc(p.x,p.y,2.1*D,0,7); ctx.fill(); continue; }
+        if(p.type===2){ var amp=(Math.sin(t*9+p.mi*0.5)*0.5+0.5)*(0.5+Math.abs(Math.sin(t*2))*0.5), h2=amp*Math.min(H*0.06,26*D);
+          ctx.strokeStyle='rgba(34,211,238,'+(0.5+amp*0.5)+')'; ctx.lineWidth=1.8*D; ctx.beginPath(); ctx.moveTo(p.x,p.y-h2); ctx.lineTo(p.x,p.y+h2); ctx.stroke(); continue; }
+        var sz=p.type===3?2.0*D:1.6*D, br=p.type===3?Math.min(1,bb+0.22):bb;
+        ctx.fillStyle='rgba('+Math.round(110+near*120)+','+Math.round(195+near*60)+',255,'+br+')'; ctx.fillRect(p.x,p.y,sz,sz);
+      }
+      if(!calm && Math.random()<0.03){ var gy=Math.random()*H, gh=6+Math.random()*20; ctx.globalCompositeOperation='lighter';
+        ctx.drawImage(cv,0,gy,W,gh,(Math.random()-0.5)*22*D,gy,W,gh); ctx.globalCompositeOperation='source-over'; }
+      ctx.strokeStyle='rgba(34,211,238,.5)'; ctx.lineWidth=1.2*D; ctx.beginPath(); ctx.moveTo(0,scanY*H); ctx.lineTo(W,scanY*H); ctx.stroke();
+    }
+    requestAnimationFrame(frame);
+  }
+  frame();
 })();
 })();
 </script>
