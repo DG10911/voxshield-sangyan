@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>VoxShield — Enterprise Brochure</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#07121F;
+  --bg2:#0a1a2b;
+  --panel:rgba(15,30,48,.62);
+  --panel2:rgba(12,24,40,.55);
+  --blue:#1E90FF;
+  --cyan:#00E5FF;
+  --ink:#ffffff;
+  --t2:#a8c2de;
+  --t3:#6e88a6;
+  --line:rgba(120,170,230,.16);
+  --line2:rgba(0,229,255,.28);
+  --sans:'Inter',-apple-system,'Helvetica Neue',Arial,sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{background:#05101c;font-family:var(--sans);-webkit-print-color-adjust:exact;print-color-adjust:exact}
+body{display:flex;flex-direction:column;align-items:center;gap:26px;padding:26px 0}
+
+/* ---- A4 landscape page ---- */
+.page{
+  position:relative;width:297mm;height:210mm;overflow:hidden;
+  background:
+    radial-gradient(900px 520px at 82% -8%,rgba(30,144,255,.16),transparent 60%),
+    radial-gradient(760px 460px at 8% 108%,rgba(0,229,255,.10),transparent 62%),
+    linear-gradient(160deg,#0a1727 0%,var(--bg) 55%,#050e18 100%);
+  color:var(--ink);
+  box-shadow:0 40px 120px -30px rgba(0,0,0,.85);
+}
+/* faint tech grid + noise */
+.page::before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.5;
+  background:
+    linear-gradient(rgba(120,170,230,.04) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(120,170,230,.04) 1px,transparent 1px);
+  background-size:34px 34px;
+  -webkit-mask-image:radial-gradient(ellipse 100% 90% at 50% 45%,#000 40%,transparent 85%);
+          mask-image:radial-gradient(ellipse 100% 90% at 50% 45%,#000 40%,transparent 85%);}
+.pad{position:relative;z-index:2;height:100%;padding:11mm 15mm 9mm}
+
+/* ---- shared ---- */
+.brand{display:flex;align-items:center;gap:11px}
+.brand .mark{width:30px;height:34px;filter:drop-shadow(0 0 10px rgba(30,144,255,.6))}
+.brand .name{font-weight:800;font-size:20px;letter-spacing:-.01em}
+.brand .name b{color:var(--blue)}
+.kchip{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;
+  padding:6px 13px;border-radius:100px;border:1px solid var(--line2);background:rgba(0,229,255,.06);color:var(--cyan)}
+.grad{background:linear-gradient(100deg,#bfe3ff 0%,var(--blue) 46%,var(--cyan) 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.34em;text-transform:uppercase;color:var(--cyan)}
+.glass{background:linear-gradient(155deg,var(--panel),var(--panel2));
+  border:1px solid var(--line);border-radius:16px;position:relative;overflow:hidden;
+  box-shadow:0 20px 44px -26px rgba(0,0,0,.8), inset 0 1px 0 rgba(255,255,255,.05);}
+.glass::after{content:"";position:absolute;inset:0;border-radius:inherit;padding:1px;pointer-events:none;
+  background:linear-gradient(150deg,rgba(0,229,255,.35),transparent 40%,transparent 70%,rgba(30,144,255,.28));
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;
+          mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);mask-composite:exclude;}
+
+/* ============================= PAGE 1 ============================= */
+.p1-top{display:flex;justify-content:space-between;align-items:center}
+.p1-hero{display:grid;grid-template-columns:1.02fr .98fr;gap:9mm;align-items:center;margin-top:3mm}
+.p1-copy .eyebrow{margin-bottom:12px}
+.p1-copy h1{font-size:45px;line-height:1.03;font-weight:800;letter-spacing:-.03em}
+.p1-copy .sub{margin-top:15px;font-size:15px;line-height:1.5;color:var(--t2);font-weight:400;max-width:430px}
+.p1-copy .sub b{color:var(--ink);font-weight:600}
+.p1-stats{display:flex;gap:24px;margin-top:20px}
+.p1-stats .st .v{font-family:var(--mono);font-size:24px;font-weight:700;background:linear-gradient(100deg,#eaf5ff,var(--cyan));-webkit-background-clip:text;background-clip:text;color:transparent}
+.p1-stats .st .k{font-size:10px;color:var(--t3);margin-top:3px;letter-spacing:.04em}
+.hero-art{position:relative;height:43mm;display:flex;align-items:center;justify-content:center}
+
+/* feature grid */
+.feat{display:grid;grid-template-columns:repeat(3,1fr);gap:6mm;margin-top:5mm}
+.fcard{padding:13px 15px;border-radius:14px}
+.fcard .ic{width:35px;height:35px;border-radius:10px;display:flex;align-items:center;justify-content:center;
+  background:rgba(30,144,255,.12);border:1px solid var(--line2);color:var(--cyan)}
+.fcard h3{font-size:14px;font-weight:700;margin:9px 0 3px;letter-spacing:-.01em}
+.fcard p{font-size:11px;line-height:1.45;color:var(--t2)}
+
+/* workflow timeline */
+.flow{display:flex;align-items:center;justify-content:space-between;margin-top:6mm;padding:0 2mm}
+.fstep{display:flex;flex-direction:column;align-items:center;gap:9px;position:relative;z-index:2}
+.fstep .node{width:44px;height:44px;border-radius:13px;display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(155deg,rgba(15,30,48,.9),rgba(10,20,34,.9));border:1px solid var(--line2);color:var(--cyan);
+  box-shadow:0 0 22px -6px rgba(0,229,255,.5)}
+.fstep .lb{font-size:11px;font-weight:600;color:var(--t2);letter-spacing:.02em}
+.fconn{flex:1;height:2px;margin:0 6px -20px;background:linear-gradient(90deg,rgba(30,144,255,.15),rgba(0,229,255,.6),rgba(30,144,255,.15));border-radius:2px}
+.p1-foot{position:absolute;left:15mm;right:15mm;bottom:6mm;display:flex;justify-content:space-between;align-items:center;
+  padding-top:6mm;border-top:1px solid var(--line);
+  font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--t3)}
+
+/* ============================= PAGE 2 ============================= */
+.p2-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:7mm}
+.p2-grid{display:grid;grid-template-columns:1.15fr 1fr;gap:9mm}
+.arch{display:flex;flex-direction:column;gap:0;align-items:center}
+.anode{width:100%;max-width:118mm;border-radius:13px;padding:12px 18px;text-align:center;position:relative}
+.anode h4{font-size:14px;font-weight:700}
+.anode p{font-size:10.5px;color:var(--t3);font-family:var(--mono);margin-top:2px;letter-spacing:.03em}
+.anode.core{border:1px solid var(--line2);box-shadow:0 0 40px -14px rgba(0,229,255,.5)}
+.anode.core h4{background:linear-gradient(100deg,#eaf5ff,var(--cyan));-webkit-background-clip:text;background-clip:text;color:transparent}
+.aconn{width:2px;height:14px;background:repeating-linear-gradient(180deg,var(--cyan) 0 4px,transparent 4px 9px);opacity:.7}
+.asys{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:100%;max-width:118mm;margin-top:4px}
+.asys .s{border:1px solid var(--line);border-radius:11px;background:rgba(12,24,40,.6);padding:9px 8px;text-align:center;font-size:10.5px;color:var(--t2);font-weight:500;display:flex;flex-direction:column;align-items:center;gap:5px}
+.asys .s .si{color:var(--cyan);font-size:15px}
+
+.why{display:flex;flex-direction:column;gap:8px}
+.why .wc{display:flex;gap:12px;align-items:flex-start;padding:12px 14px;border-radius:13px}
+.why .wc .wi{flex:none;width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;background:rgba(30,144,255,.12);border:1px solid var(--line2);color:var(--cyan)}
+.why .wc h5{font-size:13px;font-weight:700;margin-bottom:2px}
+.why .wc p{font-size:11px;color:var(--t2);line-height:1.42}
+.chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:11px}
+.chips span{font-size:11px;color:var(--t2);border:1px solid var(--line);background:rgba(12,24,40,.55);border-radius:100px;padding:6px 13px;font-weight:500}
+.chips span b{color:var(--cyan);font-weight:600}
+
+.kpis{display:grid;grid-template-columns:repeat(6,1fr);gap:7mm}
+.kpi{border-radius:14px;padding:15px 13px;text-align:center}
+.kpi .kv{font-family:var(--mono);font-size:23px;font-weight:700;background:linear-gradient(100deg,#eaf5ff,var(--cyan));-webkit-background-clip:text;background-clip:text;color:transparent;line-height:1}
+.kpi .kk{font-size:10px;color:var(--t2);margin-top:7px;font-weight:600;letter-spacing:.02em}
+.kpi .kn{font-size:8.5px;color:var(--t3);margin-top:3px;font-family:var(--mono);letter-spacing:.04em}
+
+.pad.p2{display:flex;flex-direction:column;justify-content:space-between}
+.p2-foot{display:flex;justify-content:space-between;align-items:flex-end;padding-top:7mm}
+.quote{border-radius:16px;padding:18px 24px;display:flex;flex-direction:column;gap:4px;min-width:78mm}
+.quote .q{font-size:22px;font-weight:800;letter-spacing:-.02em;background:linear-gradient(100deg,#eaf5ff,var(--cyan));-webkit-background-clip:text;background-clip:text;color:transparent}
+.quote .qs{font-family:var(--mono);font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--t3)}
+.p2-brand{text-align:right;font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--t3);line-height:1.9}
+
+@media print{
+  @page{size:297mm 210mm;margin:0}
+  body{background:#fff;padding:0;gap:0}
+  .page{box-shadow:none;page-break-after:always;break-after:page}
+  .page:last-child{page-break-after:auto}
+  .screen-only{display:none}
+}
+.hint{color:#6e88a6;font-family:var(--mono);font-size:12px;text-align:center;letter-spacing:.05em}
+</style>
+</head>
+<body>
+
+<div class="hint screen-only">VoxShield brochure · A4 landscape · Print → “Save as PDF”, layout Landscape, margins None, Background graphics ON</div>
+
+<!-- ══════════════════════════ PAGE 1 ══════════════════════════ -->
+<section class="page">
+  <div class="pad">
+
+    <div class="p1-top">
+      <div class="brand">
+        <svg class="mark" viewBox="0 0 30 34"><path d="M15 1.5 L28 7 V17 C28 25 22.5 30.5 15 32.5 C7.5 30.5 2 25 2 17 V7 Z" fill="rgba(30,144,255,.10)" stroke="url(#bg1)" stroke-width="1.6"/><defs><linearGradient id="bg1" x1="0" x2="1"><stop offset="0" stop-color="#00E5FF"/><stop offset="1" stop-color="#1E90FF"/></linearGradient></defs><g fill="#8fe6ff"><rect x="9" y="13" width="1.7" height="8" rx=".8"/><rect x="12.4" y="10" width="1.7" height="14" rx=".8"/><rect x="15.8" y="14" width="1.7" height="6" rx=".8"/><rect x="19.2" y="11" width="1.7" height="12" rx=".8"/></g></svg>
+        <div class="name">Vox<b>Shield</b></div>
+      </div>
+      <div class="kchip">Enterprise Voice Security · TRL-5</div>
+    </div>
+
+    <div class="p1-hero">
+      <div class="p1-copy">
+        <div class="eyebrow">Real-time AI Voice Forensics</div>
+        <h1>Trust every voice that <span class="grad">touches your bank.</span></h1>
+        <p class="sub">VoxShield detects AI-cloned and synthetic voices in real time, verifies liveness, and scores fraud risk, <b>a layered, honest defence</b> for India's voice-first banking and enterprise channels.</p>
+        <div class="p1-stats">
+          <div class="st"><div class="v">5.9%</div><div class="k">Equal-error-rate · held-out</div></div>
+          <div class="st"><div class="v">3.0s</div><div class="k">Flags a fraud call</div></div>
+          <div class="st"><div class="v">10</div><div class="k">Indian languages, fair</div></div>
+        </div>
+      </div>
+
+      <!-- HERO ILLUSTRATION: glowing shield protecting a microphone -->
+      <div class="hero-art">
+        <svg viewBox="0 0 520 400" width="100%" height="100%" role="img" aria-label="A glowing digital shield protecting a microphone, surrounded by an AI neural network, authentication ring and voice waveform">
+          <defs>
+            <radialGradient id="halo" cx="50%" cy="46%" r="55%"><stop offset="0" stop-color="rgba(0,229,255,.30)"/><stop offset="55%" stop-color="rgba(30,144,255,.10)"/><stop offset="100%" stop-color="rgba(30,144,255,0)"/></radialGradient>
+            <linearGradient id="shield" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="rgba(0,229,255,.18)"/><stop offset="1" stop-color="rgba(30,144,255,.05)"/></linearGradient>
+            <linearGradient id="stroke" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#00E5FF"/><stop offset="1" stop-color="#1E90FF"/></linearGradient>
+            <linearGradient id="mic" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#bfefff"/><stop offset="1" stop-color="#1E90FF"/></linearGradient>
+            <filter id="glow" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+          </defs>
+
+          <ellipse cx="260" cy="188" rx="240" ry="180" fill="url(#halo)"/>
+
+          <!-- neural network nodes + links -->
+          <g stroke="rgba(0,229,255,.28)" stroke-width="1" fill="none">
+            <path d="M70 92 L150 150 M150 150 L96 232 M96 232 L172 286 M420 78 L360 150 M360 150 L438 210 M438 210 L372 276 M70 92 L96 232 M420 78 L438 210 M172 286 L260 330 M372 276 L260 330"/>
+          </g>
+          <g fill="#00E5FF">
+            <circle cx="70" cy="92" r="3.4"/><circle cx="150" cy="150" r="2.6"/><circle cx="96" cy="232" r="3"/><circle cx="172" cy="286" r="2.4"/>
+            <circle cx="420" cy="78" r="3.4"/><circle cx="360" cy="150" r="2.6"/><circle cx="438" cy="210" r="3"/><circle cx="372" cy="276" r="2.4"/>
+          </g>
+          <g fill="rgba(143,230,255,.6)"><circle cx="118" cy="70" r="1.6"/><circle cx="48" cy="180" r="1.6"/><circle cx="470" cy="150" r="1.6"/><circle cx="300" cy="60" r="1.6"/><circle cx="230" cy="360" r="1.6"/><circle cx="410" cy="330" r="1.6"/></g>
+
+          <!-- authentication orbit rings -->
+          <ellipse cx="260" cy="190" rx="150" ry="150" fill="none" stroke="rgba(30,144,255,.30)" stroke-width="1" stroke-dasharray="2 7"/>
+          <ellipse cx="260" cy="190" rx="118" ry="118" fill="none" stroke="rgba(0,229,255,.22)" stroke-width="1"/>
+          <circle cx="260" cy="40" r="4" fill="#00E5FF" filter="url(#glow)"/>
+          <circle cx="410" cy="190" r="3" fill="#1E90FF"/>
+          <circle cx="110" cy="190" r="3" fill="#1E90FF"/>
+
+          <!-- shield -->
+          <path d="M260 74 L352 112 V196 C352 258 312 300 260 318 C208 300 168 258 168 196 V112 Z"
+                fill="url(#shield)" stroke="url(#stroke)" stroke-width="2.4" filter="url(#glow)"/>
+          <path d="M260 74 L352 112 V196 C352 258 312 300 260 318 C208 300 168 258 168 196 V112 Z"
+                fill="none" stroke="rgba(0,229,255,.18)" stroke-width="7"/>
+
+          <!-- microphone inside shield -->
+          <g filter="url(#glow)">
+            <rect x="246" y="120" width="28" height="66" rx="14" fill="url(#mic)"/>
+            <path d="M232 176 a28 28 0 0 0 56 0" fill="none" stroke="#bfefff" stroke-width="3.4" stroke-linecap="round"/>
+            <rect x="257.5" y="204" width="5" height="20" rx="2.5" fill="#bfefff"/>
+            <rect x="244" y="224" width="32" height="4.6" rx="2.3" fill="#bfefff"/>
+            <g stroke="rgba(7,18,31,.5)" stroke-width="1.4"><line x1="248" y1="134" x2="272" y2="134"/><line x1="248" y1="146" x2="272" y2="146"/><line x1="248" y1="158" x2="272" y2="158"/><line x1="248" y1="170" x2="272" y2="170"/></g>
+          </g>
+
+          <!-- voice waveform arc under the shield -->
+          <g fill="#00E5FF" opacity=".92">
+            <rect x="196" y="250" width="3.2" height="14" rx="1.6"/><rect x="205" y="244" width="3.2" height="26" rx="1.6"/><rect x="214" y="252" width="3.2" height="10" rx="1.6"/><rect x="223" y="238" width="3.2" height="38" rx="1.6"/><rect x="232" y="248" width="3.2" height="18" rx="1.6"/><rect x="241" y="242" width="3.2" height="30" rx="1.6"/>
+            <rect x="277" y="242" width="3.2" height="30" rx="1.6"/><rect x="286" y="248" width="3.2" height="18" rx="1.6"/><rect x="295" y="238" width="3.2" height="38" rx="1.6"/><rect x="304" y="252" width="3.2" height="10" rx="1.6"/><rect x="313" y="244" width="3.2" height="26" rx="1.6"/><rect x="322" y="250" width="3.2" height="14" rx="1.6"/>
+          </g>
+        </svg>
+      </div>
+    </div>
+
+    <!-- 6 feature cards -->
+    <div class="feat">
+      <div class="fcard glass"><div class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3.4"/></svg></div><h3>5-Model Detection</h3><p>Five decorrelated detectors fused by a learned meta-stacker into one calibrated, honest score.</p></div>
+      <div class="fcard glass"><div class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v18M4 8h16M6 14l-2 4h4zM18 14l-2 4h4z"/></svg></div><h3>Language Fairness</h3><p>Measured across 10 Indian languages and telephony, so genuine callers are not misread as fraud.</p></div>
+      <div class="fcard glass"><div class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7z"/><path d="M9 12l2 2 4-4"/></svg></div><h3>Liveness Challenge</h3><p>A random spoken-digit prompt a recording cannot answer. Content, liveness and timing checked at once.</p></div>
+      <div class="fcard glass"><div class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 6h16M4 12h10M4 18h16"/><circle cx="18" cy="12" r="2.4"/></svg></div><h3>Explainable Verdicts</h3><p>Plain-language reason codes on every decision, an operator, auditor and regulator can each read.</p></div>
+      <div class="fcard glass"><div class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></svg></div><h3>On-Prem &amp; Air-Gapped</h3><p>Docker image bakes every model in. Runs in the bank's own data centre with zero external calls.</p></div>
+      <div class="fcard glass"><div class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v6M12 21a7 7 0 1 0-7-7"/><path d="M12 12l4-4"/></svg></div><h3>Never Auto-Block</h3><p>A layered fraud signal, not a judge. High risk routes to step-up verification, a human stays in charge.</p></div>
+    </div>
+
+    <!-- workflow timeline -->
+    <div class="flow">
+      <div class="fstep"><div class="node"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="9" y="3" width="6" height="12" rx="3"/><path d="M6 11a6 6 0 0 0 12 0M12 17v4"/></svg></div><div class="lb">Voice</div></div>
+      <div class="fconn"></div>
+      <div class="fstep"><div class="node"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><circle cx="5" cy="7" r="1.6"/><circle cx="19" cy="7" r="1.6"/><circle cx="5" cy="17" r="1.6"/><circle cx="19" cy="17" r="1.6"/><path d="M6.4 7.6 9.8 10.6M17.6 7.6 14.2 10.6M6.4 16.4 9.8 13.4M17.6 16.4 14.2 13.4"/></svg></div><div class="lb">AI Analysis</div></div>
+      <div class="fconn"></div>
+      <div class="fstep"><div class="node"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3.2"/><path d="M12 4v3M12 17v3"/></svg></div><div class="lb">Biometrics</div></div>
+      <div class="fconn"></div>
+      <div class="fstep"><div class="node"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 12h4l2-6 4 12 2-6h6"/></svg></div><div class="lb">Detection</div></div>
+      <div class="fconn"></div>
+      <div class="fstep"><div class="node"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3a9 9 0 1 0 9 9"/><path d="M12 12l6-4"/><path d="M12 12v-6"/></svg></div><div class="lb">Risk Score</div></div>
+      <div class="fconn"></div>
+      <div class="fstep"><div class="node"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 13l4 4L19 7"/></svg></div><div class="lb">Decision</div></div>
+    </div>
+
+    <div class="p1-foot">
+      <span>VoxShield · Audio Forensics for Voice Security</span>
+      <span>Team DigiSeva · SRM Institute of Science &amp; Technology</span>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════ PAGE 2 ══════════════════════════ -->
+<section class="page">
+  <div class="pad p2">
+
+    <div class="p2-top">
+      <div class="brand">
+        <svg class="mark" viewBox="0 0 30 34"><path d="M15 1.5 L28 7 V17 C28 25 22.5 30.5 15 32.5 C7.5 30.5 2 25 2 17 V7 Z" fill="rgba(30,144,255,.10)" stroke="url(#bg2)" stroke-width="1.6"/><defs><linearGradient id="bg2" x1="0" x2="1"><stop offset="0" stop-color="#00E5FF"/><stop offset="1" stop-color="#1E90FF"/></linearGradient></defs><g fill="#8fe6ff"><rect x="9" y="13" width="1.7" height="8" rx=".8"/><rect x="12.4" y="10" width="1.7" height="14" rx=".8"/><rect x="15.8" y="14" width="1.7" height="6" rx=".8"/><rect x="19.2" y="11" width="1.7" height="12" rx=".8"/></g></svg>
+        <div class="name">Vox<b>Shield</b></div>
+      </div>
+      <div class="eyebrow">Enterprise Architecture</div>
+    </div>
+
+    <div class="p2-grid">
+      <!-- architecture flow -->
+      <div class="arch">
+        <div class="anode glass"><h4>User · Caller</h4><p>web · mobile · IVR · SIP</p></div>
+        <div class="aconn"></div>
+        <div class="anode glass"><h4>Incoming Call</h4><p>8 kHz G.711 · streamed audio</p></div>
+        <div class="aconn"></div>
+        <div class="anode glass core"><h4>VoxShield AI Engine</h4><p>speech processing → speaker embeddings → deepfake detection → risk engine</p></div>
+        <div class="aconn"></div>
+        <div class="anode glass"><h4>Decision API</h4><p>Low / Medium / High · reason codes · SHA-256 audit</p></div>
+        <div class="aconn"></div>
+        <div style="font-family:var(--mono);font-size:10px;color:var(--t3);letter-spacing:.16em;text-transform:uppercase;margin:6px 0 8px">Enterprise Systems</div>
+        <div class="asys">
+          <div class="s"><span class="si">🏦</span>Banking</div>
+          <div class="s"><span class="si">◪</span>CRM</div>
+          <div class="s"><span class="si">📋</span>Insurance</div>
+          <div class="s"><span class="si">🏛</span>Government</div>
+          <div class="s"><span class="si">📡</span>Telecom</div>
+          <div class="s"><span class="si">🎧</span>Contact Centre</div>
+        </div>
+      </div>
+
+      <!-- why voxshield -->
+      <div>
+        <div class="eyebrow" style="margin-bottom:11px">Why VoxShield</div>
+        <div class="why">
+          <div class="wc glass"><div class="wi"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-6"/></svg></div><div><h5>Fusion, not a single model</h5><p>Five detectors decorrelate errors; one learned stacker cuts error 3× over the best model alone.</p></div></div>
+          <div class="wc glass"><div class="wi"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v18M4 8h16"/></svg></div><div><h5>Fair for India</h5><p>False-positives on genuine Indian speech cut 36.3% → 11.7% with published per-language rates.</p></div></div>
+          <div class="wc glass"><div class="wi"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7z"/></svg></div><div><h5>Beats replay attacks</h5><p>Challenge-response liveness closes the door pure detection cannot: a recording can't answer live.</p></div></div>
+          <div class="wc glass"><div class="wi"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="5" width="16" height="14" rx="2"/><path d="M4 9h16"/></svg></div><div><h5>Audit-ready by design</h5><p>SHA-256 ledger, reason codes and step-up routing. Explainable to operator, auditor and regulator.</p></div></div>
+        </div>
+
+        <div class="eyebrow" style="margin:14px 0 0">Industries</div>
+        <div class="chips">
+          <span><b>·</b> Banking &amp; Finance</span><span><b>·</b> Government</span><span><b>·</b> Healthcare</span><span><b>·</b> Telecom</span><span><b>·</b> Insurance</span><span><b>·</b> BPO / Contact Centres</span><span><b>·</b> Media</span><span><b>·</b> Legal &amp; Forensics</span><span><b>·</b> Enterprise</span><span><b>·</b> Education</span><span><b>·</b> Cybersecurity</span><span><b>·</b> Defence</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- KPI cards -->
+    <div class="kpis">
+      <div class="kpi glass"><div class="kv">94%</div><div class="kk">Detection Accuracy</div><div class="kn">held-out</div></div>
+      <div class="kpi glass"><div class="kv">&lt;1s</div><div class="kk">Verification Speed</div><div class="kn">on GPU</div></div>
+      <div class="kpi glass"><div class="kv">99.9%</div><div class="kk">API Availability</div><div class="kn">target SLA</div></div>
+      <div class="kpi glass"><div class="kv">N×</div><div class="kk">Scalability</div><div class="kn">stateless</div></div>
+      <div class="kpi glass"><div class="kv">AES-256</div><div class="kk">Security</div><div class="kn">on-prem</div></div>
+      <div class="kpi glass"><div class="kv">TRL-5</div><div class="kk">Reliability</div><div class="kn">validated</div></div>
+    </div>
+
+    <div class="p2-foot">
+      <div class="quote glass">
+        <div class="q">“Trust Every Voice.”</div>
+        <div class="qs">Detection · Fairness · Liveness</div>
+      </div>
+      <div class="p2-brand">
+        VoxShield · Team DigiSeva<br>
+        SRM Institute of Science &amp; Technology<br>
+        Audio Forensics for Voice Security · TRL-5
+      </div>
+    </div>
+  </div>
+</section>
+
+</body>
+</html>
