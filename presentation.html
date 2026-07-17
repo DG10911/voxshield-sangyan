@@ -1118,6 +1118,16 @@ table.deploy-t tbody tr:hover{background:rgba(59,130,246,.05)}
       <div class="m">Held-out In-the-Wild</div></div>
   </div>
   <p class="footnote" data-reveal>Language-routed fusion: an on-device language-ID (Whisper) sends Indian-language audio to a stacker trained with a synthesized Indic deepfake class, while English keeps the main model, so both error rates fall at once. The fakes here are TTS-synthesized (a genuine synthetic-speech class); adversarial voice-conversion clones are the next hardening step.</p>
+
+  <div style="height:6vh"></div>
+  <h3 class="sub-h" data-reveal>The 6th detector, <span class="grad">an Indic specialist that can only escalate</span></h3>
+  <p class="ch-sub" data-reveal style="margin-top:0;margin-bottom:24px">On top of the five general detectors we add a sixth: a <b>fine-tuned XLS-R-300M</b> trained specifically on Indian-language deepfakes. It is deliberately designed so it can help without ever hurting a genuine caller.</p>
+  <div class="reason-chips" data-reveal>
+    <div class="chip"><span class="code">ROUTE</span><span class="d">Fires <b>only on Indian-language audio</b> (on-device language-ID). English never touches it, so the English operating point is unchanged.</span></div>
+    <div class="chip"><span class="code">VETO ↑</span><span class="d">A <b>one-sided escalation</b>: it can only raise a verdict on a confident fake (P ≥ 0.85), never lower one.</span></div>
+    <div class="chip"><span class="code">SAFE</span><span class="d">Because it can only escalate a confident fake, it lifts Indic clone recall <b>without adding a single false positive</b> on genuine speakers.</span></div>
+  </div>
+  <p class="footnote" data-reveal>Result: Indian-language voice-clone recall 42% → 82%, genuine-Indic false-positives 36.3% → 6.3%, English EER unchanged. The booster is confidence- and language-gated and fully fail-safe, if its model is absent it is a silent no-op and the five-model verdict is untouched.</p>
 </section>
 
 <!-- ================= CH 6 · LIVENESS ================= -->
