@@ -692,6 +692,32 @@ table.deploy-t tbody tr:hover{background:rgba(59,130,246,.05)}
 .in .ent-scard .sbar i{width:var(--w)}
 /* == /ENTERPRISE MODE CSS == */
 
+/* ---------- business model (elevated) ---------- */
+.biz-pillars{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+@media(max-width:900px){.biz-pillars{grid-template-columns:1fr}}
+.biz-pillar{position:relative;border-radius:16px;border:1px solid var(--line);padding:26px 24px;overflow:hidden;
+  background:linear-gradient(160deg,rgba(13,27,48,.92),rgba(11,23,40,.7));box-shadow:0 24px 60px -30px rgba(0,0,0,.8);transition:transform .5s var(--ease),border-color .5s}
+.biz-pillar:hover{transform:translateY(-6px);border-color:var(--line-strong)}
+.biz-pillar::before{content:"";position:absolute;left:0;top:0;right:0;height:3px}
+.biz-pillar.rec::before{background:linear-gradient(90deg,var(--grn),transparent)}
+.biz-pillar.con::before{background:linear-gradient(90deg,var(--acc),transparent)}
+.biz-pillar.par::before{background:linear-gradient(90deg,#8ab6ff,transparent)}
+.bp-tag{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--t3)}
+.biz-pillar h4{font-size:18px;font-weight:700;margin:8px 0 14px}
+.biz-pillar ul{list-style:none;display:flex;flex-direction:column;gap:10px}
+.biz-pillar li{font-size:13px;color:var(--t2);line-height:1.5;padding-left:16px;position:relative}
+.biz-pillar li::before{content:"›";position:absolute;left:0;color:var(--acc)}
+.biz-pillar li b{color:var(--t1);font-weight:600}
+.bp-note{margin-top:16px;padding-top:12px;border-top:1px solid var(--line);font-size:11.5px;color:var(--t3);font-style:italic}
+.gtm{display:grid;grid-template-columns:1fr auto 1fr auto 1fr;gap:0;align-items:stretch}
+@media(max-width:820px){.gtm{grid-template-columns:1fr}}
+.gtm-step{border-radius:14px;border:1px solid var(--line);background:rgba(13,27,48,.72);padding:22px 22px}
+.gtm-step .gtm-k{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.2em;color:var(--acc);background:var(--acc-soft);border:1px solid var(--line-strong);padding:4px 11px;border-radius:100px;display:inline-block}
+.gtm-step h5{font-size:16px;font-weight:700;margin:12px 0 6px}
+.gtm-step p{font-size:12.5px;color:var(--t2);line-height:1.55}
+.gtm-arr{display:flex;align-items:center;justify-content:center;color:var(--acc);font-size:22px;padding:0 14px}
+@media(max-width:820px){.gtm-arr{padding:8px 0;transform:rotate(90deg)}}
+
 /* ---------- reduced motion ---------- */
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.001s!important;animation-iteration-count:1!important;transition-duration:.2s!important}
@@ -1478,8 +1504,9 @@ table.deploy-t tbody tr:hover{background:rgba(59,130,246,.05)}
       <div class="arch-boxes">
         <span class="abox"><b>Ingest</b>, sliding 3 s windows · 1 s hop · raw-mic pipeline</span>
         <span class="abox"><b>Feature bank</b>, LFCC · CQCC · group-delay phase · prosody (jitter / shimmer) · HF vocoder fingerprint · 89-dim vector</span>
-        <span class="abox"><b>Five detectors</b>, Acoustic DSP · Wav2Vec2 · XLS-R 300M · DistilHuBERT · LFCC+CQCC head</span>
-        <span class="abox hot"><b>Meta-fusion stacker</b>, learned weights · Platt calibration</span>
+        <span class="abox"><b>Five base detectors</b>, Acoustic DSP · Wav2Vec2 · XLS-R 300M · DistilHuBERT · LFCC+CQCC head</span>
+        <span class="abox"><b>6th detector</b>, Indic anti-spoof booster (fine-tuned XLS-R-300M) · language-routed · one-sided escalation</span>
+        <span class="abox hot"><b>Meta-fusion stacker</b>, learned weights · Platt calibration · Indic-aware routing</span>
         <span class="abox"><b>Decision</b>, Low / Medium / High + reason codes SSL · PH · HF · PR · BR</span>
         <span class="abox"><b>Liveness service</b>, Whisper ASR · content + liveness + timing checks</span>
       </div>
@@ -1649,16 +1676,46 @@ table.deploy-t tbody tr:hover{background:rgba(59,130,246,.05)}
 
   <div style="height:8vh"></div>
   <h3 class="sub-h" data-reveal>Business <span class="grad">model</span></h3>
-  <div class="ent-rev">
-    <div class="ent-rcard" data-reveal><div class="rt">RECURRING</div><h5>Enterprise SaaS</h5><p>Per-seat / per-line subscriptions for banks, BPOs and enterprises.</p></div>
-<div class="ent-rcard" data-reveal><div class="rt">USAGE</div><h5>API Usage Pricing</h5><p>Metered per voice-analysis call, scales with the customer's call volume.</p></div>
-<div class="ent-rcard" data-reveal><div class="rt">LICENSE</div><h5>On-Prem Licensing</h5><p>Annual license for air-gapped, self-hosted deployments (banking / defense).</p></div>
-<div class="ent-rcard" data-reveal><div class="rt">CONTRACT</div><h5>Government Contracts</h5><p>Citizen-helpline & Digital-India anti-fraud programs; multi-year tenders.</p></div>
-<div class="ent-rcard" data-reveal><div class="rt">CONTRACT</div><h5>Banking Contracts</h5><p>Fraud-desk integration alongside CNAP / caller-ID; the beachhead market.</p></div>
-<div class="ent-rcard" data-reveal><div class="rt">VERTICAL</div><h5>Healthcare & Insurance</h5><p>Telehealth doctor auth and claims-call investigation packages.</p></div>
-<div class="ent-rcard" data-reveal><div class="rt">PARTNER</div><h5>OEM Partnerships</h5><p>Embed the engine inside contact-centre / telecom platforms.</p></div>
-<div class="ent-rcard" data-reveal><div class="rt">PARTNER</div><h5>White-Label</h5><p>Rebrandable detection for MSSPs and cloud-comms vendors.</p></div>
-<div class="ent-rcard" data-reveal><div class="rt">PLATFORM</div><h5>Marketplace</h5><p>Cloud-marketplace listings (AWS / Azure) for frictionless procurement.</p></div>
+  <p class="ch-sub" data-reveal style="margin-top:0;margin-bottom:26px">A land-and-expand model with multiple, compounding revenue lines, recurring software, metered usage, multi-year enterprise and government contracts, and platform partnerships, all off one engine.</p>
+  <div class="biz-pillars">
+    <div class="biz-pillar rec" data-reveal>
+      <div class="bp-tag">① Recurring core</div>
+      <h4>Software &amp; usage</h4>
+      <ul>
+        <li><b>Enterprise SaaS</b> per-seat / per-line for banks, BPOs, enterprises</li>
+        <li><b>Usage-based API</b> metered per voice-analysis call, scales with volume</li>
+      </ul>
+      <div class="bp-note">Predictable ARR that grows with each customer's call volume.</div>
+    </div>
+    <div class="biz-pillar con" data-reveal style="--d:.1s">
+      <div class="bp-tag">② Enterprise &amp; government</div>
+      <h4>Contracts &amp; licensing</h4>
+      <ul>
+        <li><b>Banking contracts</b> fraud-desk integration alongside CNAP / caller-ID</li>
+        <li><b>Government tenders</b> citizen-helpline &amp; Digital-India anti-fraud, multi-year</li>
+        <li><b>On-prem licensing</b> air-gapped, self-hosted (banking / defence)</li>
+      </ul>
+      <div class="bp-note">High-value, sticky, procurement-friendly.</div>
+    </div>
+    <div class="biz-pillar par" data-reveal style="--d:.2s">
+      <div class="bp-tag">③ Partnerships &amp; platform</div>
+      <h4>Reach &amp; scale</h4>
+      <ul>
+        <li><b>OEM</b> embed the engine in contact-centre / telecom platforms</li>
+        <li><b>White-label</b> rebrandable detection for MSSPs and cloud-comms vendors</li>
+        <li><b>Marketplace</b> AWS / Azure listings for frictionless procurement</li>
+      </ul>
+      <div class="bp-note">Distribution without a direct sales team.</div>
+    </div>
+  </div>
+
+  <div style="height:5vh"></div>
+  <div class="gtm" data-reveal>
+    <div class="gtm-step"><div class="gtm-k">LAND</div><h5>Banking fraud desks</h5><p>The beachhead, phone banking, IVR, UPI voice, KYC. Piloted with UCO Bank and Punjab &amp; Sind Bank.</p></div>
+    <div class="gtm-arr" aria-hidden="true">→</div>
+    <div class="gtm-step"><div class="gtm-k">EXPAND</div><h5>Adjacent sectors</h5><p>The same drop-in API into government, telecom, insurance, healthcare and legal, twelve sectors.</p></div>
+    <div class="gtm-arr" aria-hidden="true">→</div>
+    <div class="gtm-step"><div class="gtm-k">SCALE</div><h5>Platform &amp; all-India</h5><p>Marketplace, white-label, and coverage toward all 22 scheduled Indian languages.</p></div>
   </div>
 
   <div style="height:8vh"></div>
