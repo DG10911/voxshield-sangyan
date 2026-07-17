@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>VoxShield · Enterprise AI Voice-Fraud Defence</title>
+<meta name="description" content="VoxShield: real-time AI voice-clone detection for Indian banking. Detection, fairness, liveness. One layered, honest defence. TRL-5.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ============================================================================
+   VoxShield · presentation_v2 · PHASE 1 (Foundation)
+   Architecture:
+     [CSS]  design tokens · background layers · glass system · sections · nav
+     [JS]   Quality (adaptive) · BG engine · Cursor · Reveal · Counters · Nav
+   Cinematic set-pieces (holographic clone, 3D pipeline, live spectrogram, SOC
+   dashboard) slot into the marked <section> hooks in Phase 2. Everything here is
+   canvas/CSS/SVG/GSAP for maximum performance; Three.js is reserved for Phase 2
+   set-pieces only, gated behind the Quality manager.
+   ========================================================================== */
+:root{
+  --bg:#050912;            /* near-black navy */
+  --bg2:#081324;
+  --panel:rgba(14,28,48,.60);
+  --panel2:rgba(10,20,36,.52);
+  --ink:#eaf2ff;
+  --t2:#93a9c8;
+  --t3:#5f7b9d;
+  --blue:#3b82f6;
+  --blue2:#8ab6ff;
+  --cyan:#22d3ee;
+  --violet:#8b5cf6;
+  --grn:#22c55e;
+  --amb:#f59e0b;
+  --red:#ef4444;
+  --line:rgba(120,170,230,.14);
+  --line2:rgba(34,211,238,.30);
+  --glass:rgba(10,20,36,.72);
+  --r:18px;
+  --sans:'Inter',system-ui,-apple-system,sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,monospace;
+  --ease:cubic-bezier(.22,1,.36,1);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+html.lenis,html.lenis body{height:auto}
+.lenis.lenis-smooth{scroll-behavior:auto}
+body{
+  background:var(--bg);color:var(--ink);font-family:var(--sans);overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;cursor:none;
+}
+@media (hover:none),(max-width:820px){body{cursor:auto}}
+::selection{background:rgba(34,211,238,.32);color:#fff}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;cursor:none;border:none;background:none;color:inherit}
+@media (hover:none),(max-width:820px){button{cursor:pointer}}
+img{max-width:100%;display:block}
+
+/* ---------- fixed background layers (all quality-tiered by JS) ---------- */
+.bg-fixed{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+#bg-canvas{position:fixed;inset:0;z-index:0;pointer-events:none}
+.aurora{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.aurora i{position:absolute;border-radius:50%;filter:blur(80px);opacity:.42;will-change:transform;transform:translateZ(0)}
+.a1{width:56vw;height:56vw;left:-16vw;top:-20vw;background:radial-gradient(circle,rgba(59,130,246,.34),transparent 66%);animation:d1 38s var(--ease) infinite alternate}
+.a2{width:48vw;height:48vw;right:-14vw;top:26vh;background:radial-gradient(circle,rgba(34,211,238,.22),transparent 66%);animation:d2 46s var(--ease) infinite alternate}
+.a3{width:44vw;height:44vw;left:28vw;bottom:-22vw;background:radial-gradient(circle,rgba(139,92,246,.18),transparent 66%);animation:d3 52s var(--ease) infinite alternate}
+@keyframes d1{to{transform:translate(8vw,6vh) scale(1.14)}}
+@keyframes d2{to{transform:translate(-7vw,-5vh) scale(1.2)}}
+@keyframes d3{to{transform:translate(5vw,-8vh) scale(1.1)}}
+/* cyber grid floor + vignette (pure CSS, free) */
+.grid-floor{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.5;
+  background:
+    linear-gradient(rgba(120,170,230,.05) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(120,170,230,.05) 1px,transparent 1px);
+  background-size:64px 64px;
+  -webkit-mask-image:radial-gradient(ellipse 92% 74% at 50% 42%,#000 26%,transparent 76%);
+          mask-image:radial-gradient(ellipse 92% 74% at 50% 42%,#000 26%,transparent 76%);}
+.noise{position:fixed;inset:0;z-index:60;pointer-events:none;opacity:.03;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
+/* quality manager can hide the heavy layers */
+body.q-low #bg-canvas{display:none}
+body.q-low .a3{display:none}
+body.q-low .noise{display:none}
+
+/* ---------- custom cursor ---------- */
+#cur-glow,#cur-dot,#cur-ring{position:fixed;top:0;left:0;pointer-events:none;will-change:transform;z-index:2000}
+#cur-glow{z-index:1;width:340px;height:340px;margin:-170px 0 0 -170px;border-radius:50%;opacity:0;
+  background:radial-gradient(circle,rgba(34,211,238,.13),transparent 66%);transition:opacity .6s}
+#cur-dot{width:9px;height:9px;margin:-4.5px 0 0 -4.5px;border-radius:50%;background:#fff;opacity:0;
+  box-shadow:0 0 0 2px rgba(5,9,18,.5),0 0 14px rgba(138,182,255,1),0 0 34px rgba(34,211,238,.8);transition:opacity .3s}
+#cur-ring{width:38px;height:38px;border-radius:50%;border:1.6px solid rgba(138,182,255,.8);opacity:0;
+  transition:border-color .25s,background .25s,box-shadow .25s,opacity .3s}
+body.cursor-on #cur-glow,body.cursor-on #cur-dot,body.cursor-on #cur-ring{opacity:1}
+#cur-ring.hot{border-color:var(--cyan);background:rgba(34,211,238,.12);box-shadow:0 0 30px -4px rgba(34,211,238,.85)}
+#cur-ring.down{background:rgba(34,211,238,.28);border-color:#dbeafe}
+@media (hover:none),(max-width:820px){#cur-glow,#cur-dot,#cur-ring{display:none}}
+
+/* ---------- loader ---------- */
+#loader{position:fixed;inset:0;z-index:1000;background:var(--bg);display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:30px;transition:opacity .9s var(--ease),filter .9s var(--ease),transform .9s var(--ease)}
+#loader.done{opacity:0;filter:blur(16px);transform:scale(1.06);pointer-events:none}
+.ldr-shield{width:104px;height:116px;position:relative;filter:drop-shadow(0 0 26px rgba(34,211,238,.5))}
+.ldr-shield svg{width:100%;height:100%;overflow:visible}
+.ldr-outline{fill:none;stroke:url(#lg);stroke-width:2.4;stroke-linejoin:round;stroke-dasharray:340;stroke-dashoffset:340;animation:draw 1.7s var(--ease) forwards .15s}
+@keyframes draw{to{stroke-dashoffset:0}}
+.ldr-scan{position:absolute;left:-12%;right:-12%;height:2px;top:0;background:linear-gradient(90deg,transparent,var(--cyan) 40%,#fff 50%,var(--cyan) 60%,transparent);
+  box-shadow:0 0 18px rgba(34,211,238,.9);animation:scan 1.9s var(--ease) infinite .2s}
+@keyframes scan{0%,100%{top:4%;opacity:0}12%,88%{opacity:1}50%{top:94%}}
+.ldr-name{font-family:var(--mono);letter-spacing:.44em;text-indent:.44em;font-size:14px;color:var(--t2);text-transform:uppercase;font-weight:700}
+.ldr-bar{width:220px;height:2px;background:rgba(120,170,230,.16);border-radius:2px;overflow:hidden;margin-top:14px}
+.ldr-bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--blue),var(--cyan));box-shadow:0 0 12px rgba(34,211,238,.8)}
+.ldr-sub{font-family:var(--mono);font-size:11px;color:var(--t3);letter-spacing:.18em;text-transform:uppercase;margin-top:12px}
+
+/* ---------- chrome ---------- */
+#progress{position:fixed;top:0;left:0;height:2px;width:0;z-index:900;background:linear-gradient(90deg,var(--blue),var(--cyan));box-shadow:0 0 12px rgba(34,211,238,.8)}
+#progress::after{content:"";position:absolute;right:0;top:-3px;width:24px;height:8px;border-radius:100px;background:radial-gradient(closest-side,#bff4ff,transparent);animation:comet 1.6s ease-in-out infinite}
+@keyframes comet{0%,100%{opacity:.6;transform:scaleX(1)}50%{opacity:1;transform:scaleX(1.6)}}
+#dots{position:fixed;right:14px;top:50%;transform:translateY(-50%);z-index:900;display:flex;flex-direction:column;gap:4px}
+#dots button{position:relative;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center}
+#dots button::before{content:"";width:8px;height:8px;border-radius:50%;background:rgba(120,170,230,.3);transition:all .35s var(--ease)}
+#dots button:hover::before{background:var(--cyan);transform:scale(1.5)}
+#dots button.on::before{background:var(--cyan);box-shadow:0 0 12px rgba(34,211,238,.9);transform:scale(1.5)}
+#dots button::after{content:attr(data-label);position:absolute;right:30px;top:50%;transform:translateY(-50%) translateX(6px);
+  font-family:var(--mono);font-size:11px;letter-spacing:.06em;color:var(--t2);white-space:nowrap;background:var(--glass);
+  border:1px solid var(--line);padding:4px 10px;border-radius:8px;opacity:0;pointer-events:none;transition:all .3s var(--ease);backdrop-filter:blur(8px)}
+#dots button:hover::after{opacity:1;transform:translateY(-50%)}
+#pagenum{position:fixed;left:24px;bottom:22px;z-index:900;font-family:var(--mono);font-size:12px;color:var(--t3);letter-spacing:.2em}
+#pagenum b{color:var(--ink)}
+#hud{position:fixed;right:20px;bottom:18px;z-index:900;font-family:var(--mono);font-size:9.5px;letter-spacing:.12em;color:var(--t3);text-align:right;opacity:.7;text-transform:uppercase}
+#hud b{color:var(--cyan)}
+@media (max-width:900px){#dots,#pagenum,#hud{display:none}}
+
+/* ---------- layout + reveal ---------- */
+main{position:relative;z-index:1}
+section{position:relative;padding:16vh 6vw;max-width:1480px;margin:0 auto}
+.eyebrow{display:inline-flex;align-items:center;gap:10px;font-family:var(--mono);font-size:12px;letter-spacing:.28em;
+  text-transform:uppercase;color:var(--cyan);margin-bottom:24px;padding:8px 16px;border:1px solid var(--line2);
+  border-radius:100px;background:rgba(34,211,238,.06);backdrop-filter:blur(8px)}
+.eyebrow::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--cyan);box-shadow:0 0 10px var(--cyan);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+h2{font-size:clamp(38px,5.4vw,80px);font-weight:800;letter-spacing:-.03em;line-height:1.02}
+.grad{background:linear-gradient(100deg,var(--blue2) 0%,var(--cyan) 55%,var(--violet) 100%);-webkit-background-clip:text;background-clip:text;color:transparent;
+  background-size:200% 100%;animation:gshift 7s ease-in-out infinite}
+@keyframes gshift{0%,100%{background-position:0 50%}50%{background-position:100% 50%}}
+.lead{margin-top:24px;font-size:clamp(16px,1.5vw,21px);line-height:1.65;color:var(--t2);max-width:760px}
+.lead b{color:var(--ink);font-weight:600}
+.mono{font-family:var(--mono)}
+.foot{font-family:var(--mono);font-size:11.5px;color:var(--t3);line-height:1.7;margin-top:28px;display:flex;gap:10px;align-items:flex-start}
+.foot::before{content:"›";color:var(--cyan);flex:none}
+[data-reveal]{opacity:0;transform:translateY(34px);filter:blur(6px);transition:opacity 1s var(--ease),transform 1s var(--ease),filter 1s var(--ease);transition-delay:var(--d,0s);will-change:opacity,transform}
+[data-reveal].in{opacity:1;transform:none;filter:none}
+body.reduce [data-reveal]{opacity:1;transform:none;filter:none}
+
+/* ---------- glass cards ---------- */
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:22px}
+.card{position:relative;border-radius:var(--r);padding:32px 28px;overflow:hidden;
+  background:linear-gradient(160deg,var(--panel),var(--panel2));border:1px solid var(--line);backdrop-filter:blur(14px);
+  box-shadow:0 24px 60px -30px rgba(0,0,0,.8),inset 0 1px 0 rgba(234,242,255,.05);
+  transition:transform .5s var(--ease),border-color .5s,box-shadow .5s;transform-style:preserve-3d}
+.card::before{content:"";position:absolute;inset:0;border-radius:inherit;opacity:0;transition:opacity .5s;pointer-events:none;
+  background:radial-gradient(420px circle at var(--mx,50%) var(--my,50%),rgba(34,211,238,.13),transparent 66%)}
+.card:hover{transform:translateY(-5px);border-color:var(--line2);box-shadow:0 34px 80px -32px rgba(0,0,0,.9),0 0 0 1px rgba(34,211,238,.14)}
+.card:hover::before{opacity:1}
+.card .ic{width:46px;height:46px;border-radius:13px;display:flex;align-items:center;justify-content:center;color:var(--cyan);
+  background:rgba(34,211,238,.1);border:1px solid var(--line2);box-shadow:0 0 24px -6px rgba(34,211,238,.5)}
+.card h3{font-size:19px;font-weight:700;margin:16px 0 10px;letter-spacing:-.01em}
+.card p{font-size:14.5px;line-height:1.7;color:var(--t2)}
+.tilt-c>*{transform:translateZ(24px)}
+
+/* ---------- hero ---------- */
+#hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding-top:12vh;max-width:none}
+#heroFx{position:absolute;inset:0;z-index:-1}
+.hero-badges{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-bottom:36px;opacity:0}
+.hero-go .hero-badges{animation:fu 1s var(--ease) forwards .3s}
+.badge{font-family:var(--mono);font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--t2);
+  padding:9px 16px;border-radius:100px;border:1px solid var(--line);background:var(--glass);backdrop-filter:blur(10px)}
+.badge.c{color:#8fe9f7;border-color:var(--line2);background:rgba(34,211,238,.06)}
+.badge.g{color:#7fe0a2;border-color:rgba(34,197,94,.4);background:rgba(34,197,94,.08)}
+.hero-title{font-size:clamp(66px,13vw,210px);font-weight:900;letter-spacing:-.045em;line-height:.92;perspective:800px}
+.hero-title .l{display:inline-block;opacity:0;transform:translateY(.5em) rotateX(45deg);filter:blur(10px)}
+.hero-go .hero-title .l{animation:lup 1.05s var(--ease) forwards;animation-delay:calc(var(--i)*.05s)}
+.letters-done .hero-title .l{animation:none;opacity:1;transform:none;filter:none}
+@keyframes lup{to{opacity:1;transform:none;filter:none}}
+.hero-title .vox{color:var(--ink)}
+.hero-title .shd .l{color:var(--lc,#3b82f6);transition:color .35s}
+.letters-done .hero-title .shd .l{color:transparent}
+.hero-title .shd{background:linear-gradient(100deg,#7cb0ff,var(--cyan) 55%,var(--violet));-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 34px rgba(34,211,238,.35))}
+.hero-sub{margin:32px auto 0;max-width:720px;font-size:clamp(17px,1.9vw,24px);line-height:1.6;color:var(--t2);opacity:0}
+.hero-go .hero-sub{animation:fu 1.1s var(--ease) forwards .8s}
+.hero-sub b{color:var(--ink);font-weight:600}
+@keyframes fu{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
+.hero-ctas{display:flex;gap:16px;justify-content:center;margin-top:42px;flex-wrap:wrap;opacity:0}
+.hero-go .hero-ctas{animation:fu 1.1s var(--ease) forwards 1.05s}
+.btn{position:relative;display:inline-flex;align-items:center;gap:10px;padding:17px 34px;border-radius:100px;font-size:15px;font-weight:600;
+  overflow:hidden;will-change:transform;transition:box-shadow .4s var(--ease),border-color .4s}
+.btn-primary{background:linear-gradient(135deg,var(--blue),var(--cyan));color:#04121b;font-weight:700;box-shadow:0 14px 40px -10px rgba(34,211,238,.55),inset 0 1px 0 rgba(255,255,255,.3)}
+.btn-primary:hover{box-shadow:0 20px 54px -10px rgba(34,211,238,.8)}
+.btn-ghost{border:1px solid var(--line2);color:var(--ink);background:var(--glass);backdrop-filter:blur(10px)}
+.btn-ghost:hover{border-color:var(--cyan)}
+.btn .sweep{position:absolute;inset:0;background:linear-gradient(105deg,transparent 30%,rgba(255,255,255,.28) 50%,transparent 70%);transform:translateX(-120%);transition:transform .8s var(--ease)}
+.btn:hover .sweep{transform:translateX(120%)}
+.hero-team{margin-top:52px;font-family:var(--mono);font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--t3);opacity:0}
+.hero-go .hero-team{animation:fu 1s var(--ease) forwards 1.25s}
+.scroll-cue{position:absolute;bottom:32px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:9px;
+  color:var(--t3);font-family:var(--mono);font-size:10px;letter-spacing:.3em;text-transform:uppercase;opacity:0}
+.hero-go .scroll-cue{animation:fu 1s forwards 1.6s}
+.scroll-cue .line{width:1px;height:42px;background:linear-gradient(180deg,var(--cyan),transparent);position:relative;overflow:hidden}
+.scroll-cue .line::after{content:"";position:absolute;left:0;top:-40%;width:100%;height:40%;background:#bff4ff;animation:cd 1.8s ease-in-out infinite}
+@keyframes cd{to{top:110%}}
+
+/* ---------- stats ---------- */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:22px}
+.stat{position:relative;border-radius:var(--r);padding:34px 28px;overflow:hidden;border:1px solid var(--line);backdrop-filter:blur(14px);
+  background:linear-gradient(165deg,var(--panel),var(--panel2));box-shadow:0 24px 60px -30px rgba(0,0,0,.8);transition:transform .5s var(--ease),border-color .5s,box-shadow .5s}
+.stat::after{content:"";position:absolute;left:0;right:40%;top:0;height:1px;background:linear-gradient(90deg,var(--cyan),transparent)}
+.stat:hover{transform:translateY(-5px);border-color:var(--line2)}
+.stat .v{font-family:var(--mono);font-size:clamp(36px,3.4vw,54px);font-weight:700;letter-spacing:-.02em;line-height:1;font-variant-numeric:tabular-nums}
+.stat .v .u{font-size:.45em;color:var(--t3);font-weight:600;margin-left:2px}
+.stat .k{margin-top:12px;font-size:13.5px;color:var(--t2);line-height:1.55}
+.stat .m{margin-top:10px;font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--t3)}
+.stat.good .v{color:var(--grn);text-shadow:0 0 34px rgba(34,197,94,.35)}
+.stat.cy .v{color:var(--cyan);text-shadow:0 0 34px rgba(34,211,238,.35)}
+.stat.bl .v{color:var(--blue2);text-shadow:0 0 34px rgba(59,130,246,.35)}
+
+/* ---------- pipeline (upgraded in Phase 2 to 3D) ---------- */
+.pipe{border-radius:22px;border:1px solid var(--line);overflow:hidden;overflow-x:auto;position:relative;
+  background:radial-gradient(1000px 500px at 50% -10%,rgba(34,211,238,.08),transparent 60%),linear-gradient(170deg,#081324,#050b16);
+  box-shadow:0 40px 100px -40px rgba(0,0,0,.9);padding:clamp(14px,3vw,40px)}
+.pipe svg{width:100%;min-width:900px;height:auto;display:block}
+.pnode{fill:rgba(12,26,46,.92);stroke:rgba(120,170,230,.28);stroke-width:1}
+.pnode.hot{stroke:rgba(34,211,238,.7);animation:breath 2.6s ease-in-out infinite}
+@keyframes breath{0%,100%{stroke-opacity:.7}50%{stroke-opacity:1}}
+.ptext{fill:var(--ink);font-family:'Inter',sans-serif;font-weight:600}
+.ptext2{fill:var(--t2);font-family:'JetBrains Mono',monospace}
+.pline{fill:none;stroke:rgba(34,211,238,.35);stroke-width:1.4;stroke-dasharray:5 7;animation:flow 1.4s linear infinite}
+@keyframes flow{to{stroke-dashoffset:-12}}
+.pdot{fill:var(--cyan);filter:drop-shadow(0 0 5px rgba(34,211,238,1))}
+
+/* ---------- chips row ---------- */
+.chips{display:flex;flex-wrap:wrap;gap:12px}
+.chip{display:flex;align-items:center;gap:12px;padding:12px 18px;border-radius:12px;border:1px solid var(--line);background:var(--glass);backdrop-filter:blur(10px);transition:border-color .4s,transform .4s var(--ease)}
+.chip:hover{border-color:var(--line2);transform:translateY(-3px)}
+.chip .code{font-family:var(--mono);font-weight:700;font-size:13px;color:var(--cyan);background:rgba(34,211,238,.1);border:1px solid var(--line2);padding:4px 9px;border-radius:7px}
+.chip .d{font-size:13px;color:var(--t2)}
+
+/* ---------- bars ---------- */
+.bars{display:flex;flex-direction:column;gap:16px}
+.brow{display:grid;grid-template-columns:210px 1fr 96px;align-items:center;gap:18px}
+@media (max-width:700px){.brow{grid-template-columns:120px 1fr 72px}}
+.brow .bl{font-size:14px;color:var(--t2);font-weight:500}
+.brow .bl small{display:block;font-family:var(--mono);font-size:10.5px;color:var(--t3);margin-top:3px}
+.brow .bv{font-family:var(--mono);font-size:14px;text-align:right;color:var(--ink);font-variant-numeric:tabular-nums}
+.btrack{height:12px;border-radius:100px;background:rgba(120,170,230,.1);overflow:hidden;position:relative;border:1px solid rgba(120,170,230,.08)}
+.bfill{height:100%;width:0;border-radius:100px;transition:width 1.5s var(--ease);transition-delay:var(--d,0s)}
+.in .bfill{width:var(--w)}
+.c-red{background:linear-gradient(90deg,#b91c1c,var(--red))}
+.c-mut{background:linear-gradient(90deg,#3f5f8f,#64809f)}
+.c-cy{background:linear-gradient(90deg,#0e7490,var(--cyan));box-shadow:0 0 18px -2px rgba(34,211,238,.6)}
+.brow.win .bl,.brow.win .bv{color:var(--cyan);font-weight:700}
+
+/* ---------- finale (3D shield upgraded in Phase 2) ---------- */
+#finale{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;max-width:none}
+.fin-shield{width:120px;height:134px;margin-bottom:40px;filter:drop-shadow(0 0 44px rgba(34,211,238,.6));animation:float 5s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
+.fin-line{font-size:clamp(30px,4.6vw,66px);font-weight:800;letter-spacing:-.03em;line-height:1.16;max-width:1100px}
+.fin-line .w1{color:var(--blue2)}.fin-line .w2{color:var(--grn)}.fin-line .w3{color:var(--amb)}
+.fin-line .rest{display:block;margin-top:16px;font-size:.5em;font-weight:600;color:var(--t2)}
+.fin-meta{margin-top:52px;display:flex;flex-direction:column;gap:12px;align-items:center}
+.fin-meta .t{font-size:17px;font-weight:700}
+.fin-meta .s{font-family:var(--mono);font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--t3);line-height:2}
+
+/* Phase-2 hook: sections reserved for cinematic set-pieces */
+.p2-hook{border:1px dashed var(--line);border-radius:var(--r);padding:26px;background:rgba(10,20,36,.4);text-align:center}
+.p2-hook .t{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--cyan)}
+.p2-hook .d{font-size:14px;color:var(--t3);margin-top:8px}
+
+/* ---------- reduced motion ---------- */
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001s!important;animation-iteration-count:1!important;transition-duration:.2s!important}
+  #loader{display:none}
+  body{cursor:auto}
+  #cur-glow,#cur-dot,#cur-ring{display:none}
+  [data-reveal]{opacity:1;transform:none;filter:none}
+  .hero-title .l,.hero-sub,.hero-ctas,.hero-badges,.hero-team,.scroll-cue{opacity:1;animation:none;transform:none;filter:none}
+}
+</style>
+</head>
+<body>
+
+<!-- ===== background layers ===== -->
+<canvas id="bg-canvas" aria-hidden="true"></canvas>
+<div class="aurora" aria-hidden="true"><i class="a1"></i><i class="a2"></i><i class="a3"></i></div>
+<div class="grid-floor" aria-hidden="true"></div>
+<div class="noise" aria-hidden="true"></div>
+
+<!-- ===== cursor ===== -->
+<div id="cur-glow" aria-hidden="true"></div>
+<div id="cur-dot" aria-hidden="true"></div>
+<div id="cur-ring" aria-hidden="true"></div>
+
+<!-- ===== chrome ===== -->
+<div id="progress" aria-hidden="true"></div>
+<nav id="dots" aria-label="Chapters"></nav>
+<div id="pagenum" aria-hidden="true"><b>01</b> / 09</div>
+<div id="hud" aria-hidden="true">QUALITY <b id="hud-q">HIGH</b> · <b id="hud-fps">60</b> FPS</div>
+
+<!-- ===== loader ===== -->
+<div id="loader" role="status" aria-label="Loading VoxShield">
+  <div class="ldr-shield">
+    <svg viewBox="0 0 64 68" aria-hidden="true">
+      <defs><linearGradient id="lg" x1="0" x2="1"><stop offset="0" stop-color="#22d3ee"/><stop offset="1" stop-color="#8b5cf6"/></linearGradient></defs>
+      <path class="ldr-outline" d="M32 3 L58 13 V33 C58 48 47 60 32 65 C17 60 6 48 6 33 V13 Z"/>
+    </svg>
+    <div class="ldr-scan"></div>
+  </div>
+  <div class="ldr-name">VoxShield</div>
+  <div class="ldr-bar"><i id="ldrBar"></i></div>
+  <div class="ldr-sub" id="ldrSub">initialising secure runtime</div>
+</div>
+
+<main>
+
+<!-- ===================== HERO ===================== -->
+<section id="hero" aria-label="VoxShield">
+  <canvas id="heroFx" aria-hidden="true"></canvas>
+  <div class="hero-badges">
+    <span class="badge c">Enterprise Voice-Fraud Defence</span>
+    <span class="badge">UCO Bank · Punjab &amp; Sind Bank · IIT Kharagpur · PS2</span>
+    <span class="badge g">● TRL-5 · Live System</span>
+  </div>
+  <h1 class="hero-title" aria-label="VoxShield">
+    <span class="vox"><span class="l" style="--i:0">V</span><span class="l" style="--i:1">o</span><span class="l" style="--i:2">x</span></span><span class="shd"><span class="l" style="--i:3;--lc:#7cb0ff">S</span><span class="l" style="--i:4;--lc:#4bb9e0">h</span><span class="l" style="--i:5;--lc:#22d3ee">i</span><span class="l" style="--i:6;--lc:#4bb9e0">e</span><span class="l" style="--i:7;--lc:#6f8bf0">l</span><span class="l" style="--i:8;--lc:#8b5cf6">d</span></span>
+  </h1>
+  <p class="hero-sub">Real-time <b>AI voice-clone detection</b> for India's voice-first banking. Six detectors, one learned brain, language fairness and challenge-response liveness, <b>flagging a fraud call in 3 seconds.</b></p>
+  <div class="hero-ctas">
+    <button class="btn btn-primary magnetic" data-goto="threat"><span class="sweep"></span>Experience the system <span aria-hidden="true">↓</span></button>
+    <button class="btn btn-ghost magnetic" data-goto="results"><span class="sweep"></span>Jump to results</button>
+  </div>
+  <div class="hero-team">Team DigiSeva · SRM Institute of Science &amp; Technology</div>
+  <div class="scroll-cue" data-goto="threat" role="button" tabindex="0" aria-label="Scroll"><span>Scroll</span><span class="line"></span></div>
+</section>
+
+<!-- ===================== 01 · THE THREAT ===================== -->
+<section id="threat" aria-label="The Threat">
+  <div data-reveal>
+    <span class="eyebrow">01 · The Threat</span>
+    <h2>Your voice is no longer <span class="grad">yours alone.</span></h2>
+    <p class="lead">Consumer voice-cloning copies a speaker from seconds of public audio. The fake sounds human, it knows the customer's name, and the bank's phone channel cannot tell the difference.</p>
+  </div>
+  <div class="cards" style="margin-top:8vh">
+    <div class="card tilt-c" data-reveal><div class="ic">◉</div><h3>Cloning is cheap and instant</h3><p>Modern text-to-speech clones a voice from a voicemail or a social clip. Cheap, public, multilingual. <span class="mono" style="font-size:11px;color:var(--t3)">Industry data</span></p></div>
+    <div class="card tilt-c" data-reveal style="--d:.12s"><div class="ic">☎</div><h3>Telephony hides the evidence</h3><p>An 8 kHz G.711 line smears exactly the high-frequency artifacts most detectors depend on. Studio-trained models go blind on a real call.</p></div>
+    <div class="card tilt-c" data-reveal style="--d:.24s"><div class="ic">⧗</div><h3>The damage happens fast</h3><p>Voice-authorised transfers act in minutes. A verdict after the call ends is forensics, not protection. Detection must happen in the first seconds.</p></div>
+  </div>
+  <p class="foot" data-reveal>Detection alone loses to a replay attack: a clone played through a speaker launders the digital artifacts. It needs layers.</p>
+  <!-- PHASE 2 HOOK: holographic AI clone face + real-vs-clone split-screen slots here -->
+  <div style="margin-top:7vh" data-reveal><div class="p2-hook"><div class="t">▣ Phase 2 · Holographic AI-Clone Reveal</div><div class="d">A wireframe deepfake face + a live Real-vs-AI waveform split-screen mount here.</div></div></div>
+</section>
+
+<!-- ===================== 02 · PIPELINE ===================== -->
+<section id="pipeline" aria-label="Detection Pipeline">
+  <div data-reveal>
+    <span class="eyebrow">02 · Real-time Pipeline</span>
+    <h2>From incoming audio <span class="grad">to a verdict in 3 seconds.</span></h2>
+    <p class="lead">Every call streams through sliding windows and a 89-dimension feature bank into six detectors, fused by a calibrated meta-brain that outputs a risk verdict with reason codes.</p>
+  </div>
+  <div class="pipe" data-reveal style="margin-top:6vh">
+    <svg viewBox="0 0 1240 360" role="img" aria-label="VoxShield pipeline: audio to windows to features to six detectors to meta-fusion to verdict">
+      <rect class="pnode hot" x="14" y="150" width="150" height="70" rx="13"/>
+      <text class="ptext" x="89" y="180" text-anchor="middle" font-size="14">Incoming call</text>
+      <text class="ptext2" x="89" y="200" text-anchor="middle" font-size="9.5">8 kHz · G.711</text>
+      <rect class="pnode" x="200" y="150" width="150" height="70" rx="13"/>
+      <text class="ptext" x="275" y="176" text-anchor="middle" font-size="13">Windowing</text>
+      <text class="ptext2" x="275" y="196" text-anchor="middle" font-size="9">3 s window · 1 s hop</text>
+      <rect class="pnode" x="386" y="140" width="164" height="90" rx="13"/>
+      <text class="ptext" x="468" y="168" text-anchor="middle" font-size="13">Feature bank</text>
+      <text class="ptext2" x="468" y="186" text-anchor="middle" font-size="8.5">LFCC · CQCC · phase</text>
+      <text class="ptext2" x="468" y="200" text-anchor="middle" font-size="8.5">prosody · 89-dim</text>
+      <path class="pline" d="M164 185 H200"/><path class="pline" d="M350 185 H386"/>
+      <path id="fa" class="pline" d="M550 185 C600 185 600 60 640 60"/>
+      <path id="fb" class="pline" d="M550 185 C600 185 600 185 640 185"/>
+      <path id="fc" class="pline" d="M550 185 C600 185 600 310 640 310"/>
+      <rect class="pnode" x="640" y="34" width="230" height="52" rx="11"/><text class="ptext" x="658" y="58" font-size="12">Wav2Vec2 · XLS-R · HuBERT</text><text class="ptext2" x="658" y="75" font-size="8.5">3 neural detectors</text>
+      <rect class="pnode" x="640" y="159" width="230" height="52" rx="11"/><text class="ptext" x="658" y="183" font-size="12">Acoustic DSP · LFCC/CQCC</text><text class="ptext2" x="658" y="200" font-size="8.5">explainable + trained head</text>
+      <rect class="pnode" x="640" y="284" width="230" height="52" rx="11"/><text class="ptext" x="658" y="308" font-size="12">Indic booster</text><text class="ptext2" x="658" y="325" font-size="8.5">6th · fine-tuned XLS-R-300M</text>
+      <path id="ba" class="pline" d="M870 60 C920 60 905 185 950 185"/>
+      <path id="bb" class="pline" d="M870 185 H950"/>
+      <path id="bc" class="pline" d="M870 310 C920 310 905 185 950 185"/>
+      <rect class="pnode hot" x="950" y="150" width="150" height="70" rx="14"/>
+      <text class="ptext" x="1025" y="178" text-anchor="middle" font-size="13">Meta-brain</text>
+      <text class="ptext2" x="1025" y="197" text-anchor="middle" font-size="9">stacker · calibrated</text>
+      <path class="pline" d="M1100 185 H1136"/>
+      <rect class="pnode hot" x="1136" y="140" width="90" height="90" rx="13"/>
+      <text class="ptext2" x="1181" y="170" text-anchor="middle" font-size="10" fill="#ef4444">HIGH</text>
+      <text class="ptext2" x="1181" y="190" text-anchor="middle" font-size="10" fill="#f59e0b">MED</text>
+      <text class="ptext2" x="1181" y="210" text-anchor="middle" font-size="10" fill="#22c55e">LOW</text>
+      <g aria-hidden="true">
+        <circle class="pdot" r="3.2"><animateMotion dur="2.4s" repeatCount="indefinite"><mpath href="#fa"/></animateMotion></circle>
+        <circle class="pdot" r="3.2"><animateMotion dur="2.4s" begin="0.6s" repeatCount="indefinite"><mpath href="#fb"/></animateMotion></circle>
+        <circle class="pdot" r="3.2"><animateMotion dur="2.4s" begin="1.2s" repeatCount="indefinite"><mpath href="#fc"/></animateMotion></circle>
+        <circle class="pdot" r="3.2" fill="#7fe0a2"><animateMotion dur="2.2s" begin="0.9s" repeatCount="indefinite"><mpath href="#ba"/></animateMotion></circle>
+        <circle class="pdot" r="3.2" fill="#7fe0a2"><animateMotion dur="2.2s" begin="1.5s" repeatCount="indefinite"><mpath href="#bc"/></animateMotion></circle>
+      </g>
+    </svg>
+  </div>
+  <p class="foot" data-reveal>Phase 2 upgrades this to an interactive 3D pipeline with live inference timers, confidence meters and packet flow. The logic and the six-detector topology are the real system.</p>
+</section>
+
+<!-- ===================== 03 · SIX MODELS ===================== -->
+<section id="models" aria-label="Six Models">
+  <div data-reveal>
+    <span class="eyebrow">03 · Six AI Models, One Brain</span>
+    <h2>Weak alone. <span class="grad">Strong together.</span></h2>
+    <p class="lead">Each detector fails differently. A learned meta-stacker trusts each exactly as much as it should, and even down-weights two of its own. The sixth is an Indic specialist that can only escalate.</p>
+  </div>
+  <div class="bars" data-reveal style="margin-top:6vh">
+    <div class="brow"><div class="bl">Wav2Vec2<small>alone</small></div><div class="btrack"><i class="bfill c-red" style="--w:96%;--d:.05s"></i></div><div class="bv">62.4% EER</div></div>
+    <div class="brow"><div class="bl">Acoustic DSP<small>alone</small></div><div class="btrack"><i class="bfill c-red" style="--w:72%;--d:.15s"></i></div><div class="bv">46.9% EER</div></div>
+    <div class="brow"><div class="bl">LFCC + CQCC head<small>alone</small></div><div class="btrack"><i class="bfill c-mut" style="--w:41%;--d:.25s"></i></div><div class="bv">26.8% EER</div></div>
+    <div class="brow"><div class="bl">DistilHuBERT<small>alone</small></div><div class="btrack"><i class="bfill c-mut" style="--w:35%;--d:.35s"></i></div><div class="bv">23.0% EER</div></div>
+    <div class="brow"><div class="bl">XLS-R 300M<small>best single</small></div><div class="btrack"><i class="bfill c-mut" style="--w:25%;--d:.45s"></i></div><div class="bv">16.0% EER</div></div>
+    <div class="brow win"><div class="bl">VoxShield meta-fusion<small>all six, stacked</small></div><div class="btrack"><i class="bfill c-cy" style="--w:9%;--d:.65s"></i></div><div class="bv">5.9% EER</div></div>
+  </div>
+  <div style="height:5vh"></div>
+  <h3 data-reveal style="font-size:20px;font-weight:700;margin-bottom:20px">The 6th detector, an Indic specialist that can only escalate</h3>
+  <div class="chips" data-reveal>
+    <div class="chip"><span class="code">ROUTE</span><span class="d">Fires <b>only on Indian-language audio</b>. English is untouched.</span></div>
+    <div class="chip"><span class="code">VETO ↑</span><span class="d">Can <b>only raise</b> a confident fake (P ≥ 0.85), never lower one.</span></div>
+    <div class="chip"><span class="code">SAFE</span><span class="d">Lifts Indic recall 42% → 82% <b>with zero new false positives</b>.</span></div>
+  </div>
+  <p class="foot" data-reveal>Equal-error-rate, lower is better, measured on held-out In-the-Wild data. Learned stacker weights: DistilHuBERT +2.22, LFCC/CQCC +2.10, XLS-R +1.21, and negative weights on the two it learned not to trust.</p>
+</section>
+
+<!-- ===================== 04 · RESULTS ===================== -->
+<section id="results" aria-label="Measured Results">
+  <div data-reveal>
+    <span class="eyebrow">04 · Measured Results</span>
+    <h2>Numbers we can <span class="grad">defend.</span></h2>
+    <p class="lead">Every figure is held-out, on clips the system never trained on. No cherry-picking, no projections dressed as measurements.</p>
+  </div>
+  <div class="stats" data-reveal style="margin-top:6vh">
+    <div class="stat cy"><div class="v"><span class="cnt" data-to="5.9" data-dec="1">0.0</span><span class="u">%</span></div><div class="k">Equal-error-rate, down from 20% for the previous fusion. A 3× error reduction.</div><div class="m">Held-out In-the-Wild</div></div>
+    <div class="stat bl"><div class="v"><span class="cnt" data-to="0.983" data-dec="3">0.000</span></div><div class="k">ROC-AUC, near-perfect ranking of fake vs genuine on unseen data.</div><div class="m">Held-out · n=320</div></div>
+    <div class="stat good"><div class="v"><span class="cnt" data-to="3.0" data-dec="1">0.0</span><span class="u">s</span></div><div class="k">Time-to-flag on a synthetic call in streaming mode, well inside the 10-second target.</div><div class="m">Verified end-to-end</div></div>
+    <div class="stat good"><div class="v"><span class="cnt" data-to="6.3" data-dec="1">0.0</span><span class="u">%</span></div><div class="k">Genuine-Indic false positives, down from 36.3% before Indic-aware retraining.</div><div class="m">IndicVoices · 10 languages</div></div>
+    <div class="stat cy"><div class="v"><span class="cnt" data-to="82" data-dec="0">0</span><span class="u">%</span></div><div class="k">Indian-language voice-clone recall, up from 42% with the Indic-aware path.</div><div class="m">Held-out · MMS-TTS Indic</div></div>
+    <div class="stat bl"><div class="v"><span class="cnt" data-to="6" data-dec="0">0</span><span class="u">models</span></div><div class="k">Decorrelated detectors fused by one learned meta-brain, calibrated output.</div><div class="m">Architecture</div></div>
+  </div>
+  <!-- PHASE 2 HOOK: SOC dashboard + explainable-AI + fraud-graph set-pieces slot here -->
+  <div style="margin-top:7vh" data-reveal><div class="p2-hook"><div class="t">▣ Phase 2 · Live SOC Dashboard · Explainable AI · Fraud Graph</div><div class="d">A real-time operations dashboard, reason-code panel and fraud-ring graph mount here.</div></div></div>
+</section>
+
+<!-- ===================== 05 · ENTERPRISE ===================== -->
+<section id="enterprise" aria-label="Enterprise">
+  <div data-reveal>
+    <span class="eyebrow">05 · Enterprise</span>
+    <h2>One platform. <span class="grad">Every voice. Every industry.</span></h2>
+    <p class="lead">The banking fraud desk is the beachhead. The same drop-in engine secures every sector where a voice must be provably human, on-premise or air-gapped, and it never auto-blocks.</p>
+  </div>
+  <div class="cards" style="margin-top:8vh">
+    <div class="card tilt-c" data-reveal><div class="ic">🛡</div><h3>On-prem &amp; air-gapped</h3><p>Docker image bakes every model in. Runs in the bank's own data centre with zero external calls. SHA-256 audit trail.</p></div>
+    <div class="card tilt-c" data-reveal style="--d:.12s"><div class="ic">⚖</div><h3>Fair for India</h3><p>Measured across 10 Indian languages, retrained Indic-aware. Genuine callers are not misread as fraud.</p></div>
+    <div class="card tilt-c" data-reveal style="--d:.24s"><div class="ic">⇢</div><h3>Never auto-block</h3><p>A layered fraud signal, not a judge. High risk routes to step-up verification. A human stays in charge.</p></div>
+  </div>
+  <p class="foot" data-reveal>Beyond banking: government helplines, telecom anti-vishing, insurance, healthcare, legal forensics, contact centres. Phase 2 adds the animated deployment architecture and world-scale map.</p>
+</section>
+
+<!-- ===================== FINALE ===================== -->
+<section id="finale" aria-label="Thank You">
+  <svg class="fin-shield" viewBox="0 0 64 68" aria-hidden="true">
+    <defs><linearGradient id="fg" x1="0" x2="1"><stop offset="0" stop-color="#22d3ee"/><stop offset="1" stop-color="#8b5cf6"/></linearGradient></defs>
+    <path d="M32 3 L58 13 V33 C58 48 47 60 32 65 C17 60 6 48 6 33 V13 Z" fill="rgba(34,211,238,.08)" stroke="url(#fg)" stroke-width="2"/>
+    <g fill="#8fe9f7"><rect x="20" y="26" width="3" height="16" rx="1.4"/><rect x="26" y="21" width="3" height="26" rx="1.4"/><rect x="32" y="27" width="3" height="14" rx="1.4"/><rect x="38" y="19" width="3" height="30" rx="1.4"/><rect x="44" y="25" width="3" height="18" rx="1.4"/></g>
+  </svg>
+  <div class="mono" data-reveal style="letter-spacing:.5em;text-indent:.5em;text-transform:uppercase;font-size:13px;color:var(--cyan);margin-bottom:26px">Thank you</div>
+  <p class="fin-line" data-reveal style="--d:.15s"><span class="w1">Detection.</span> <span class="w2">Fairness.</span> <span class="w3">Liveness.</span><span class="rest">One layered, honest defence for India's voice-first banking future.</span></p>
+  <div class="fin-meta" data-reveal style="--d:.35s">
+    <div class="t">VoxShield · Team DigiSeva</div>
+    <div class="s">SRM Institute of Science &amp; Technology · PS2 · TRL-5</div>
+  </div>
+  <!-- PHASE 2 HOOK: Three.js interactive 3D holographic shield replaces the SVG above -->
+</section>
+
+</main>
+
+<!-- CDN motion libs (progressive enhancement; the deck runs without them) -->
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
+<script>
+(function(){
+'use strict';
+var reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+if(reduced) document.body.classList.add('reduce');
+var fine = matchMedia('(hover:hover) and (pointer:fine)').matches && innerWidth>820;
+
+/* ==========================================================================
+   MODULE · Quality, adaptive quality manager (Phase-3 foundation)
+   Detects device capability, exposes flags all effects read, and auto-downgrades
+   when the measured frame-rate drops. This is what keeps the VPS/low-end smooth.
+   ========================================================================== */
+var Quality = (function(){
+  var dpr = Math.min(2, devicePixelRatio||1);
+  var cores = navigator.hardwareConcurrency || 4;
+  var mem = navigator.deviceMemory || 4;
+  var mobile = innerWidth < 820;
+  // initial tier from static hints
+  var tier = 'high';
+  if(mobile || cores<=4 || mem<=4) tier='medium';
+  if(cores<=2 || mem<=2) tier='low';
+  if(reduced) tier='low';
+  var flags = {};
+  function apply(t){
+    tier=t;
+    flags = {
+      high:   {particles: mobile?60:150, dpr: Math.min(2,dpr), heroField:true, bloom:true},
+      medium: {particles: mobile?40:90,  dpr: Math.min(1.5,dpr), heroField:true, bloom:false},
+      low:    {particles: 0, dpr: 1, heroField:false, bloom:false}
+    }[t];
+    document.body.classList.toggle('q-low', t==='low');
+    var el=document.getElementById('hud-q'); if(el) el.textContent=t.toUpperCase();
+  }
+  apply(tier);
+  // live FPS probe → downgrade if sustained low
+  var last=performance.now(), frames=0, acc=0, lowStreak=0, cur=tier;
+  function tick(now){
+    frames++; acc+=now-last; last=now;
+    if(acc>=1000){
+      var fps=Math.round(frames*1000/acc); frames=0; acc=0;
+      var h=document.getElementById('hud-fps'); if(h) h.textContent=fps;
+      if(fps<42){ lowStreak++; } else { lowStreak=0; }
+      if(lowStreak>=3 && cur!=='low'){ cur = cur==='high'?'medium':'low'; apply(cur); lowStreak=0; }
+    }
+    requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+  return { get tier(){return tier;}, get f(){return flags;}, mobile:mobile };
+})();
+
+/* ==========================================================================
+   MODULE · SmoothScroll (Lenis, optional) + goto helper
+   ========================================================================== */
+var lenis=null;
+try{
+  if(!reduced && typeof Lenis==='function' && Quality.tier!=='low'){
+    lenis = new Lenis({lerp:0.12, wheelMultiplier:1.05});
+    (function raf(t){ lenis.raf(t); requestAnimationFrame(raf); })(0);
+  }
+}catch(e){}
+function goto(el){ if(!el) return; lenis ? lenis.scrollTo(el,{duration:1.3}) : el.scrollIntoView({behavior:reduced?'auto':'smooth'}); }
+document.querySelectorAll('[data-goto]').forEach(function(b){
+  function g(){ goto(document.getElementById(b.getAttribute('data-goto'))); }
+  b.addEventListener('click',g);
+  b.addEventListener('keydown',function(e){ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); g(); }});
+});
+
+/* ==========================================================================
+   MODULE · Loader → hero intro
+   ========================================================================== */
+(function(){
+  var loader=document.getElementById('loader'), bar=document.getElementById('ldrBar'), sub=document.getElementById('ldrSub');
+  var subs=['initialising secure runtime','loading detector ensemble','warming meta-fusion','arming liveness','ready'];
+  var done=false;
+  function finish(){ if(done)return; done=true; loader.classList.add('done'); document.body.classList.add('hero-go');
+    setTimeout(function(){loader.style.display='none';},1000);
+    setTimeout(function(){document.body.classList.add('letters-done');},1900); }
+  if(reduced){ loader.style.display='none'; document.body.classList.add('hero-go','letters-done'); return; }
+  var t0=performance.now(), DUR=1900;
+  (function tick(now){
+    var p=Math.min(1,(now-t0)/DUR), e=1-Math.pow(1-p,3);
+    bar.style.width=(e*100)+'%'; sub.textContent=subs[Math.min(subs.length-1,Math.floor(p*subs.length))];
+    if(p<1) requestAnimationFrame(tick); else setTimeout(finish,160);
+  })(t0);
+  setTimeout(finish,4200);
+})();
+
+/* ==========================================================================
+   MODULE · Cursor (magnetic, snaps onto targets)
+   ========================================================================== */
+if(fine && !reduced){
+  var dot=document.getElementById('cur-dot'), ring=document.getElementById('cur-ring'), glow=document.getElementById('cur-glow');
+  var SEL='button,a,[data-goto],.chip,.card,.stat';
+  var mx=innerWidth/2,my=innerHeight/2,gx=mx,gy=my,rX=mx-19,rY=my-19,rW=38,rH=38,rR=19,snap=null,down=false;
+  addEventListener('mousemove',function(e){ mx=e.clientX; my=e.clientY;
+    dot.style.transform='translate('+mx+'px,'+my+'px)'+(down?' scale(1.9)':'');
+    if(!document.body.classList.contains('cursor-on')) document.body.classList.add('cursor-on'); },{passive:true});
+  document.addEventListener('mouseover',function(e){ var t=e.target.closest(SEL); if(t){snap=t; ring.classList.add('hot');} });
+  document.addEventListener('mouseout',function(e){ var t=e.target.closest(SEL); if(t&&snap===t){snap=null; ring.classList.remove('hot');} });
+  addEventListener('mousedown',function(){ down=true; ring.classList.add('down'); });
+  addEventListener('mouseup',function(){ down=false; ring.classList.remove('down'); });
+  (function loop(){
+    var tx,ty,tw,th,tr;
+    if(snap && document.contains(snap)){
+      var b=snap.getBoundingClientRect();
+      if(b.width>420||b.height>200){ tx=mx-30;ty=my-30;tw=60;th=60;tr=30; }
+      else{ var pad=6; tx=b.left-pad;ty=b.top-pad;tw=b.width+pad*2;th=b.height+pad*2;
+        var br=getComputedStyle(snap).borderRadius; tr=parseFloat(br)||0;
+        if(!tr||br.indexOf('%')>-1) tr=Math.min(tw,th)/2; else tr=Math.min(tr+pad,Math.min(tw,th)/2); }
+    } else { tx=mx-19;ty=my-19;tw=38;th=38;tr=19; }
+    var k=snap?0.42:0.32;
+    rX+=(tx-rX)*k; rY+=(ty-rY)*k; rW+=(tw-rW)*k; rH+=(th-rH)*k; rR+=(tr-rR)*k;
+    ring.style.transform='translate('+rX+'px,'+rY+'px)'+(down?' scale(.94)':''); ring.style.width=rW+'px'; ring.style.height=rH+'px'; ring.style.borderRadius=rR+'px';
+    gx+=(mx-gx)*0.08; gy+=(my-gy)*0.08; glow.style.transform='translate('+gx+'px,'+gy+'px)';
+    requestAnimationFrame(loop);
+  })();
+}else{ ['cur-dot','cur-ring','cur-glow'].forEach(function(id){var e=document.getElementById(id); if(e)e.style.display='none';}); }
+
+/* magnetic buttons */
+if(fine && !reduced) document.querySelectorAll('.magnetic').forEach(function(btn){
+  btn.addEventListener('mousemove',function(e){ var r=btn.getBoundingClientRect(); btn.style.transform='translate('+(e.clientX-(r.left+r.width/2))*0.18+'px,'+(e.clientY-(r.top+r.height/2))*0.28+'px)'; });
+  btn.addEventListener('mouseleave',function(){ btn.style.transition='transform .5s var(--ease)'; btn.style.transform=''; setTimeout(function(){btn.style.transition='';},500); });
+});
+
+/* ==========================================================================
+   MODULE · Reveal + Counters (IntersectionObserver)
+   ========================================================================== */
+(function(){
+  if(!('IntersectionObserver' in window)){ document.querySelectorAll('[data-reveal]').forEach(function(e){e.classList.add('in');}); return; }
+  var io=new IntersectionObserver(function(es){ es.forEach(function(en){ if(en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); } }); },{threshold:0.18,rootMargin:'0px 0px -6% 0px'});
+  document.querySelectorAll('[data-reveal]').forEach(function(e){ io.observe(e); });
+})();
+(function(){
+  function anim(el){ var to=parseFloat(el.dataset.to), dec=parseInt(el.dataset.dec||'0',10);
+    if(reduced){ el.textContent=to.toFixed(dec); return; }
+    var t0=null,DUR=1600; (function s(now){ if(!t0)t0=now; var p=Math.min(1,(now-t0)/DUR),e=1-Math.pow(1-p,3); el.textContent=(to*e).toFixed(dec); if(p<1)requestAnimationFrame(s); })(); }
+  if(!('IntersectionObserver' in window)){ document.querySelectorAll('.cnt').forEach(anim); return; }
+  var io=new IntersectionObserver(function(es){ es.forEach(function(en){ if(en.isIntersecting){ anim(en.target); io.unobserve(en.target); } }); },{threshold:0.6});
+  document.querySelectorAll('.cnt').forEach(function(e){ io.observe(e); });
+})();
+
+/* card tilt + cursor light */
+if(fine && !reduced) document.querySelectorAll('.card,.stat').forEach(function(el){
+  var raf=null;
+  el.addEventListener('mousemove',function(e){ var r=el.getBoundingClientRect(),px=(e.clientX-r.left)/r.width,py=(e.clientY-r.top)/r.height;
+    el.style.setProperty('--mx',(px*100)+'%'); el.style.setProperty('--my',(py*100)+'%');
+    if(raf)return; raf=requestAnimationFrame(function(){ raf=null; el.style.transform='perspective(1100px) rotateX('+((0.5-py)*5)+'deg) rotateY('+((px-0.5)*5)+'deg) translateY(-5px)'; }); });
+  el.addEventListener('mouseleave',function(){ el.style.transition='transform .6s var(--ease)'; el.style.transform=''; setTimeout(function(){el.style.transition='';},600); });
+});
+
+/* ==========================================================================
+   MODULE · Nav (progress · dots · keyboard · section tracking)
+   ========================================================================== */
+var chapters=['hero','threat','pipeline','models','results','enterprise','finale'];
+var labels=['VoxShield','01 · Threat','02 · Pipeline','03 · Six Models','04 · Results','05 · Enterprise','Thank You'];
+var dotsNav=document.getElementById('dots'), pagenum=document.getElementById('pagenum'), current=0;
+chapters.forEach(function(id,i){ var b=document.createElement('button'); b.setAttribute('data-label',labels[i]); b.setAttribute('aria-label',labels[i]);
+  b.addEventListener('click',function(){ goto(document.getElementById(id)); }); dotsNav.appendChild(b); });
+var dotBtns=dotsNav.querySelectorAll('button');
+function setCur(i){ if(i<0)return; current=i; dotBtns.forEach(function(d,j){ d.classList.toggle('on',j===i); });
+  pagenum.innerHTML='<b>'+String(i+1).padStart(2,'0')+'</b> / '+String(chapters.length).padStart(2,'0'); }
+setCur(0);
+if('IntersectionObserver' in window){
+  var sio=new IntersectionObserver(function(es){ es.forEach(function(en){ if(en.isIntersecting) setCur(chapters.indexOf(en.target.id)); }); },{rootMargin:'-45% 0px -45% 0px'});
+  chapters.forEach(function(id){ var el=document.getElementById(id); if(el) sio.observe(el); });
+}
+addEventListener('keydown',function(e){ if(e.target.matches('input,textarea'))return; var k=e.key;
+  if(k==='ArrowDown'||k==='ArrowRight'||k==='PageDown'){ e.preventDefault(); goto(document.getElementById(chapters[Math.min(chapters.length-1,current+1)])); }
+  else if(k==='ArrowUp'||k==='ArrowLeft'||k==='PageUp'){ e.preventDefault(); goto(document.getElementById(chapters[Math.max(0,current-1)])); }
+  else if(k==='Home'){ e.preventDefault(); goto(document.getElementById(chapters[0])); }
+  else if(k==='End'){ e.preventDefault(); goto(document.getElementById(chapters[chapters.length-1])); } });
+var prog=document.getElementById('progress'),ticking=false;
+addEventListener('scroll',function(){ if(ticking)return; ticking=true; requestAnimationFrame(function(){ ticking=false;
+  var max=document.documentElement.scrollHeight-innerHeight; prog.style.width=(max>0?(scrollY/max)*100:0)+'%'; }); },{passive:true});
+
+/* ==========================================================================
+   MODULE · BG engine, page starfield (quality-tiered)
+   ========================================================================== */
+(function(){
+  var cv=document.getElementById('bg-canvas'); if(!cv) return;
+  var ctx=cv.getContext('2d'), DPR=Quality.f.dpr, stars=[];
+  function size(){ cv.width=innerWidth*DPR; cv.height=innerHeight*DPR; cv.style.width=innerWidth+'px'; cv.style.height=innerHeight+'px'; }
+  size(); addEventListener('resize',size);
+  function seed(){ stars=[]; var N=Quality.f.particles; for(var i=0;i<N;i++) stars.push({x:Math.random(),y:Math.random(),r:Math.random()*1.2+.3,tw:Math.random()*6.28,sp:Math.random()*.4+.12,dr:Math.random()*.00012+.00003}); }
+  seed();
+  var t=0, reseedAt=0;
+  function draw(){
+    if(document.hidden || Quality.f.particles===0){ requestAnimationFrame(draw); return; }
+    if(stars.length!==Quality.f.particles && performance.now()>reseedAt){ seed(); reseedAt=performance.now()+500; }
+    t+=0.016; ctx.clearRect(0,0,cv.width,cv.height);
+    for(var i=0;i<stars.length;i++){ var s=stars[i]; s.y-=s.dr; if(s.y<-0.02)s.y=1.02;
+      var a=0.22+Math.abs(Math.sin(t*s.sp+s.tw))*0.5; ctx.globalAlpha=a; ctx.fillStyle=i%7===0?'#7fe9f7':'#9cc0ef';
+      ctx.beginPath(); ctx.arc(s.x*cv.width,s.y*cv.height,s.r*DPR,0,7); ctx.fill(); }
+    ctx.globalAlpha=1; requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* ==========================================================================
+   MODULE · Hero audio-field (cursor-reactive particle waveform, tiered)
+   ========================================================================== */
+(function(){
+  var cv=document.getElementById('heroFx'); if(!cv) return;
+  var ctx=cv.getContext('2d'), DPR=Quality.f.dpr, W,H,cols;
+  function size(){ var r=cv.parentElement.getBoundingClientRect(); W=r.width; H=r.height; cv.width=W*DPR; cv.height=H*DPR;
+    cv.style.width=W+'px'; cv.style.height=H+'px'; ctx.setTransform(DPR,0,0,DPR,0,0); cols=Math.floor(W/(Quality.mobile?18:13)); }
+  size(); addEventListener('resize',size);
+  var mouse={x:-9999,y:-9999};
+  addEventListener('mousemove',function(e){ var r=cv.getBoundingClientRect(); mouse.x=e.clientX-r.left; mouse.y=e.clientY-r.top; },{passive:true});
+  var t=0;
+  function frame(){
+    if(!Quality.f.heroField || document.hidden){ requestAnimationFrame(frame); return; }
+    t+=0.014; ctx.clearRect(0,0,W,H); var rows=Quality.mobile?5:7, cy=H*0.62;
+    for(var i=0;i<=cols;i++){ var x=(i/cols)*W, env=Math.sin(Math.PI*i/cols);
+      var base=Math.sin(i*0.32+t*2.1)*32*env + Math.sin(i*0.11-t*1.3)*50*env + Math.sin(i*0.045+t*0.6)*24*env;
+      var dx=x-mouse.x,dyc=cy-mouse.y, push=Math.exp(-(dx*dx+dyc*dyc)/26000)*58;
+      for(var r2=0;r2<rows;r2++){ var depth=1-Math.abs(r2-(rows-1)/2)/((rows+1)/2);
+        var y=cy+base*(0.45+depth*0.55)+(r2-(rows-1)/2)*13-push*depth, rad=0.9+depth*1.5;
+        var al=0.10+depth*0.5*(0.55+0.45*Math.abs(Math.sin(i*0.32+t*2.1)));
+        if(depth>0.5 && Quality.f.bloom){ ctx.globalAlpha=al*0.26; ctx.fillStyle='#22d3ee'; ctx.beginPath(); ctx.arc(x,y,rad*3,0,7); ctx.fill(); }
+        ctx.globalAlpha=al; ctx.fillStyle=depth>0.75?'#bff4ff':'#5fb8e6'; ctx.beginPath(); ctx.arc(x,y,rad,0,7); ctx.fill(); } }
+    ctx.globalAlpha=1; requestAnimationFrame(frame);
+  }
+  frame();
+})();
+
+/* ==========================================================================
+   MODULE · GSAP polish (optional enhancement layer)
+   ========================================================================== */
+try{
+  if(!reduced && typeof gsap!=='undefined' && typeof ScrollTrigger!=='undefined' && Quality.tier!=='low'){
+    gsap.registerPlugin(ScrollTrigger);
+    if(lenis) lenis.on('scroll',ScrollTrigger.update);
+    gsap.to('.hero-title,.hero-sub',{yPercent:-12,opacity:.3,filter:'blur(6px)',ease:'none',scrollTrigger:{trigger:'#hero',start:'top top',end:'bottom top',scrub:true}});
+    document.querySelectorAll('.pipe,.bars,.stats').forEach(function(el){ gsap.from(el,{y:40,ease:'none',scrollTrigger:{trigger:el,start:'top bottom',end:'top 60%',scrub:true}}); });
+  }
+}catch(e){}
+})();
+</script>
+</body>
+</html>
