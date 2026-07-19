@@ -33,6 +33,36 @@
 
 ## 2. Slide-by-slide talk track
 
+### Prologue · One Call. One Approval. One Invisible Fraud.
+
+*(This is the cold open. Deliver it slowly, let the balance drop land, then move into the problem. The deck's Prologue section mirrors this beat for beat.)*
+
+> Good morning, respected judges. We are Team DigiSeva from SRM Institute of Science and Technology.
+>
+> For the next twelve minutes, we would like to tell you a story. Because the problem we are solving does not begin with AI models or algorithms. It begins with a phone call.
+>
+> Our project is VoxShield, a real-time AI voice-clone detection platform designed for Indian banking. By combining six complementary detectors, a learned fusion model, language-aware fairness, and challenge-response liveness, VoxShield helps identify high-risk voice impersonation attempts within the first ten seconds of a call.
+>
+> Let us show you why that matters.
+>
+> It is 10 a.m. A customer service representative at a bank receives an incoming call. The caller sounds calm, confident, and familiar. They know the customer's name, account information, and recent transaction history. They correctly answer the identity verification questions asked by the agent.
+>
+> For the particular request they are making, the bank follows its normal verification process. If additional verification such as an OTP is required, the attacker has already obtained it through social engineering or another compromise. From the agent's perspective, every required check has been satisfied. The request is approved.
+>
+> A few minutes later, the real customer opens the banking app. Their balance has dropped from ₹8,47,000 to ₹97,000. They immediately call the bank and say: "I never made that call."
+>
+> What happened? No banking server was hacked. No malware broke into the bank. No insider transferred the money. Instead, the attacker combined stolen personal information, social engineering, and an AI-generated clone of the customer's voice to convincingly impersonate the customer throughout the verification process.
+>
+> This is the key point: voice cloning does not replace existing banking security. It strengthens an impersonation attack by making the fraudster sound exactly like the genuine customer. As AI voice synthesis becomes increasingly realistic, a familiar voice is no longer sufficient evidence that the caller is genuine.
+>
+> That is exactly the gap VoxShield is designed to help close. Instead of relying only on what the caller knows or how convincing they sound, VoxShield provides the bank with an independent, AI-powered assessment of whether the voice itself appears genuine or synthetically generated, enabling high-risk calls to be routed for additional verification before money moves.
+
+**Judge-proofing this open (if pressed):**
+- *"But OTP would stop this."* Correct in isolation, which is why we say the voice does not replace 2FA, it strengthens social engineering. If the attacker has already phished the OTP, the voice is what makes the whole call believable to the agent. VoxShield adds a check the attacker cannot phish: the acoustic authenticity of the voice itself.
+- *"So you are not claiming to bypass all security?"* No. We are honest: we add an independent, explainable signal on the one thing that used to be trusted automatically, the voice, and we route high-risk calls to step-up. We never auto-block.
+
+---
+
 ### Ch 1 · The Threat — *"Your voice is no longer yours alone."*
 - Consumer tools clone a speaker from **seconds** of audio — a voicemail, a social post. Cheap, public, multilingual.
 - Three forces make it a bank problem: (1) clones sound human and *know the customer's name*; (2) **telephony hides the evidence** — 8 kHz G.711 smears the exact high-frequency artifacts most detectors rely on; (3) **the damage is fast** — voice-authorised transfers act in minutes. *A verdict after the call ends is forensics, not protection.*
