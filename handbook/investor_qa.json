@@ -1,0 +1,402 @@
+[
+  {
+    "q": "Why now for voice-clone fraud detection in India specifically — what changed?",
+    "a": "Open-source and API voice cloners (ElevenLabs-class, Tacotron TTS) crossed the quality threshold where a few seconds of a target's audio produces a convincing clone, and India runs the world's highest volume of voice-first banking (IVR, phone-banking, UPI support lines). Our corpus already contains ElevenLabs and Tacotron-TTS as attribution classes because these are the generators we see. The attack surface is voice, not just text, and India's fraud channels are disproportionately phone-based, which is exactly where our narrowband (phone) detection path is tuned."
+  },
+  {
+    "q": "How large is the actual serviceable market versus the addressable one you put on slides?",
+    "a": "We are honest that the 12-sector expansion is a TARGET, not a served market — today the validated system (TRL-5) is aimed at banking-fraud voice channels. The near-term wedge is Indian bank and NBFC phone/IVR fraud triage, and the broader 12 verticals (insurance, telecom, gov helplines, etc.) are addressable but unproven by us. We do not claim revenue or deployed customers; the credible market claim is the banking voice-fraud triage layer where our Indic-language edge is defensible."
+  },
+  {
+    "q": "What's the wedge — why start with banks rather than a horizontal API?",
+    "a": "Banks have the acute pain (Digital Arrest scams, KYC-voice fraud), the budget, and a regulatory push from RBI, and they operate the phone channels our narrowband thresholds (HIGH 0.85 / MED 0.55) are calibrated for. Our Digital Arrest Shield feature — a scam-intent and stage tracker (Authority→Threat→Isolation→Extraction) in English/Hindi/Hinglish — is purpose-built for the exact scam typology hitting Indian bank customers. A horizontal API would dilute the Indic-language and phone-channel advantages that are our real differentiation."
+  },
+  {
+    "q": "Isn't deepfake-audio detection a feature, not a company?",
+    "a": "The commodity part is a single deepfake classifier; the company is the system around it — five-detector meta-fusion, channel-aware thresholds, Indic-language routing, calibrated confidence, SHAP reason codes, source attribution, fraud-ring linkage, and a scam-intent tracker. That integration and the Indian-language fairness work is where the defensibility lives, not in any one model. A bank cannot buy this stack off the shelf, and a single-model vendor cannot match our 6.3% Indic false-positive rate without redoing the routing and calibration work."
+  },
+  {
+    "q": "Why won't a bank just build this in-house with their own ML team?",
+    "a": "They can build a classifier; the hard part is the fairness and calibration work — getting Indic-language clean false positives from 11.7% down to 6.3% and fake recall from 42% to 82% via language-ID routing without moving English EER off 5.9%. That required per-language evaluation across ten Indian languages and a channel-aware threshold design most bank ML teams have neither the data nor the incentive to reproduce. In-house teams also underestimate the productionization gap that we are candid is still ahead of us (auth, persistence, scale)."
+  },
+  {
+    "q": "What is the actual moat if the underlying models are public Hugging Face weights?",
+    "a": "The moat is the fusion and calibration layer, not the weights: the best single public model (XLS-R) sits at 16.0% EER, while our learned meta-stacker reaches 5.9% — a 10-point improvement that no single downloaded model gives you. On top sit the learned stacker weights, Platt calibration (a:6.446, b:-3.151), the recall-floor gate, Indic routing weights, and channel-aware thresholds, all fit on our evaluation data. Anyone can download the same five models and will still land near 16-19% EER without our stacking and calibration."
+  },
+  {
+    "q": "How durable is a fusion advantage — can't a competitor just copy your ensemble recipe?",
+    "a": "The recipe is only valuable with the data and calibration behind it; our stacker weights, Platt parameters, and Indic routing weights are fit to our labeled corpus and per-language evaluation, which a competitor does not have. More importantly the moat compounds: as we pilot on recorded IVR traffic (our stated TRL-6 step), the calibration and routing improve on real Indian channel data a generic competitor can't access. The ensemble architecture is copyable; the fitted parameters and the Indic evaluation discipline are the durable part."
+  },
+  {
+    "q": "Every deepfake vendor claims 99% accuracy — why should I believe your numbers?",
+    "a": "We deliberately report EER (5.9%) and t-DCF (0.252), not a single cherry-picked accuracy, because accuracy hides the false-positive tradeoff that actually matters to a bank. Every headline number ties to a committed artifact (meta_eval.json, calibration.json) and a held-out In-the-Wild test set, and we openly disclose that calibration did NOT lower our ECE (0.044 calibrated vs 0.031 uncalibrated). A vendor quoting 99% accuracy without an EER, a t-DCF, or a false-positive breakdown is hiding the number banks care about most."
+  },
+  {
+    "q": "How do you compare against ElevenLabs' or Pindrop's own detectors?",
+    "a": "We don't have a head-to-head benchmark against commercial APIs and won't pretend to — our validated claim is on our held-out corpus. Our structural differentiators are Indic-language fairness (6.3% clean FP across ten Indian languages) and phone-channel calibration, which US-centric commercial detectors are not tuned for. The honest framing to a buyer is that we compete on Indian-language and phone-channel performance plus explainability, not on out-marketing a large API's raw English accuracy."
+  },
+  {
+    "q": "What stops ElevenLabs from shipping a detector and bundling it free?",
+    "a": "A generator vendor bundling a detector has a conflict of interest and, more practically, no incentive to tune for Indian languages and Indian phone channels where our edge lives. Our value is not detecting one vendor's outputs but generalizing across ElevenLabs, Tacotron, and in-the-wild clones with calibrated confidence and reason codes a bank compliance team can act on. Bundled free detectors also won't carry the Digital Arrest Shield scam-intent tracker, which is India-specific fraud tooling, not generic deepfake scoring."
+  },
+  {
+    "q": "Your best single detector is 16% EER but fusion is 5.9% — walk me through why fusion works.",
+    "a": "The five detectors make different errors: XLS-R is strong (16.0% EER) but the DSP heuristic (47.4%) and the weak wav2vec2-base (62.0%) contribute negatively-weighted signal (w=-0.55 and w=-1.17) that the logistic stacker uses as corrective evidence. The learned weights (DistilHuBERT +2.22, LFCC/CQCC head +2.10, XLS-R +1.21) plus a bias and Platt calibration combine complementary strengths, and a simple average alone only reaches 19.1% EER — so the learned stacking, not mere averaging, drives the gain to 5.9%."
+  },
+  {
+    "q": "Why is a pure-DSP detector with 47% EER even in your ensemble?",
+    "a": "Because the stacker uses it as negatively-weighted evidence (w=-0.55), not as a standalone predictor — a DSP heuristic that is wrong on average can still carry corrective signal about channel and prosody artifacts that the neural models miss. The same logic applies to the wav2vec2-base detector at 62% EER with w=-1.17: the stacker learns to subtract its bias. Removing them and averaging the good models only would leave us near 19.1% EER, so the weak detectors earn their place through the learned combination."
+  },
+  {
+    "q": "What is your explainability story and why does it matter to a bank buyer?",
+    "a": "We compute closed-form EXACT SHAP for the logistic head — phi_i = (w_i/sd_i)(x_i - mu_i) in logit space, summing to the final logit minus base logit — so every verdict comes with reason codes, no external shap dependency, and no approximation. For a bank, an unexplained block is a compliance and customer-experience risk; a scored verdict with contributing features and a SHA-256 audit reference is something a fraud analyst can defend. This is a concrete differentiator over black-box commercial scores."
+  },
+  {
+    "q": "What are your unit economics per call today, honestly?",
+    "a": "Today inference is CPU-bound: the Docker image ships CPU torch with no CUDA/MPS, so a call runs the five detectors concurrently in a ThreadPoolExecutor at roughly 3-8s CPU latency, with GPU sub-second only if hardware were added. Cost per call is therefore CPU-seconds on a general instance, which is cheap per unit but does not yet benefit from GPU batching (we process one clip at a time). We are candid that per-call cost at scale depends on batching and multi-worker work that is roadmap, not built."
+  },
+  {
+    "q": "How should we think about gross margin at scale?",
+    "a": "Margin is a function of inference cost, and today we have no GPU batching and a single-process deployment, so unoptimized CPU inference sets a floor rather than a best case. The clear margin levers are on the roadmap: GPU batching, multi-worker horizontal scale, and a containerized queue, each of which cuts cost-per-call materially versus the current one-clip-at-a-time path. We would rather show you an honest unoptimized baseline than a projected 90% gross margin we haven't earned yet."
+  },
+  {
+    "q": "What's your pricing model and is it per-call, per-seat, or platform?",
+    "a": "We have not committed a public price and won't invent one; the natural model for a fraud-triage layer is per-call or per-minute-of-audio analyzed, aligned to the CPU/GPU cost driver. A bank pilot on recorded IVR traffic (our TRL-6 step) is what will calibrate willingness-to-pay against fraud-loss avoided. We are being disciplined not to quote ARPU or contract values we cannot yet substantiate."
+  },
+  {
+    "q": "What does it cost to serve 10 million calls a month on today's architecture?",
+    "a": "On today's single-process, CPU-only, one-clip-at-a-time path, 10M calls is not something the current deployment can serve — it would require the multi-worker, GPU-batched, queued architecture on our roadmap. The honest engineering answer is that we have a load simulator (simulate_load.py) proving concurrent handling on a single box but no horizontal scale-out yet. Serving 10M/month is a solved problem in principle (batch on GPU, shard workers) but it is unbuilt, so any cost figure I gave you would be a projection, not a measurement."
+  },
+  {
+    "q": "GPU or CPU — which are you betting on for cost at scale?",
+    "a": "Our deployed inference is CPU (Docker ships CPU torch, transformers default device is effectively CPU), which keeps infra simple but leaves throughput on the table. The economic bet at scale is GPU batching — GPU inference is sub-second versus 3-8s on CPU — combined with worker sharding, which is exactly the roadmap item for cost reduction. We are transparent that this optimization is not yet implemented, so today's cost profile is CPU-per-call, not the batched-GPU profile we'd operate at volume."
+  },
+  {
+    "q": "Your latency is 3-8s on CPU — isn't that too slow for real-time call blocking?",
+    "a": "We never auto-block; a HIGH verdict triggers a human step-up, so the operative latency target is our streaming time-to-flag of 3.0 seconds, which met the under-10s target on 5/5 test clips. For streaming we analyze in 3.0s windows with 1.0s hops and fast-flag on any single window >=0.85, so the system raises a flag mid-call rather than waiting for the full recording. GPU would take per-window inference sub-second; the 3.0s flag is the number that matters operationally, not the full-file CPU time."
+  },
+  {
+    "q": "Walk me through PSU-bank procurement — how long and how painful?",
+    "a": "PSU procurement is long (empanelment, security review, POC, tender) and we treat it as a multi-quarter cycle, not a bottoms-up SaaS motion. The gating factors will be exactly our known gaps — auth, persistence, encryption-at-rest, and a security posture — which are on the roadmap and which a PSU security review will demand before production. Our credible near-term path is a pilot on recorded (non-live) IVR traffic where the missing production controls are less blocking, then hardening for a full deployment."
+  },
+  {
+    "q": "Who is the economic buyer inside a bank and what's their KPI?",
+    "a": "The buyer is the fraud-risk or CISO organization whose KPI is fraud loss avoided and customer-friction minimized, which is why our calibrated, explainable, low-false-positive design targets their exact tradeoff. The 6.3% Indic clean false-positive rate directly addresses their fear of blocking genuine customers, and the SHAP reason codes plus SHA-256 audit give their compliance team something defensible. We sell to the person accountable for both fraud losses and wrongful-block complaints."
+  },
+  {
+    "q": "How do you get past a bank's InfoSec review given you have no auth today?",
+    "a": "We don't pretend to pass it today — all endpoints are currently open with no auth, no CORS, no rate-limiting, and no RBAC, and that is a hard blocker for production bank deployment. The mitigation is sequencing: a recorded-traffic pilot in a controlled environment first, while we build the roadmap controls (API keys/JWT, rate-limiting, CORS, RBAC, persistence, encryption-at-rest). We'd rather name this gap directly than have a CISO discover it in a pen test."
+  },
+  {
+    "q": "The fairness-as-moat thesis — explain why Indic false-positive rates are a business moat, not just an ethics slide.",
+    "a": "In India a false positive means blocking a genuine customer in their own language, which is both a churn event and a regulatory-fairness risk, so a detector that flags Telugu or Malayalam speakers as fake is commercially unusable. We cut Indic clean false positives from 11.7% to 6.3% with channel-aware thresholds and lifted Indic fake recall from 42% to 82% via language-ID routing while holding English EER at 5.9%. That per-language calibration is data-and-effort-intensive to reproduce, so fairness is simultaneously the ethical story and the switching-cost moat."
+  },
+  {
+    "q": "Your Telugu false-positive rate is still 13.3% — isn't that a fairness failure you're spinning?",
+    "a": "It is our weakest language and we report it plainly: Telugu clean FP is 13.3%, Hindi and Malayalam 10.0%, versus Marathi at 0.0%. We are not spinning it — the honest position is that per-language performance is uneven and Telugu needs more matched data and augmentation, which is on the roadmap alongside deploying the fine-tuned XLS-R+AASIST Indic head. The point of publishing the full per-language table is that we know where the failures are, which is the prerequisite to fixing them."
+  },
+  {
+    "q": "How big is the evaluation set behind these fairness numbers — is 6.3% statistically meaningful?",
+    "a": "We are transparent that the eval sets are small: the meta evaluation is n_test=320 (n_train=480) and per-language clean FP is measured on roughly 30 clips per language, so the 6.3% aggregate carries real confidence-interval width. That is precisely why our next milestone is a pilot on recorded IVR traffic (TRL-6) to validate on production-scale Indian data. We present these as validated-system (TRL-5) signals, not population-level guarantees, and we don't overclaim their precision."
+  },
+  {
+    "q": "How does the Indic routing actually work under the hood?",
+    "a": "A Whisper-base language-ID model classifies the call; if it's Indic, we switch to an Indic-aware stacker (meta_fusion_indic.json, weights [0.617, -1.226, 1.600, 0.820, 1.156]) rather than the default English stacker, with a heuristic fallback (hf_energy_ratio < 0.0015). The narrowband/phone flag independently changes only the thresholds, not the stacker. This routing is what lifts Indic fake recall from 42% to 82% while leaving the English EER untouched at 5.9%."
+  },
+  {
+    "q": "What's your RBI and regulatory tailwind, concretely?",
+    "a": "RBI's push on fraud-risk controls and customer protection in digital/voice channels is the tailwind, and our design — human-in-the-loop step-up rather than auto-block, explainable verdicts, and an audit trail — fits a regulator's expectation that automated decisions be contestable. We're careful not to claim any RBI certification or mandate we don't have. The credible statement is that the regulatory direction favors auditable, low-false-positive fraud tooling, which is what we built."
+  },
+  {
+    "q": "DPDP compliance — how do you handle voice as personal data?",
+    "a": "Voice is personal data under DPDP, and our current architecture actually minimizes some exposure — the WebRTC path relays only signaling while audio stays peer-to-peer and never transits the server, and audit state is in-memory (capped 200, returns 50), not persisted. But we're candid that in-memory, non-persisted, non-encrypted handling is not a compliance posture — there's no database, no encryption-at-rest (only 'AES-256-ready' on slides), and no access control today. DPDP-grade consent, retention, and encryption controls are roadmap items we must build before production."
+  },
+  {
+    "q": "Is your enrollment/voiceprint store a DPDP liability?",
+    "a": "The ECAPA speaker-verification enrollment store is in-memory only, so voiceprints are lost on restart and never persisted to disk today — which limits breach exposure but is not a designed privacy control. Under DPDP, storing biometric voiceprints demands consent, purpose limitation, retention limits, and encryption, none of which are implemented yet. We treat the enrollment feature as validated technology (ECAPA, 192-D, verify threshold 0.18) but not as a production-ready, DPDP-compliant identity store."
+  },
+  {
+    "q": "As generators improve, doesn't your detector become obsolete?",
+    "a": "Detection is an arms race, and we're honest that our robustness self-test shows real gaps against benign DSP transforms — pitch +2 semitones degrades EER to 56.3% and noise at 15dB to 45.0% — so a motivated adversary applying those has an evasion path today. Our durability argument is process, not a static model: the fusion-plus-calibration pipeline is retrainable, and the roadmap closes the DSP gap via matched augmentation and deploys the fine-tuned XLS-R+AASIST head. Defensibility comes from a retraining loop fed by pilot traffic, not from any single frozen detector."
+  },
+  {
+    "q": "Your own robustness test shows noise and pitch shift break you — why isn't that disqualifying?",
+    "a": "It would be disqualifying if we hid it; instead we publish that pitch +2st (56.3% EER, +48.8 pts) and noise@15dB (45.0%, +37.5) are our worst conditions, while codec transforms like Opus 12k actually improve to 2.5%. The deployed model is codec-hardened by design, and prior experiments showed full-scenario augmentation hurt Marathi fairness, so we reverted it — meaning the fix has to be matched augmentation that doesn't regress fairness. Closing the benign-DSP gap is the single most important item on our robustness roadmap, and we scope it as known, not solved."
+  },
+  {
+    "q": "Can't an attacker just add background noise to defeat you, cheaply?",
+    "a": "Yes — that is our most credible evasion today, and our robustness.json shows noise@15dB pushing EER to 45.0%, so we won't claim otherwise. The mitigations are matched-condition augmentation (retraining on noised/pitch-shifted data), the streaming running-mean over multiple windows which is harder to fool consistently than a single clip, and human step-up on HIGH verdicts so a borderline evasion still gets a second look. We treat benign-DSP robustness as an open engineering problem with a concrete plan, not a solved one."
+  },
+  {
+    "q": "What about white-box adversarial attacks — FGSM/PGD against your models?",
+    "a": "White-box adversarial hardening is stated roadmap and explicitly not covered today, so a sophisticated attacker with model access and gradient-based perturbations is a threat we have not defended against. The partial mitigation is that our five-detector fusion across heterogeneous architectures (wav2vec2, XLS-R, DistilHuBERT, DSP) raises the bar for a single perturbation to fool all heads, and the phone-channel narrowband path adds a distribution shift. But we're clear: FGSM/PGD robustness is unbuilt and on the list, not something we claim."
+  },
+  {
+    "q": "How do you keep up with new voice generators you've never seen?",
+    "a": "Our source-attribution classifier is trained on ElevenLabs, Tacotron-TTS, and In-the-Wild, and the meta-fusion generalizes better than any single detector (5.9% vs 16.0% for the best single), but a genuinely novel generator is an open-set problem we don't claim to solve statically. The answer is the retraining loop: pilot traffic feeds new labeled examples into the stacker and calibration. We compete on how fast we can re-fit and re-calibrate, which is why the productionized data pipeline matters as much as the models."
+  },
+  {
+    "q": "Tell me about the team and why you can execute this.",
+    "a": "I'll answer this against what the artifacts demonstrate rather than resumes: the team has shipped a genuinely integrated system — five-detector fusion with learned stacking, closed-form SHAP, channel-aware calibration, Indic routing, ECAPA verification, a scam-intent stage tracker, and a Dockerized CPU deployment with a VPS systemd+Caddy path. That breadth from detection through explainability to deployment is evidence of full-stack ML-plus-systems capability. The honest gap is production hardening (auth, scale, persistence), which is a known engineering execution risk, not a research risk."
+  },
+  {
+    "q": "What's the single biggest execution risk you're carrying?",
+    "a": "The productionization gap: we have a validated model system (TRL-5) but a single-process, no-auth, no-database, CPU-only backend, so the risk is executing the unglamorous hardening — auth, persistence, rate-limiting, multi-worker scale, encryption — under the timeline a bank pilot demands. It's an engineering-execution risk more than a scientific one, since the detection quality is already at 5.9% EER. Mitigation is sequencing a recorded-traffic pilot that tolerates the current gaps while we build the controls in parallel."
+  },
+  {
+    "q": "What exactly is built and working today versus on slides?",
+    "a": "Built and real in code today: the 5-detector fusion with calibration and SHAP, channel-aware thresholds, liveness challenge-response (Whisper + Silero VAD + timing), ECAPA enroll/verify, fraud-ring linkage, the Digital Arrest Shield scam tracker (English/Hindi/Hinglish), citizen 1930 warning, source attribution, partial-fake localization, SHA-256 audit, Docker model-baking, and the systemd+Caddy VPS deploy. Slideware with no code: JWT/OAuth/auth, rate-limiting, RBAC, CORS, AES-256-at-rest, TLS pinning, HSM, SIEM, SOC2, immutable/persisted audit, any database, Redis/Kafka/queues, Kubernetes/autoscaling/GPU-cluster, multi-worker, and CI/CD. We keep that line bright."
+  },
+  {
+    "q": "What does TRL-5 mean here and why aren't you claiming deployment?",
+    "a": "TRL-5 means a validated working system in a relevant environment — the detection stack is proven on held-out data (5.9% EER) and runs end-to-end — but it is not deployed in a live bank, which would be TRL-7 after a pilot (TRL-6) on recorded IVR traffic. We explicitly do not say 'deployed in banks' because it isn't true. The managed-service SLAs (99.9% uptime, sub-300ms) and SOC2/ISO27001 are targets, and we label them as such."
+  },
+  {
+    "q": "You claim a '100% Indic fine-tune recall' somewhere — is that real?",
+    "a": "No, and we correct it wherever it appears: there is no committed artifact for a 100% Indic fine-tune recall, so we cite the reproducible 42% to 82% routed recall instead. The fine-tuned XLS-R antispoof model (1.18 GB) exists locally but is gitignored and not baked into Docker, so it is a roadmap asset, not a deployed result. Any 100% figure is not substantiated and we don't use it."
+  },
+  {
+    "q": "You have no database — how is this a real product?",
+    "a": "It's a validated system, not yet a production product, and the missing database is exactly why: all state (audit, enrollments, actions, blacklist, challenges, rooms) is in-memory, lost on restart, and not shared across workers. That's fine for a demo and a controlled pilot but disqualifying for production, so persistence is a top roadmap item alongside auth. We'd rather be precise — TRL-5 validated system — than call an in-memory prototype a finished product."
+  },
+  {
+    "q": "In-memory audit that isn't immutable or persisted — how is that an audit trail for a bank?",
+    "a": "Today it isn't a compliant audit trail: the SHA-256 hash is truncated to 16 hex (64-bit), the audit is an in-memory list capped at 200 returning 50, and it's neither immutable nor persisted. It demonstrates the mechanism — every verdict is hashed and traceable — but a bank needs a persisted, tamper-evident store, which is roadmap. We present it as a working design pattern, not a production audit system, and the full-width hash plus immutable persistence are explicit next steps."
+  },
+  {
+    "q": "A 64-bit truncated hash — isn't that cryptographically weak for audit integrity?",
+    "a": "For tamper-evidence at scale, yes, 64 bits is weak against collision search, and we use the full SHA-256 internally but currently truncate the stored/returned value to 16 hex for compactness. The fix is trivial engineering — store the full 256-bit digest and persist it in an append-only store — and it's part of making the audit production-grade. It's a demo-stage shortcut, not a considered security design, and we flag it as such."
+  },
+  {
+    "q": "No encryption at rest — your slide says AES-256. Which is true?",
+    "a": "The slide says 'AES-256-ready,' and the honest reading is that AES-256 at rest is not implemented — it's aspirational. Today there's no database to encrypt because state is in-memory, so encryption-at-rest becomes real work only once we add persistence. We won't let the 'ready' phrasing imply it exists; it's a roadmap control that must land before any deployment touching real customer voice data."
+  },
+  {
+    "q": "Single-process uvicorn with no workers — how does that survive real load?",
+    "a": "It doesn't survive production load, and we don't claim it does — the launch is single-process uvicorn with no --workers, auto-restarting on OOM, with a daemon-thread model warmup. Within one process we do get real concurrency (ThreadPoolExecutor for the five detectors, run_in_threadpool to keep the event loop unblocked), and we have a load simulator to test it. But horizontal scale — multi-worker, queued, GPU-batched — is explicitly roadmap, and single-process is a known ceiling."
+  },
+  {
+    "q": "If a worker crashes you lose all state — how is that acceptable?",
+    "a": "It's acceptable only for a demo or controlled pilot, not production — a crash or OOM restart wipes AUDIT, enrollments, actions, and blacklist because there's no persistence. The auto-restart keeps availability but not state, which is precisely why persistence is a headline roadmap item. We're not going to sell this as production-durable; the validated claim is on detection quality, and durability is the next engineering layer."
+  },
+  {
+    "q": "The 'just a wrapper around Hugging Face models' objection — rebut it directly.",
+    "a": "If it were a wrapper, downloading the same three HF pipelines would give you our accuracy — but the best single HF model (XLS-R) is 16.0% EER and naive averaging is 19.1%, while our system is 5.9%, so two-thirds of the error is removed by work that isn't in any wrapper. That work is the learned logistic stacker with specific weights, Platt calibration, the recall-floor gate, the 89-dim engineered feature bank (LFCC+CQCC plus nine prosodic scalars), Indic language routing, channel-aware thresholds, closed-form SHAP, and the scam-intent tracker. The HF models are ingredients; the fusion, calibration, and Indic fairness are the recipe and the moat."
+  },
+  {
+    "q": "But you didn't train the base models — doesn't that cap your defensibility?",
+    "a": "Using strong public base models is a feature, not a cap — it lets us focus differentiation on the layer banks actually pay for: fusion, calibration, Indic fairness, explainability, and fraud workflow. The defensibility isn't the weights; it's the fitted stacker, the per-language routing that moves recall 42 to 82, and the pilot-data retraining loop that a wrapper can't replicate. And we do have a fine-tuned XLS-R+AASIST antispoof head (1.18 GB, local) on the roadmap, so proprietary weights are coming where they add the most value."
+  },
+  {
+    "q": "Your 89-dim feature bank — is that real engineering or window dressing?",
+    "a": "It's load-bearing: the vector is LFCC 40 (n_lfcc=20, mean+std) plus CQCC 40 (CQT 84 bins, DCT, mean+std) plus nine prosodic scalars — hf_energy_ratio, hf_regularity, spectral_flatness, phase_reg group-delay proxy, f0_jitter, shimmer, f0_voiced_ratio, silence_ratio, breath_score. The LFCC/CQCC head runs a real LogisticRegressionNP over all 89 dims (b=-0.512, w=+2.10 in the stacker), and those scalars feed the DSP heuristic. These are the hand-built features that let the DSP and linear heads catch artifacts the neural models miss."
+  },
+  {
+    "q": "How do you scale to 10 million calls a month — give me the architecture path.",
+    "a": "The path is well-understood infra work, none of which is built yet: replace single-process uvicorn with multi-worker horizontal scale, add GPU batching (today we run one clip at a time on CPU at 3-8s; GPU is sub-second), and put a containerized queue in front for concurrency and backpressure. State moves from in-memory to a real database so workers share it. We have a load simulator validating single-box concurrency, but 10M/month requires executing that sharded, batched, queued roadmap — I won't pretend it exists today."
+  },
+  {
+    "q": "What's the cost trajectory from prototype to production scale?",
+    "a": "Prototype cost is low (CPU instances, four models baked into a 2.2 GB image, no runtime downloads), but per-call cost is currently CPU-bound and unoptimized because there's no batching. Moving to GPU batching cuts per-call inference from 3-8s CPU to sub-second, which is the dominant lever on cost-per-call at volume, offset by GPU instance cost that batching amortizes. Honest summary: today's cost is a CPU-per-call baseline; the batched-GPU production cost is a projection we'll validate in the pilot, not a measured number."
+  },
+  {
+    "q": "You bake models into the Docker image — doesn't that make it bloated and slow to update?",
+    "a": "Baking the four models (three classifiers plus whisper-base.en) into HF_HOME at build time is a deliberate tradeoff: a 2.2 GB image but no runtime model downloads, which matters for air-gapped-ish bank environments and cold-start latency. It does mean model updates require a rebuild, which is acceptable given detectors change on a retraining cadence, not continuously. The image notably does not bake ECAPA, language-ID, or the 1.2 GB xlsr_antispoof, so those are separate deploy concerns."
+  },
+  {
+    "q": "What's the realistic path to a $1B outcome?",
+    "a": "The credible path is: win Indian bank voice-fraud triage as the wedge on the strength of Indic fairness and explainability, expand across the addressable adjacent verticals (the 12 sectors are a target, not a claim), and become the calibrated, auditable detection layer regulators and banks standardize on. Scale value accrues from the retraining data flywheel off pilot and production traffic, which compounds the fairness moat. We're clear this requires executing the production hardening and closing the robustness gaps first — the $1B story is contingent on TRL-6/7 execution, not guaranteed by TRL-5."
+  },
+  {
+    "q": "Who acquires you and why?",
+    "a": "Natural acquirers are bank-fraud platform vendors, contact-center and telecom infrastructure players, or identity/anti-fraud suites that lack Indic-language voice-deepfake coverage and phone-channel calibration. The strategic asset is the Indian-language fairness work (6.3% Indic FP, 42 to 82 routed recall) plus the fraud-workflow tooling (Digital Arrest Shield, ring linkage), which is expensive to reproduce. We're not banking on a specific acquirer; the point is the Indic detection layer is a capability incumbents would rather buy than rebuild."
+  },
+  {
+    "q": "Why will this fail — give me your own strongest bear case.",
+    "a": "Strongest bear case: benign-DSP evasion (noise@15dB drops us to 45% EER, pitch shift to 56%) means motivated fraudsters route around detection cheaply, while the production gap (no auth, no DB, single process, CPU-only) stalls us in long PSU procurement, and a well-funded incumbent bundles a 'good enough' detector before our data flywheel spins up. The counter is that these are execution and retraining problems, not dead ends — matched augmentation, the fine-tuned Indic head, and pilot-data retraining address robustness, and sequenced pilots address procurement. But the honest answer is the risk is real and concentrated in execution speed."
+  },
+  {
+    "q": "What kills you fastest — technology, regulation, or go-to-market?",
+    "a": "Go-to-market timing is the fastest killer: PSU-bank procurement is slow, and if we can't run a recorded-traffic pilot before a bundled incumbent detector becomes the default, we lose the data flywheel that makes the fairness moat compound. Technology risk (DSP evasion) is real but addressable via retraining; regulation is a tailwind more than a threat given our human-in-the-loop, auditable design. The existential race is converting TRL-5 into a live pilot fast enough to start the retraining loop."
+  },
+  {
+    "q": "How do you defend the claim that fairness is a moat when a competitor can also fine-tune on Indic data?",
+    "a": "They can, but the moat is the accumulated, labeled, per-language evaluation and the pilot traffic that lets us keep re-calibrating — the 6.3% clean FP and 82% Indic recall came from disciplined per-language work across ten languages, not a one-shot fine-tune. A competitor starting today faces the same data-acquisition and evaluation cost we've already partly paid, and our pilot data widens the gap. It's a first-mover-plus-flywheel moat, not a patent, and we're honest it's contestable until the flywheel is spinning."
+  },
+  {
+    "q": "How defensible is a logistic-regression stacker — it's a linear model anyone can fit?",
+    "a": "The stacker being simple (LogisticRegressionNP over standardized detector outputs) is a virtue — it's calibratable, explainable via closed-form SHAP, and cheap to serve — and its value is entirely in the fitted weights and calibration on our data, not the model class. Anyone can fit a logistic regression; they cannot fit ours without our labeled corpus, the five specific detector outputs, the Indic routing variant, and the recall-floor gate. Simplicity here is a deliberate design choice that buys interpretability, which banks require, without sacrificing the 5.9% EER."
+  },
+  {
+    "q": "Your calibration didn't even improve ECE — doesn't that undermine the 'calibrated confidence' pitch?",
+    "a": "We report it straight: calibrated ECE is 0.044 versus uncalibrated 0.031, so Platt calibration did not lower ECE on this set, and we say so rather than hide it. The value of calibration is producing a monotonic, threshold-alignable probability for the channel-aware cutoffs, and the model is well-calibrated in absolute terms (Brier 0.048) either way. We'd rather show a slightly-worse-ECE honest result than a doctored calibration curve — that transparency is itself part of the pitch to a technical buyer."
+  },
+  {
+    "q": "Isn't 320 test samples far too small to make procurement decisions on?",
+    "a": "For a procurement decision, yes — n_test=320 (held-out In-the-Wild) is a validation-stage sample, not a production evidence base, and per-language FP is ~30 clips each, so we position these as TRL-5 signals. That's exactly why the next milestone is a pilot on recorded IVR traffic to generate statistically meaningful, in-distribution evidence. A serious buyer should require that pilot before scale, and we agree; we're not asking anyone to procure on 320 samples."
+  },
+  {
+    "q": "How do you handle the phone channel — most fraud comes over narrowband lines?",
+    "a": "Narrowband is a first-class path: an 8 kHz channel is detected as a flag when hf_energy_ratio < 0.02 (not resampled as a target), and we apply stricter phone thresholds — HIGH 0.85 / MED 0.55 versus wideband 0.70 / 0.40 — because narrowband loses the high-frequency artifacts detectors rely on. This channel-awareness is a large part of why we cut Indic FP to 6.3%, since phone audio is where naive detectors over-flag. Robustness data even shows one codec (Opus 12k) improves EER to 2.5%, though G.711 8k worsens to 15%, so channel handling is nuanced and explicitly modeled."
+  },
+  {
+    "q": "G.711 8k pushes your EER to 15% — that's the dominant Indian telephony codec, right?",
+    "a": "Yes, and we report it honestly: G.711 8k narrowband raises EER to 15.0% (+7.5 pts) in the self-test, which is why the phone thresholds are stricter (HIGH 0.85) and why human step-up rather than auto-block is the design. It's a real degradation on a common codec, and closing it via matched-codec augmentation is part of the robustness roadmap. We surface the weakness because a bank running G.711 IVR needs to know the operating point, not a clean-audio number."
+  },
+  {
+    "q": "What's the false-accept versus false-reject tradeoff a bank actually cares about?",
+    "a": "At threshold 0.70 our confusion is TP 144, TN 155, FP 10, FN 11 — roughly balanced, with precision 93.5% and recall 92.9% — and the channel-aware thresholds let a bank tune the operating point per channel. Crucially we never auto-block; HIGH routes to human step-up, so a false accept isn't an instant loss and a false reject isn't an instant customer block. The 6.3% Indic clean FP is the number that governs wrongful-friction risk, which is usually the bank's dominant concern."
+  },
+  {
+    "q": "Explain the Digital Arrest Shield — is it real code or a marketing feature?",
+    "a": "It's real code (the analyze-call endpoint): a scam-intent classifier plus a stage tracker that follows the Digital Arrest playbook — Authority, then Threat, then Isolation, then Extraction — across English, Hindi, and Hinglish, with a citizen warning to call 1930. It's purpose-built for the specific scam typology hitting Indian bank customers, which is a differentiator no generic deepfake API carries. It uses a Whisper 'small' model for multilingual scam ASR because base mis-decodes Hindi as Urdu, so it's engineered for the Indian language reality."
+  },
+  {
+    "q": "The liveness challenge-response — can't a real-time cloner just speak the digits?",
+    "a": "Real-time clones raise the bar, which is why liveness combines a Whisper digit-ASR check with a Silero VAD gate (to prevent hallucinated digits on silence) and timing analysis — the response must be correct AND fast AND actually spoken, not synthesized after a pause. Decoding is capped (max_new_tokens=32) for latency. It's not unbeatable against a low-latency real-time cloner, and we treat it as one layer among fusion, source attribution, and step-up, not a standalone defense."
+  },
+  {
+    "q": "Your ECAPA speaker verification threshold is 0.18 cosine — how did you pick that and is it robust?",
+    "a": "The 0.18 cosine threshold on the 192-D ECAPA embedding (speechbrain/spkrec-ecapa-voxceleb, CPU) is the enroll/verify operating point yielding VERIFIED / REJECTED-CLONE / REJECTED-IDENTITY decisions, tuned on our evaluation. It's a real, working verification path, but the enrollment store is in-memory only, so it's validated technology rather than a production identity system. Robustness at scale needs a persisted, DPDP-compliant voiceprint store, which is roadmap — the threshold is sound, the surrounding infrastructure isn't production-grade yet."
+  },
+  {
+    "q": "How is this different from a generic anti-spoofing model like AASIST?",
+    "a": "AASIST is one detector architecture; we run a five-model ensemble and, notably, the fine-tuned XLS-R+AASIST Indic head is our roadmap proprietary asset (1.2 GB, local, not yet deployed). The difference is the system: calibration, channel-aware thresholds, Indic routing, SHAP explainability, and fraud workflow wrapped around whatever the best detectors are. AASIST or any single model gets you a score; we deliver a calibrated, explainable, Indic-fair verdict inside a fraud-triage product."
+  },
+  {
+    "q": "What's your data strategy — where does training data come from and is it defensible?",
+    "a": "Today's training data is our held-out In-the-Wild corpus (n_train=480) plus the per-language Indic evaluation and the source-attribution classes (ElevenLabs, Tacotron-TTS, In-the-Wild), which is enough for TRL-5 but small. The defensible data asset is prospective: pilot traffic on recorded Indian IVR generates in-distribution, labeled, per-language data that a competitor can't buy. That's the flywheel — our data moat is mostly ahead of us and depends on landing the pilot, which we state plainly rather than claiming a large proprietary corpus today."
+  },
+  {
+    "q": "If English EER is unchanged at 5.9% after Indic routing, are you sure routing isn't just overfitting?",
+    "a": "The design specifically preserves English performance — routing only switches the stacker when language-ID flags Indic, so English calls use the original stacker and EER stays 5.9% by construction, while Indic calls use meta_fusion_indic.json. The overfitting concern is legitimate given small eval sets, which is why we cite the routed 42 to 82 recall as a validated-system signal, not a population guarantee, and gate the strong claim behind the pilot. The English-unchanged result is a sanity check that routing isn't cannibalizing the majority case, not proof of Indic generalization."
+  },
+  {
+    "q": "What's your churn/retention story if you have no product stickiness yet?",
+    "a": "Stickiness is prospective and comes from three places we're building toward: the calibration and routing tuned to a specific bank's channels and languages, the accumulated audit and fraud-ring linkage data, and integration into their fraud-triage workflow. Today there's no deployed customer and no persistence, so there's no retention data to show — that would be dishonest to claim. The retention thesis is that per-bank calibration plus workflow embedding creates switching cost, which we'll prove in pilots, not assert now."
+  },
+  {
+    "q": "How much of the '30 endpoints' is real product surface versus demo scaffolding?",
+    "a": "The roughly 30 FastAPI endpoints (v3.0.0) are real and functional — analyze, stream-analyze, live-call SSE, enroll, verify-speaker, liveness, analyze-call, localize, why-fusion, audit, action, stress-test, health, WebRTC signaling — but several are demo-oriented (two-phone WebRTC signaling, page routes) rather than product API surface. The core detection and fraud-workflow endpoints are the product; the demo scaffolding proves the capability end-to-end. We don't count page routes and signaling as enterprise API surface."
+  },
+  {
+    "q": "You have no CI/CD or automated test suite — how do you ship safely?",
+    "a": "Correct, there's no .github CI/CD and no automated test suite today, which is a real engineering-maturity gap we don't paper over — we have a load simulator and manual validation against committed artifacts, but not continuous testing. For a system going into banks, CI/CD and regression tests on the metric artifacts are table-stakes and are on the hardening roadmap. It's a known deficiency of a TRL-5 codebase, and it's cheap to fix relative to the model work already done."
+  },
+  {
+    "q": "Air-gapped deployment is a common bank requirement — do you support it?",
+    "a": "The deck implies air-gapped support, but honestly it is not actually documented or supported today, so I won't claim it. What's real and adjacent is that the Docker image bakes the four core models into HF_HOME so there are no runtime downloads, which is a building block toward offline operation. True air-gapped deployment — with the full model set, no external calls, and an offline update path — is roadmap, and I'd rather correct the slide than mislead a security team that will test it."
+  },
+  {
+    "q": "What's your inference concurrency model and where does it break?",
+    "a": "Within a single process we use a ThreadPoolExecutor to run the five detectors concurrently per request and run_in_threadpool to offload blocking ML off the event loop, with models lazy-loaded and serialized by a _LOAD_LOCK to avoid an MPS init race. It breaks at the process boundary: no multi-worker, no queue, no GPU batching (one clip at a time), so throughput is capped by a single box. Scaling past that is the multi-worker/queue/batch roadmap, and the load simulator is how we characterize the current ceiling."
+  },
+  {
+    "q": "Why serialize model loading with a lock — doesn't that hurt startup and concurrency?",
+    "a": "The _LOAD_LOCK serializes lazy model loading specifically to avoid an MPS initialization race that can crash concurrent first-loads; we mitigate the startup cost with a daemon-thread warmup on startup so models are hot before traffic. It only serializes the one-time load, not steady-state inference, so it doesn't bottleneck request concurrency. It's a pragmatic correctness fix for a known device-init hazard, not a throughput design."
+  },
+  {
+    "q": "Given generators will soon be real-time and streaming, is offline clip analysis obsolete?",
+    "a": "We anticipated streaming: stream_analyze uses 3.0s windows with 1.0s hops and a running mean over the last three windows, fast-flagging on any single window >=0.85, and the live-call SSE path uses 2.5s windows — so we flag mid-call at 3.0s, not only post-hoc. The gap is that our robustness against a real-time cloner applying benign DSP live is unproven, which loops back to the augmentation roadmap. Offline analysis isn't the whole product; the streaming path is built and is the answer to real-time generation."
+  },
+  {
+    "q": "What's your answer to a CISO who says 'open endpoints means I can't even pilot this'?",
+    "a": "For a live-network pilot, that CISO is right, and the honest sequencing is a recorded-traffic or isolated-environment pilot first — analyzing exported IVR recordings in a segmented enclave where open endpoints aren't internet-exposed — while we implement API-key/JWT auth, rate-limiting, CORS, and RBAC. None of those controls exist yet, so we don't propose an internet-facing deployment. The controls are straightforward FastAPI middleware work, and we'd scope them into the pilot statement of work rather than hand-wave them."
+  },
+  {
+    "q": "How do you price against the fraud losses you prevent — what's the ROI math?",
+    "a": "The ROI framing is fraud-loss-avoided per flagged call versus per-call analysis cost, but we don't yet have pilot data quantifying loss-avoided, so I won't fabricate an ROI multiple. What we can commit to is a low per-call cost profile (CPU inference, no runtime downloads) and a human-in-the-loop design that avoids the hidden cost of wrongful blocks via the 6.3% Indic FP. The real ROI number comes out of the pilot; presenting one now would be exactly the kind of invented metric we refuse to use."
+  },
+  {
+    "q": "Isn't the whole category commoditizing toward zero as detection gets built into telecom stacks?",
+    "a": "Commodity detection (a generic English classifier in a telecom stack) is plausible, which is why we don't compete there — we compete on Indic-language fairness, phone-channel calibration, explainability, and India-specific fraud workflow (Digital Arrest Shield). A telecom-embedded generic detector won't deliver 6.3% Indic FP or the scam-stage tracker, and it won't carry the auditable, contestable verdicts regulators favor. Our bet is that the India-fair, explainable, workflow-integrated layer resists commoditization even if raw English detection doesn't."
+  },
+  {
+    "q": "What happens to your accuracy on a language you've never evaluated, like a code-mixed dialect?",
+    "a": "Unknown languages fall back to a heuristic (hf_energy_ratio < 0.0015) or the default stacker if language-ID doesn't flag Indic, so performance is uncharacterized and likely worse than the ten evaluated languages. Code-mixing (Hinglish) is partly handled in the Digital Arrest Shield ASR, but the detection stacker's behavior on unseen dialects is not validated. We're honest that our fairness claim covers the ten measured languages, not all of Indian linguistic diversity, and expanding coverage is a data roadmap item."
+  },
+  {
+    "q": "Your deck showed DistilHuBERT at 23% but the fact sheet says 24.9% — which do I trust?",
+    "a": "Trust the artifact: reproduced from meta_scores.csv, DistilHuBERT is 24.9% EER / 0.828 AUC on the full 800-clip corpus, and the deck's 23.0% is a discrepancy we've flagged internally. We reconcile every headline number to committed artifacts precisely so a diligence team can catch and resolve these. The 1.9-point gap doesn't change the thesis — DistilHuBERT is a mid-strength detector carrying positive stacker weight (+2.22) — but we'd correct the slide to the artifact value."
+  },
+  {
+    "q": "How do you prevent your own system from being used to improve the attackers' clones?",
+    "a": "This is a real dual-use risk — a detector score is a fitness signal an attacker could optimize against — which is why the roadmap prioritizes auth, rate-limiting, and access control so the scoring endpoint isn't an open oracle (today it unfortunately is, which we flag as a gap). We also don't expose gradients or internal detector logits externally, only calibrated verdicts and reason codes. Long term, white-box adversarial hardening and query-rate limits reduce the oracle risk, but today's open endpoints are a genuine exposure we must close."
+  },
+  {
+    "q": "What's your gross-margin sensitivity if you're forced onto GPUs for every call?",
+    "a": "GPU-per-call without batching would be expensive, but that's not the plan — the economic case for GPU is batching many clips per inference, which amortizes the instance cost and turns the 3-8s CPU latency into sub-second throughput. Margin sensitivity therefore hinges on batch efficiency and utilization, not raw GPU price. Since batching is roadmap and unmeasured, I'll give you the honest bound: today's CPU baseline is the conservative cost, and batched GPU should improve unit margin, but the exact figure awaits the pilot."
+  },
+  {
+    "q": "You revert augmentation because it hurt Marathi — doesn't that show you can't improve robustness without breaking fairness?",
+    "a": "It shows a real tension we discovered empirically: full-scenario augmentation (music/noise/reverb) hurt Marathi fairness and didn't reliably help robustness, so we reverted to the codec-hardened deployed model (EER 5.9%, FP 11.7% pre-channel). The lesson is that robustness gains must be matched and fairness-audited, not blanket-applied — which is exactly the disciplined approach on the roadmap (targeted augmentation for the failing DSP conditions with per-language regression checks). It's evidence of rigor, not of a dead end: we measure fairness impact before shipping robustness fixes."
+  },
+  {
+    "q": "How do you know your held-out set isn't leaking into training given n is small?",
+    "a": "The evaluation is on a held-out In-the-Wild split (n_test=320 vs n_train=480) reported against committed artifacts, and the per-detector numbers are reproduced from meta_scores.csv, so the split discipline is documented. That said, with sets this small, subtle leakage or distribution overlap is a fair concern, which is one more reason we gate strong claims behind a pilot on independent recorded traffic. We treat these as internally-validated signals and would welcome a diligence team re-running the artifacts to check the split themselves."
+  },
+  {
+    "q": "What's the minimum viable production version and how far is it from today?",
+    "a": "MVP-for-production needs four things we don't have: authentication (API keys/JWT), persistence (a database for audit and enrollments), rate-limiting/CORS, and encryption-at-rest — plus multi-worker scale for throughput. The detection core is done (5.9% EER, calibrated, explainable), so the distance is bounded, well-understood middleware and infra work rather than research. Honest estimate framing: it's an engineering sprint set, not a science project, but until it's done we remain a validated system, not a production product."
+  },
+  {
+    "q": "Why should a partner bet on a solo/small team against funded incumbents on hardening?",
+    "a": "The bet is that the hard, differentiated work — Indic fairness, five-model calibration, explainability, India fraud workflow — is already done and is the part incumbents can't cheaply replicate, while the remaining work (auth, DB, scale) is commodity engineering that funding accelerates. A funded incumbent still has to do our fairness and calibration work from scratch on data they don't have. The capital-efficient story is: fund the hardening, not the research, because the research moat already exists at TRL-5."
+  },
+  {
+    "q": "What regulatory approval or certification do you actually hold today?",
+    "a": "None — we hold no RBI certification, no SOC2, no ISO 27001; those are stated targets, not facts, and we label them so. Our regulatory posture today is design alignment (human-in-the-loop, explainable, auditable) rather than certification. Claiming any held certification would be false; the honest position is we're designed to be certifiable and that certification is a roadmap cost, gated behind the security controls we still need to build."
+  },
+  {
+    "q": "How do you handle consent for analyzing a customer's voice in real time?",
+    "a": "Consent is a DPDP requirement we don't yet implement in software — there's no consent-management layer today — so in a pilot it would be handled contractually and operationally by the bank on recorded traffic with existing customer consent. Architecturally, the WebRTC path helps by keeping live audio peer-to-peer (never through our server) and audit is in-memory, minimizing incidental collection. But a production consent, retention, and purpose-limitation framework is roadmap, and we won't claim DPDP compliance until it's built."
+  },
+  {
+    "q": "Partial-fake localization — is that a real capability or a slide?",
+    "a": "It's a real endpoint (localize): the system identifies which segment of a call is synthetic rather than only scoring the whole clip, which matters for spliced or partially-cloned attacks where a fraudster inserts synthetic segments into genuine audio. It's built on the same streaming windowing that gives the 3.0s time-to-flag. Like the rest, it's validated technology at TRL-5, characterized on our corpus, not yet proven at production scale — but it is code, not a slide."
+  },
+  {
+    "q": "What's your defensibility against Google/Amazon adding voice-deepfake detection to their cloud speech APIs?",
+    "a": "Hyperscaler detection would be generic and English-centric, and it won't carry Indic-language routing to 6.3% FP, phone-channel narrowband thresholds tuned to Indian telephony (G.711, Opus), or the India-specific Digital Arrest Shield fraud workflow. Banks also want explainable, contestable verdicts and on-prem/enclave deployment that a cloud API complicates for sensitive voice data. We don't out-scale hyperscalers; we out-specialize them for Indian banking fraud, which is a market they under-serve — though we're clear this requires us to lock in the fairness-and-workflow moat before they bother."
+  },
+  {
+    "q": "If I gave you $5M today, what specifically do you build and in what order?",
+    "a": "Order: (1) production hardening — auth, database persistence, rate-limiting/CORS, encryption-at-rest — to clear InfoSec review; (2) horizontal scale and GPU batching to prove 10M-call economics; (3) close the benign-DSP robustness gap via matched augmentation and deploy the fine-tuned XLS-R+AASIST Indic head; (4) run a recorded-IVR pilot (TRL-6) to generate real per-language evidence and start the data flywheel. The research moat is done; the capital buys productionization and the pilot, which are the two things standing between TRL-5 and revenue."
+  },
+  {
+    "q": "What's the single most impressive thing in the codebase that de-risks the technical bet?",
+    "a": "The meta-fusion result: taking five heterogeneous public detectors whose best single is 16.0% EER and whose naive average is 19.1%, and reaching 5.9% EER with a learned, calibrated, explainable stacker — that's a real, artifact-backed 10-point gain that proves the team can extract system-level performance no single model gives. Layered with the Indic routing (42 to 82 recall, English unchanged) and closed-form SHAP, it demonstrates both ML depth and product judgment. That result is the technical de-risker; the productionization is the remaining execution risk."
+  },
+  {
+    "q": "Why won't banks just wait until deepfake detection is a solved, standardized commodity?",
+    "a": "Because the fraud is happening now — Digital Arrest scams and voice-KYC fraud are live losses — and detection is an arms race that won't 'settle' into a static commodity as generators keep evolving, so waiting means absorbing losses indefinitely. A bank that waits also forgoes the per-institution calibration and workflow integration that make detection actually usable on their channels and languages. The realistic buyer posture is to pilot now on the India-fair, explainable option, not to wait for a mythical solved standard that an adversarial domain never reaches."
+  },
+  {
+    "q": "How do you avoid being a services/consulting business dressed as product?",
+    "a": "The risk is real given per-bank calibration, so the product discipline is keeping the core — fusion, calibration, Indic routing, SHAP, streaming, fraud workflow — as a reusable engine (the ~30-endpoint FastAPI app, Dockerized) and treating per-bank tuning as configuration (thresholds, routing), not bespoke rebuilds. Channel-aware thresholds and language routing are parameters, not new code, which keeps marginal deployment cost low. We're watchful here: the moment calibration requires per-customer custom modeling, margins erode, so the design deliberately parameterizes rather than forks."
+  },
+  {
+    "q": "What's your answer when a competitor demos better raw accuracy on an English benchmark?",
+    "a": "We concede English raw-accuracy leaderboards aren't our fight and ask the buyer to evaluate on what matters for them: Indic-language clean false positives (our 6.3%), phone-channel narrowband performance, calibrated confidence for a human-step-up workflow, explainability, and India-specific scam detection. A competitor's English benchmark win says little about false-positive behavior on a Telugu customer over a G.711 line. We compete on the operating conditions of Indian banking, and we'd rather lose an English benchmark than the Indic-fairness comparison that decides real deployments."
+  },
+  {
+    "q": "Give me the honest one-line status of VoxShield, and why it's still worth backing.",
+    "a": "Honest status: a TRL-5 validated system with a genuinely differentiated detection-and-fairness core — 5.9% EER, 6.3% Indic false positives, 42-to-82 routed recall, explainable and calibrated — sitting on a prototype backend that still lacks auth, persistence, encryption, and horizontal scale. It's worth backing because the hard, non-commodity research moat is already built and artifact-verified, while the remaining gap is well-understood productionization plus a pilot to start the Indian-language data flywheel. You're funding execution against a proven core, not betting on unproven science."
+  },
+  {
+    "q": "How does the recall-floor gate work and why won't it inflate false positives?",
+    "a": "The recall-floor gate is a safety override: if the two strongest detectors — max(DistilHuBERT, XLS-R) — clear 0.90 AND the LFCC/CQCC head clears 0.5, the final score is floored to at least 0.70 so a confident multi-detector fake can't slip under threshold. It's deliberately conservative — it requires agreement between the best neural detectors and the linear head before firing — so it targets high-confidence cases rather than borderline audio. That double-condition design is precisely how we lift recall without spraying false positives across genuine calls, and it still routes HIGH to human step-up rather than auto-blocking."
+  },
+  {
+    "q": "You cap analysis at the first 6 seconds of speech — doesn't that let attackers hide the clone later in the call?",
+    "a": "The 6-second cap applies to the single-clip analyze path (load_audio drops silence via librosa top_db=30 and caps the first 6s of speech) for latency, but the streaming and live-call paths analyze continuously in 3.0s/2.5s windows across the whole call, so a clone appearing later is still caught mid-stream. Partial-fake localization further targets spliced synthetic segments anywhere in the audio. So the cap is a per-clip efficiency choice, not a blind spot — continuous monitoring is the answer to late-call injection, and it's built."
+  },
+  {
+    "q": "Source attribution across only three classes — is naming the generator actually useful or just a demo?",
+    "a": "It's a simple but real 3-class multinomial-softmax logistic over the 89-dim vector (classes ElevenLabs, Tacotron-TTS, In-the-Wild, firing at score >= 0.5), and its usefulness is investigative: telling a fraud team the likely generator family helps cluster attacks and prioritize response, complementing the ring-linkage feature. We're honest it's a linear three-class model, not a comprehensive generator taxonomy, so novel generators land in In-the-Wild by default. It's a genuine capability with clear limits — attribution breadth expands as we add labeled generator data from pilots."
+  },
+  {
+    "q": "What's your reproducibility and diligence posture — can a technical DD team verify these numbers themselves?",
+    "a": "Yes, and we invite it: every headline number maps to a committed artifact — meta_eval.json (5.9% EER, 0.983 AUC), calibration.json (confusion TP144/TN155/FP10/FN11, ECE 0.044), robustness.json (per-condition EER), lang_report.json (per-language FP), exp_indicfull_result.json (0.417 to 0.823 recall, 0.059 English EER), and meta_scores.csv for per-detector reproduction. We even self-report discrepancies (deck's 23% DistilHuBERT vs artifact 24.9%) and unflattering results (calibration not lowering ECE). A DD team can re-run the artifacts against the code; that verifiability is deliberate and is itself part of the trust argument."
+  }
+]
