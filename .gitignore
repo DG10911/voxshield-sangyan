@@ -18,3 +18,15 @@ hf_cache/
 *.log
 .vscode/
 .idea/
+data/
+checkpoints/
+logs/
+wandb/
+*.pt
+*.pth
+*.ckpt
+*.safetensors
+__pycache__/
+.ipynb_checkpoints/
+.venv/
+miniconda3/
