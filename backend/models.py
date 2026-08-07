@@ -58,7 +58,7 @@ class HFDetector:
             return None
         try:
             from transformers import pipeline
-            self._pipe = pipeline("audio-classification", model=self.model_id)
+            self._pipe = pipeline("audio-classification", model=self.model_id, device=0)
             print(f"[VoxShield] loaded {self.model_id}")
         except Exception as e:
             print(f"[VoxShield] skip {self.model_id} ({e.__class__.__name__})")

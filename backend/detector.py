@@ -31,7 +31,7 @@ def _try_load_pipeline():
         return None
     try:
         from transformers import pipeline  # noqa
-        _pipe = pipeline("audio-classification", model=_HF_MODEL_ID)
+        _pipe = pipeline("audio-classification", model=_HF_MODEL_ID, device=0)
         print(f"[VoxShield] Neural detector loaded: {_HF_MODEL_ID}")
     except Exception as e:  # no torch / no internet / no model -> fallback
         print(f"[VoxShield] Neural model unavailable ({e.__class__.__name__}); "
