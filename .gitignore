@@ -30,3 +30,4 @@ __pycache__/
 .ipynb_checkpoints/
 .venv/
 miniconda3/
+.venv_voxshield/
