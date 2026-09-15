@@ -92,6 +92,37 @@ def load_corpus(root, holdout_gen, langs, limit_per=None):
                              lang="en", generator=g, dataset="dfadd",
                              split=_split_of(sp, holdout_gen, g, "dfadd")))
         print(f"  dfadd: {n}")
+
+    # MLAAD (multilingual fakes, wav tree) -> OOD eval (never trained on)
+    mlbase = os.path.join(root, "mlaad", "fake")
+    if os.path.isdir(mlbase):
+        n = 0
+        cap = (limit_per*3) if limit_per else 10**9
+        for wav in glob.glob(os.path.join(mlbase, "*", "*", "*.wav")):
+            if n >= cap: break
+            parts = wav.split(os.sep)
+            rows.append(dict(store=None, idx=-1, wavpath=wav, audiocol=None, label=1,
+                             speaker="mlaad", lang=parts[-3].lower(),
+                             generator=parts[-2].lower(), dataset="mlaad", split="ood"))
+            n += 1
+        if n: print(f"  mlaad: {n} (OOD)")
+
+    # Rural_Women_Bhojpuri (real rural speech, parquet) -> real class, fairness
+    rbase = os.path.join(root, "rural_bhojpuri")
+    rfiles = sorted(glob.glob(os.path.join(rbase, "**", "*.parquet"), recursive=True))
+    if rfiles:
+        ds = load_dataset("parquet", data_files=rfiles, split="train")
+        ds = ds.cast_column("audio", Audio(decode=False))
+        stores["rural"] = ds
+        spk = ds["speaker_id"] if "speaker_id" in ds.column_names else [f"r{i}" for i in range(len(ds))]
+        n = len(ds) if not limit_per else min(limit_per, len(ds))
+        for i in range(n):
+            sp = f"rural_{spk[i]}"
+            rows.append(dict(store="rural", idx=i, wavpath=None, audiocol="audio", label=0,
+                             speaker=sp, lang="bho", generator="real", dataset="rural",
+                             split=_split_of(sp, holdout_gen, "real", "rural")))
+        print(f"  rural: {n} real")
+
     return rows, stores
 
 # ---------------- torch dataset ----------------
@@ -104,12 +135,15 @@ class CorpusDS(Dataset):
         r = self.rows[i]
         try:
             import io, soundfile as sf
-            a = self.stores[r["store"]][r["idx"]][r["audiocol"]]
-            b, p = a.get("bytes"), a.get("path")
-            if b is not None:
-                y, sr = sf.read(io.BytesIO(b), dtype="float32")
-            else:
-                y, sr = sf.read(p, dtype="float32")
+            if r.get("wavpath"):                      # MLAAD wav files
+                y, sr = sf.read(r["wavpath"], dtype="float32")
+            else:                                     # parquet audio bytes
+                a = self.stores[r["store"]][r["idx"]][r["audiocol"]]
+                b, p = a.get("bytes"), a.get("path")
+                if b is not None:
+                    y, sr = sf.read(io.BytesIO(b), dtype="float32")
+                else:
+                    y, sr = sf.read(p, dtype="float32")
             if y.ndim > 1: y = y.mean(1)
             if sr != SR:
                 import torchaudio.functional as F
@@ -172,6 +206,7 @@ def main():
     val   = [r for r in rows if r["split"]=="val"]
     test  = [r for r in rows if r["split"]=="test"]
     testg = [r for r in rows if r["split"]=="test_gen"]
+    ood   = [r for r in rows if r["split"]=="ood"]
     if not train:
         print("no training rows — check data-root"); return
 
@@ -209,6 +244,7 @@ def main():
         evaluate(model, test, stores, device, "test-clean", bs=a.bs)
         evaluate(model, test, stores, device, "test-G711", force_codec=True, bs=a.bs)
         evaluate(model, testg, stores, device, f"XGEN({a.holdout_generator})", bs=a.bs)
+        if ood: evaluate(model, ood[:3000], stores, device, "OOD-MLAAD", bs=a.bs)
         # per-language on test
         for lang in a.langs.split(","):
             evaluate(model, [r for r in test if r["lang"]==lang[:2] or r["lang"]==lang],
