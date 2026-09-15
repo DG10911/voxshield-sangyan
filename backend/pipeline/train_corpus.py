@@ -178,7 +178,9 @@ def main():
     print(f"[model] loading XLSR-53  (train={len(train)} val={len(val)} test={len(test)} test_gen={len(testg)})")
     model = Wav2Vec2ForSequenceClassification.from_pretrained(
         "facebook/wav2vec2-large-xlsr-53", num_labels=2, ignore_mismatched_sizes=True)
-    model.freeze_feature_encoder(); model.gradient_checkpointing_enable(); model.to(device)
+    model.freeze_feature_encoder(); model.gradient_checkpointing_enable()
+    model.enable_input_require_grads()   # torch>=2.6: keep grad path through checkpointed layers
+    model.to(device)
     opt = torch.optim.AdamW(model.parameters(), lr=a.lr, weight_decay=0.01)
     sch = torch.optim.lr_scheduler.CosineAnnealingLR(opt, T_max=a.epochs*max(1,len(tl)))
 
