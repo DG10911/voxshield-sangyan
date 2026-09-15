@@ -45,7 +45,7 @@ def load_corpus(root, holdout_gen, langs, limit_per=None):
         files = sorted(glob.glob(os.path.join(isbase, cap, "*.parquet")))
         if not files: continue
         ds = load_dataset("parquet", data_files=files, split="train")
-        ds = ds.cast_column("audio", Audio(sampling_rate=SR, decode=True))
+        ds = ds.cast_column("audio", Audio(decode=False))
         key = f"indicsynth:{lang}"; stores[key] = ds
         gens = ds["Generative Model"]; spk = ds["Target Speaker ID"]
         n = len(ds) if not limit_per else min(limit_per, len(ds))
@@ -62,7 +62,7 @@ def load_corpus(root, holdout_gen, langs, limit_per=None):
     ivfiles = sorted(glob.glob(os.path.join(ivbase, "**", "*.parquet"), recursive=True))
     if ivfiles:
         ds = load_dataset("parquet", data_files=ivfiles, split="train")
-        ds = ds.cast_column("audio_filepath", Audio(sampling_rate=SR, decode=True))
+        ds = ds.cast_column("audio_filepath", Audio(decode=False))
         stores["indicvoices"] = ds
         lg = ds["lang"]; spk = ds["speaker_id"]
         n = len(ds) if not limit_per else min(limit_per*5, len(ds))
@@ -79,7 +79,7 @@ def load_corpus(root, holdout_gen, langs, limit_per=None):
     dffiles = sorted(glob.glob(os.path.join(dfbase, "**", "*.parquet"), recursive=True))
     if dffiles:
         ds = load_dataset("parquet", data_files=dffiles, split="train")
-        ds = ds.cast_column("audio", Audio(sampling_rate=SR, decode=True))
+        ds = ds.cast_column("audio", Audio(decode=False))
         stores["dfadd"] = ds
         names = ds["audio_name"]; labs = ds["label"]
         n = len(ds) if not limit_per else min(limit_per, len(ds))
@@ -103,12 +103,18 @@ class CorpusDS(Dataset):
     def __getitem__(self, i):
         r = self.rows[i]
         try:
+            import io, soundfile as sf
             a = self.stores[r["store"]][r["idx"]][r["audiocol"]]
-            y = np.asarray(a["array"], dtype=np.float32)
-            sr = a["sampling_rate"]
+            b, p = a.get("bytes"), a.get("path")
+            if b is not None:
+                y, sr = sf.read(io.BytesIO(b), dtype="float32")
+            else:
+                y, sr = sf.read(p, dtype="float32")
+            if y.ndim > 1: y = y.mean(1)
             if sr != SR:
                 import torchaudio.functional as F
-                y = F.resample(torch.from_numpy(y), sr, SR).numpy()
+                y = F.resample(torch.from_numpy(y.copy()), sr, SR).numpy()
+            y = np.asarray(y, dtype=np.float32)
         except Exception:
             y = np.zeros(CLIP_LEN, np.float32)
         if self.augment:
