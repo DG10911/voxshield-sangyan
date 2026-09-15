@@ -178,11 +178,12 @@ def main():
     print(f"[model] loading XLSR-53  (train={len(train)} val={len(val)} test={len(test)} test_gen={len(testg)})")
     model = Wav2Vec2ForSequenceClassification.from_pretrained(
         "facebook/wav2vec2-large-xlsr-53", num_labels=2, ignore_mismatched_sizes=True)
-    # NOTE torch>=2.6: freezing the feature encoder + gradient checkpointing kills the
-    # gradient path (checkpoint input has requires_grad=False -> no grads reach the
-    # transformer layers -> model doesn't learn). So we do NOT freeze it here; the CNN
-    # feature encoder is tiny (~5M params), cheap to train, and keeps grads flowing.
-    model.gradient_checkpointing_enable()
+    # torch>=2.6 fix: default (reentrant) gradient checkpointing silently drops grads
+    # when the checkpointed segment's input doesn't require grad -> loss stays at 0.69,
+    # model never learns. use_reentrant=False is the modern mode that handles this
+    # correctly, so we can keep freezing the feature encoder (the proven recipe).
+    model.freeze_feature_encoder()
+    model.gradient_checkpointing_enable(gradient_checkpointing_kwargs={"use_reentrant": False})
     model.to(device)
     opt = torch.optim.AdamW(model.parameters(), lr=a.lr, weight_decay=0.01)
     sch = torch.optim.lr_scheduler.CosineAnnealingLR(opt, T_max=a.epochs*max(1,len(tl)))
