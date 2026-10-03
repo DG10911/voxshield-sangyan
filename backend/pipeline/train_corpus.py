@@ -12,7 +12,7 @@ Run on the DGX:
 
 Deps: datasets, soundfile, scikit-learn (pip via `python -m pip install datasets`)
 """
-import os, sys, time, argparse, random, hashlib
+import os, sys, time, argparse, random, hashlib, json
 import numpy as np, torch
 from torch.utils.data import Dataset, DataLoader, WeightedRandomSampler
 from transformers import Wav2Vec2ForSequenceClassification
@@ -44,6 +44,7 @@ def load_corpus(root, holdout_gen, langs, limit_per=None):
         cap = lang.capitalize()
         files = sorted(glob.glob(os.path.join(isbase, cap, "*.parquet")))
         if not files: continue
+        if limit_per: files = files[:max(1, limit_per // 1500 + 2)]   # only load enough files
         ds = load_dataset("parquet", data_files=files, split="train")
         ds = ds.cast_column("audio", Audio(decode=False))
         key = f"indicsynth:{lang}"; stores[key] = ds
@@ -60,6 +61,7 @@ def load_corpus(root, holdout_gen, langs, limit_per=None):
     # IndicVoices (real)
     ivbase = os.path.join(root, "indicvoices_real")
     ivfiles = sorted(glob.glob(os.path.join(ivbase, "**", "*.parquet"), recursive=True))
+    if limit_per: ivfiles = ivfiles[:max(1, (limit_per*5) // 3000 + 2)]
     if ivfiles:
         ds = load_dataset("parquet", data_files=ivfiles, split="train")
         ds = ds.cast_column("audio_filepath", Audio(decode=False))
@@ -77,6 +79,7 @@ def load_corpus(root, holdout_gen, langs, limit_per=None):
     # DFADD (English fakes + some real)
     dfbase = os.path.join(root, "dfadd")
     dffiles = sorted(glob.glob(os.path.join(dfbase, "**", "*.parquet"), recursive=True))
+    if limit_per: dffiles = dffiles[:max(1, limit_per // 3000 + 2)]
     if dffiles:
         ds = load_dataset("parquet", data_files=dffiles, split="train")
         ds = ds.cast_column("audio", Audio(decode=False))
@@ -110,6 +113,7 @@ def load_corpus(root, holdout_gen, langs, limit_per=None):
     # Rural_Women_Bhojpuri (real rural speech, parquet) -> real class, fairness
     rbase = os.path.join(root, "rural_bhojpuri")
     rfiles = sorted(glob.glob(os.path.join(rbase, "**", "*.parquet"), recursive=True))
+    if limit_per: rfiles = rfiles[:max(1, limit_per // 2000 + 2)]
     if rfiles:
         ds = load_dataset("parquet", data_files=rfiles, split="train")
         ds = ds.cast_column("audio", Audio(decode=False))
@@ -122,6 +126,26 @@ def load_corpus(root, holdout_gen, langs, limit_per=None):
                              speaker=sp, lang="bho", generator="real", dataset="rural",
                              split=_split_of(sp, holdout_gen, "real", "rural")))
         print(f"  rural: {n} real")
+
+    # Generated Worst-AI attacks (Bhashini TTS / voice-clone) -> fakes
+    wman = os.path.join(root, "worst_ai", "manifest.jsonl")
+    if os.path.isfile(wman):
+        n = 0
+        with open(wman) as f:
+            for line in f:
+                try: m = json.loads(line)
+                except Exception: continue
+                p = m.get("path")
+                if not p or not os.path.isfile(p): continue
+                lg = str(m.get("language", "x"))[:2].lower()
+                gen = str(m.get("generator", "bhashini/tts")).lower()
+                sp = f"wai_{lg}"
+                rows.append(dict(store=None, idx=-1, wavpath=p, audiocol=None, label=1,
+                                 speaker=sp, lang=lg, generator=gen, dataset="worst_ai",
+                                 split=_split_of(sp, holdout_gen, gen, "worst_ai")))
+                n += 1
+                if limit_per and n >= limit_per: break
+        if n: print(f"  worst_ai: {n} generated fakes")
 
     return rows, stores
 
@@ -179,6 +203,27 @@ def evaluate(model, rows, stores, device, tag, force_codec=False, bs=16):
         print(f"    [{tag}] only one class, skip"); return
     print(f"    [{tag:16s}] EER={eer(np.array(yt),np.array(ys))*100:.2f}%  "
           f"AUC={roc_auc_score(yt,ys)*100:.2f}%  n={len(yt)}")
+
+def score_rows(model, rows, stores, device, force_codec=False, bs=16):
+    """Per-sample P(synthetic) for a slice -> list of dicts for eval_gengap."""
+    if not rows: return []
+    dl = DataLoader(CorpusDS(rows, stores, force_codec=force_codec), batch_size=bs,
+                    shuffle=False, num_workers=6, pin_memory=True)
+    model.eval(); ys = []
+    with torch.no_grad():
+        for x, y in dl:
+            x = x.to(device, non_blocking=True)
+            with torch.autocast("cuda", dtype=torch.bfloat16):
+                p = torch.softmax(model(input_values=x).logits, -1)[:, 1].float().cpu().numpy()
+            ys += p.tolist()
+    out = []
+    for r, s in zip(rows, ys):
+        out.append({"label": r["label"], "score": round(float(s), 6),
+                    "generator": r.get("generator", ""), "language": r.get("lang", ""),
+                    "channel": "g711" if force_codec else "clean",
+                    "seen": 0 if r["split"] in ("test_gen", "ood") else 1})
+    return out
+
 
 def main():
     ap = argparse.ArgumentParser()
@@ -250,6 +295,18 @@ def main():
             evaluate(model, [r for r in test if r["lang"]==lang[:2] or r["lang"]==lang],
                      stores, device, f"lang:{lang[:2]}", bs=a.bs)
         torch.save({"model":model.state_dict(),"epoch":ep}, f"{a.out}/last.pt")
+
+    # scorecard for eval_gengap.py (per-slice, seen vs unseen generators)
+    scored = (score_rows(model, test,  stores, device, False, a.bs)
+              + score_rows(model, test,  stores, device, True,  a.bs)
+              + score_rows(model, testg, stores, device, False, a.bs)
+              + (score_rows(model, ood[:3000], stores, device, False, a.bs) if ood else []))
+    if scored:
+        import csv as _csv
+        with open(f"{a.out}/scores.csv", "w", newline="") as f:
+            w = _csv.DictWriter(f, fieldnames=["label", "score", "generator", "language", "channel", "seen"])
+            w.writeheader(); w.writerows(scored)
+        print(f"[scores] {len(scored)} rows -> {a.out}/scores.csv")
     print(f"\n[done] checkpoint -> {a.out}/last.pt")
 
 if __name__ == "__main__":

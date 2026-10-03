@@ -1,0 +1,266 @@
+{
+  "_note": "India-First language coverage tracker (roadmap §15). 'mastery' = we are master of a language only when detection_tested=True on Indic deepfake + genuine data. Detection coverage != ASR/TTS coverage.",
+  "_eighth_schedule_count": 22,
+  "_total": 23,
+  "_legend": {
+    "genuine_data": "real human speech available (IndicVoices-R)",
+    "clone_generator": "can zero-shot clone (IndicF5)",
+    "tts_generator": "can synthesize (Indic-Parler/MMS)",
+    "detection_tested": "VoxShield detector validated on this language's deepfakes"
+  },
+  "languages": [
+    {
+      "code": "hi",
+      "name": "Hindi",
+      "script": "Devanagari",
+      "family": "Indo-Aryan",
+      "genuine_data": true,
+      "clone_generator": true,
+      "tts_generator": true,
+      "detection_tested": false,
+      "mastery": "data+generators ready, detection UNVERIFIED"
+    },
+    {
+      "code": "bn",
+      "name": "Bengali",
+      "script": "Bengali",
+      "family": "Indo-Aryan",
+      "genuine_data": true,
+      "clone_generator": true,
+      "tts_generator": true,
+      "detection_tested": false,
+      "mastery": "data+generators ready, detection UNVERIFIED"
+    },
+    {
+      "code": "ta",
+      "name": "Tamil",
+      "script": "Tamil",
+      "family": "Dravidian",
+      "genuine_data": true,
+      "clone_generator": true,
+      "tts_generator": true,
+      "detection_tested": false,
+      "mastery": "data+generators ready, detection UNVERIFIED"
+    },
+    {
+      "code": "te",
+      "name": "Telugu",
+      "script": "Telugu",
+      "family": "Dravidian",
+      "genuine_data": true,
+      "clone_generator": true,
+      "tts_generator": true,
+      "detection_tested": false,
+      "mastery": "data+generators ready, detection UNVERIFIED"
+    },
+    {
+      "code": "mr",
+      "name": "Marathi",
+      "script": "Devanagari",
+      "family": "Indo-Aryan",
+      "genuine_data": true,
+      "clone_generator": true,
+      "tts_generator": true,
+      "detection_tested": false,
+      "mastery": "data+generators ready, detection UNVERIFIED"
+    },
+    {
+      "code": "gu",
+      "name": "Gujarati",
+      "script": "Gujarati",
+      "family": "Indo-Aryan",
+      "genuine_data": true,
+      "clone_generator": true,
+      "tts_generator": true,
+      "detection_tested": false,
+      "mastery": "data+generators ready, detection UNVERIFIED"
+    },
+    {
+      "code": "kn",
+      "name": "Kannada",
+      "script": "Kannada",
+      "family": "Dravidian",
+      "genuine_data": true,
+      "clone_generator": true,
+      "tts_generator": true,
+      "detection_tested": false,
+      "mastery": "data+generators ready, detection UNVERIFIED"
+    },
+    {
+      "code": "ml",
+      "name": "Malayalam",
+      "script": "Malayalam",
+      "family": "Dravidian",
+      "genuine_data": true,
+      "clone_generator": true,
+      "tts_generator": true,
+      "detection_tested": false,
+      "mastery": "data+generators ready, detection UNVERIFIED"
+    },
+    {
+      "code": "or",
+      "name": "Odia",
+      "script": "Odia",
+      "family": "Indo-Aryan",
+      "genuine_data": true,
+      "clone_generator": true,
+      "tts_generator": true,
+      "detection_tested": false,
+      "mastery": "data+generators ready, detection UNVERIFIED"
+    },
+    {
+      "code": "pa",
+      "name": "Punjabi",
+      "script": "Gurmukhi",
+      "family": "Indo-Aryan",
+      "genuine_data": true,
+      "clone_generator": true,
+      "tts_generator": true,
+      "detection_tested": false,
+      "mastery": "data+generators ready, detection UNVERIFIED"
+    },
+    {
+      "code": "as",
+      "name": "Assamese",
+      "script": "Eastern-Nagari",
+      "family": "Indo-Aryan",
+      "genuine_data": true,
+      "clone_generator": true,
+      "tts_generator": true,
+      "detection_tested": false,
+      "mastery": "data+generators ready, detection UNVERIFIED"
+    },
+    {
+      "code": "ur",
+      "name": "Urdu",
+      "script": "Perso-Arabic",
+      "family": "Indo-Aryan",
+      "genuine_data": true,
+      "clone_generator": false,
+      "tts_generator": true,
+      "detection_tested": false,
+      "mastery": "data+generators ready, detection UNVERIFIED"
+    },
+    {
+      "code": "sd",
+      "name": "Sindhi",
+      "script": "Perso-Arabic/Devanagari",
+      "family": "Indo-Aryan",
+      "genuine_data": true,
+      "clone_generator": false,
+      "tts_generator": true,
+      "detection_tested": false,
+      "mastery": "data+generators ready, detection UNVERIFIED"
+    },
+    {
+      "code": "ne",
+      "name": "Nepali",
+      "script": "Devanagari",
+      "family": "Indo-Aryan",
+      "genuine_data": true,
+      "clone_generator": false,
+      "tts_generator": true,
+      "detection_tested": false,
+      "mastery": "data+generators ready, detection UNVERIFIED"
+    },
+    {
+      "code": "kok",
+      "name": "Konkani",
+      "script": "Devanagari",
+      "family": "Indo-Aryan",
+      "genuine_data": true,
+      "clone_generator": false,
+      "tts_generator": true,
+      "detection_tested": false,
+      "mastery": "data+generators ready, detection UNVERIFIED"
+    },
+    {
+      "code": "mai",
+      "name": "Maithili",
+      "script": "Devanagari",
+      "family": "Indo-Aryan",
+      "genuine_data": true,
+      "clone_generator": false,
+      "tts_generator": true,
+      "detection_tested": false,
+      "mastery": "data+generators ready, detection UNVERIFIED"
+    },
+    {
+      "code": "doi",
+      "name": "Dogri",
+      "script": "Devanagari",
+      "family": "Indo-Aryan",
+      "genuine_data": true,
+      "clone_generator": false,
+      "tts_generator": true,
+      "detection_tested": false,
+      "mastery": "data+generators ready, detection UNVERIFIED"
+    },
+    {
+      "code": "sa",
+      "name": "Sanskrit",
+      "script": "Devanagari",
+      "family": "Indo-Aryan",
+      "genuine_data": true,
+      "clone_generator": false,
+      "tts_generator": true,
+      "detection_tested": false,
+      "mastery": "data+generators ready, detection UNVERIFIED"
+    },
+    {
+      "code": "ks",
+      "name": "Kashmiri",
+      "script": "Perso-Arabic/Devanagari",
+      "family": "Indo-Aryan",
+      "genuine_data": true,
+      "clone_generator": false,
+      "tts_generator": true,
+      "detection_tested": false,
+      "mastery": "data+generators ready, detection UNVERIFIED"
+    },
+    {
+      "code": "sat",
+      "name": "Santali",
+      "script": "Ol-Chiki",
+      "family": "Austroasiatic",
+      "genuine_data": true,
+      "clone_generator": false,
+      "tts_generator": true,
+      "detection_tested": false,
+      "mastery": "data+generators ready, detection UNVERIFIED"
+    },
+    {
+      "code": "brx",
+      "name": "Bodo",
+      "script": "Devanagari",
+      "family": "Sino-Tibetan",
+      "genuine_data": true,
+      "clone_generator": false,
+      "tts_generator": true,
+      "detection_tested": false,
+      "mastery": "data+generators ready, detection UNVERIFIED"
+    },
+    {
+      "code": "mni",
+      "name": "Manipuri",
+      "script": "Meitei-Mayek/Bengali",
+      "family": "Sino-Tibetan",
+      "genuine_data": true,
+      "clone_generator": false,
+      "tts_generator": true,
+      "detection_tested": false,
+      "mastery": "data+generators ready, detection UNVERIFIED"
+    },
+    {
+      "code": "en",
+      "name": "English (Indian)",
+      "script": "Latin",
+      "family": "Indo-European",
+      "genuine_data": true,
+      "clone_generator": false,
+      "tts_generator": true,
+      "detection_tested": false,
+      "mastery": "data+generators ready, detection UNVERIFIED"
+    }
+  ]
+}

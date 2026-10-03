@@ -1,0 +1,26 @@
+{
+  "_schema": ["recipe_id","generator","version","attack_mode","speaker","language","accent",
+    "style","emotion","device","microphone","distance","environment","noise","codec","network",
+    "replay","manipulation","status"],
+  "_required": ["recipe_id","generator","attack_mode","language","codec"],
+  "_note": "Attack Recipe Registry (roadmap §6). A recipe is a FULLY-SPECIFIED, reproducible point in the scenario space = Generator × Version × Attack-Mode × Speaker × Language × Accent × Style × Emotion × Device × Microphone × Distance × Environment × Noise × Codec × Network × Replay × Manipulation. `generator` and `attack_mode` reference ids/models in generators.json / attack_modes.json. These are the reproducible units the eval harness (eval_gengap.py) and Scenario Generator (§33) consume.",
+  "recipes": [
+    {"recipe_id":"R001","generator":"ElevenLabs","attack_mode":"voice_cloning","language":"hi","accent":"bihar",
+     "style":"call-center","emotion":"emotional","device":"Android","microphone":"cheap","distance":"50cm",
+     "environment":"street","noise":"traffic","codec":"g711_ulaw","network":"packet_loss","replay":"speakerphone",
+     "manipulation":"none","status":"proposed"},
+    {"recipe_id":"R002","generator":"XTTS","version":"2","attack_mode":"cross_lingual","language":"ta","accent":"chennai",
+     "style":"normal","emotion":"neutral","device":"VoLTE","microphone":"phone","distance":"5cm",
+     "environment":"office","noise":"quiet","codec":"g711_ulaw","network":"clean","replay":"none",
+     "manipulation":"none","status":"proposed"},
+    {"recipe_id":"R003","generator":"MMS-TTS (Indic)","attack_mode":"tts","language":"bn","accent":"kolkata",
+     "style":"reading","emotion":"neutral","device":"SIP","microphone":"desk","distance":"20cm",
+     "environment":"call-center","noise":"office","codec":"g711_ulaw","network":"jitter","replay":"none",
+     "manipulation":"partial_splice","status":"proposed"},
+    {"recipe_id":"R004-NIGHTMARE","generator":"unknown","attack_mode":"cross_lingual","language":"te","accent":"rural",
+     "style":"emotional","emotion":"angry","device":"feature-phone","microphone":"bad","distance":"1m",
+     "environment":"market","noise":"crowd","codec":"g711_ulaw","network":"packet_loss","replay":"speakerphone",
+     "manipulation":"code_switch+partial_splice","status":"proposed",
+     "_note":"the §32 Nightmare recipe — unknown generator + Indian accent + low-resource lang + G.711 + noise + replay + speakerphone + emotion + code-switch + partial splice + unknown device"}
+  ]
+}

@@ -31,3 +31,9 @@ __pycache__/
 .venv/
 miniconda3/
 .venv_voxshield/
+
+# secrets / local context
+.context/
+.env
+*.env
+.env.*

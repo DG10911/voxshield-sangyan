@@ -1,0 +1,167 @@
+{
+  "_schema": [
+    "id",
+    "name",
+    "family",
+    "description"
+  ],
+  "_note": "Attack Mode Registry (roadmap §5). Every experiment must name its mode.",
+  "modes": [
+    {
+      "id": "tts",
+      "name": "Text-to-Speech",
+      "family": "synthesis",
+      "description": "Speech generated from text by a TTS model."
+    },
+    {
+      "id": "zero_shot_tts",
+      "name": "Zero-shot TTS",
+      "family": "synthesis",
+      "description": "TTS cloning a voice from a short unseen reference, no fine-tuning."
+    },
+    {
+      "id": "few_shot_tts",
+      "name": "Few-shot TTS",
+      "family": "synthesis",
+      "description": "TTS adapted to a voice from a few reference samples."
+    },
+    {
+      "id": "voice_cloning",
+      "name": "Voice cloning",
+      "family": "cloning",
+      "description": "Reproduce a specific target speaker's voice."
+    },
+    {
+      "id": "voice_conversion",
+      "name": "Voice conversion",
+      "family": "conversion",
+      "description": "Convert one speaker's speech to sound like another (source content preserved)."
+    },
+    {
+      "id": "speech_to_speech",
+      "name": "Speech-to-speech",
+      "family": "conversion",
+      "description": "Direct S2S generation/translation preserving prosody."
+    },
+    {
+      "id": "voice_design",
+      "name": "Voice design",
+      "family": "synthesis",
+      "description": "Synthesise a novel non-existent voice from a description."
+    },
+    {
+      "id": "emotion_tts",
+      "name": "Emotion-controlled TTS",
+      "family": "synthesis",
+      "description": "TTS with explicit emotion/style control."
+    },
+    {
+      "id": "cross_lingual",
+      "name": "Cross-lingual cloning",
+      "family": "cloning",
+      "description": "Clone a speaker into a language they did not speak in the reference."
+    },
+    {
+      "id": "long_form",
+      "name": "Long-form synthesis",
+      "family": "synthesis",
+      "description": "Extended multi-minute generated speech."
+    },
+    {
+      "id": "realtime",
+      "name": "Real-time synthesis",
+      "family": "synthesis",
+      "description": "Streaming/low-latency generation for live use."
+    },
+    {
+      "id": "ai_agent",
+      "name": "AI-agent speech",
+      "family": "agent",
+      "description": "An autonomous conversational AI agent speaking."
+    },
+    {
+      "id": "conversational_ai",
+      "name": "Conversational AI",
+      "family": "agent",
+      "description": "Scripted/interactive AI dialogue system."
+    },
+    {
+      "id": "replay_ai",
+      "name": "Replayed AI",
+      "family": "replay",
+      "description": "AI audio played back through a speaker and re-recorded."
+    },
+    {
+      "id": "replay_human",
+      "name": "Replayed human",
+      "family": "replay",
+      "description": "Genuine human recording replayed and re-captured."
+    },
+    {
+      "id": "partial_splice",
+      "name": "Partial splice",
+      "family": "manipulation",
+      "description": "Real audio with synthetic segments inserted."
+    },
+    {
+      "id": "human_to_ai",
+      "name": "Human → AI transition",
+      "family": "manipulation",
+      "description": "Boundary where genuine speech switches to synthetic."
+    },
+    {
+      "id": "ai_to_human",
+      "name": "AI → human transition",
+      "family": "manipulation",
+      "description": "Boundary where synthetic switches to genuine."
+    },
+    {
+      "id": "gen_a_to_gen_b",
+      "name": "Generator A → Generator B",
+      "family": "manipulation",
+      "description": "Two different generators within one clip."
+    },
+    {
+      "id": "ai_codec_replay",
+      "name": "AI → codec → replay",
+      "family": "chain",
+      "description": "Synthetic audio through a codec then replayed."
+    },
+    {
+      "id": "human_rec_replay",
+      "name": "Human → recording → replay",
+      "family": "chain",
+      "description": "Human → recording → replay (double transmission)."
+    },
+    {
+      "id": "hybrid",
+      "name": "Hybrid human/AI",
+      "family": "hybrid",
+      "description": "Mixed human and AI within a single utterance."
+    },
+    {
+      "id": "realtime_vc",
+      "name": "Real-time Voice Conversion",
+      "family": "conversion",
+      "description": "Live speaker->target voice conversion (RVC <50ms CPU / Seed-VC ~400ms) during a call."
+    },
+    {
+      "id": "agent_vishing",
+      "name": "AI Voice-Agent Vishing",
+      "family": "agent",
+      "description": "Autonomous conversational agent (OpenAI Realtime / Vapi / Retell / LiveKit / Pipecat) driving a scam call."
+    },
+    {
+      "id": "indic_cross_lingual_clone",
+      "name": "Indic Cross-Lingual Clone",
+      "family": "synthesis",
+      "description": "Clone a voice then speak a different Indian language (e.g. Hindi voice -> Tamil), incl. code-switch."
+    },
+    {
+      "id": "codec_rtc",
+      "name": "Codec-Compressed RTC",
+      "family": "channel",
+      "description": "Any attack transmitted through RTC/telephony codecs (G.711/Opus/Zoom/Teams) that degrade detection (RTCFake threat)."
+    }
+  ]
+}
