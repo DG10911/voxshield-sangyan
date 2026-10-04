@@ -260,7 +260,7 @@ function Shell() {
       </a>
       <aside className="sidebar">
         <Link to="/overview" className="brand">
-          <img src="/shield.svg" alt="" />
+          <img src="./shield.svg" alt="" />
           <div>
             VOXSHIELD<span>VOICE FRAUD INTELLIGENCE</span>
           </div>
@@ -408,7 +408,7 @@ function Shell() {
           </Suspense>
           <footer className="main-footer">
             <span>
-              <img src="/shield.svg" alt="" /> VOXSHIELD INTELLIGENCE PLATFORM
+              <img src="./shield.svg" alt="" /> VOXSHIELD INTELLIGENCE PLATFORM
             </span>
             <span>Evidence first. Certainty earned.</span>
             <span>PROTOTYPE / DEMO TELEMETRY</span>

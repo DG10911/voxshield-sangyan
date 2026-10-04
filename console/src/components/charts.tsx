@@ -431,3 +431,78 @@ export function EvidenceGraph({
     </div>
   );
 }
+
+export function Spectrogram({
+  src,
+  suspicious = false,
+  caption = "Mel spectrogram · 128 bands · log frequency",
+}: {
+  src?: string;
+  suspicious?: boolean;
+  caption?: string;
+}) {
+  const ref = useRef<HTMLCanvasElement>(null);
+  useEffect(() => {
+    if (src) return;
+    const canvas = ref.current;
+    if (!canvas) return;
+    const w = canvas.clientWidth || 900;
+    const h = canvas.clientHeight || 150;
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = w * dpr;
+    canvas.height = h * dpr;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const cols = 240;
+    const rows = 104;
+    const cw = w / cols;
+    const ch = h / rows;
+    const seed = suspicious ? 7 : 3;
+    const rnd = (i: number) => {
+      const x = Math.sin(i * 12.9898 + seed * 78.233) * 43758.5453;
+      return x - Math.floor(x);
+    };
+    for (let x = 0; x < cols; x++) {
+      for (let y = 0; y < rows; y++) {
+        const f = y / rows;
+        let v = rnd(x * 97 + y * 13) * 0.42;
+        v += Math.exp(-Math.pow((f - 0.84) / 0.07, 2)) * 0.72;
+        v += Math.exp(-Math.pow((f - 0.62) / 0.05, 2)) * 0.42;
+        v += Math.sin(x * 0.34 + f * 42) * 0.06;
+        if (suspicious) {
+          v += Math.exp(-Math.pow((f - 0.16) / 0.12, 2)) * 0.5;
+          if (rnd(x * 401) > 0.93) v += 0.5;
+        }
+        v = Math.max(0, Math.min(1, v));
+        const c =
+          v < 0.5
+            ? `rgb(${Math.round(8 + v * 46)},${Math.round(22 + v * 186)},${Math.round(34 + v * 198)})`
+            : `rgb(${Math.round(32 + (v - 0.5) * 2 * 216)},${Math.round(214 - (v - 0.5) * 148)},${Math.round(232 - (v - 0.5) * 150)})`;
+        ctx.fillStyle = c;
+        ctx.fillRect(x * cw, y * ch, cw + 0.7, ch + 0.7);
+      }
+    }
+    ctx.fillStyle = "rgba(255,77,106,.85)";
+    ctx.fillRect(0, Math.round(0.11 * h), w, 1.5);
+  }, [src, suspicious]);
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 6, marginTop: 10 }}>
+      {src ? (
+        <img
+          alt="Mel spectrogram"
+          src={src}
+          style={{ width: "100%", height: 150, objectFit: "cover", borderRadius: 10, border: "1px solid rgba(255,255,255,.08)" }}
+        />
+      ) : (
+        <canvas
+          ref={ref}
+          style={{ width: "100%", height: 150, display: "block", borderRadius: 10, border: "1px solid rgba(255,255,255,.08)" }}
+        />
+      )}
+      <small className="mono" style={{ color: "rgba(143,160,186,.85)" }}>
+        {caption}
+      </small>
+    </div>
+  );
+}

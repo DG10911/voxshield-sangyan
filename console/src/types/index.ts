@@ -20,6 +20,7 @@ export interface AnalysisResult {
   reasons: string[];
   transcript: string;
   source: "demo" | "live";
+  spectrogram?: string;
 }
 export interface CallRecord extends AnalysisResult {
   analyst: string;

@@ -18,7 +18,7 @@ import {
   Tabs,
   Bar,
 } from "../components/ui";
-import { EvidenceGraph, Waveform } from "../components/charts";
+import { EvidenceGraph, Spectrogram, Waveform } from "../components/charts";
 import VoxOrb from "../components/VoxOrb";
 import { api, download } from "../services/api";
 import { mockAnalysis } from "../services/mock";
@@ -128,6 +128,15 @@ export function VerdictView({ result }: { result: AnalysisResult }) {
           <Waveform
             suspicious={result.verdict === "SYNTHETIC"}
             onTime={setTime}
+          />
+          <Spectrogram
+            src={result.spectrogram}
+            suspicious={result.verdict === "SYNTHETIC"}
+            caption={
+              result.verdict === "SYNTHETIC"
+                ? "Mel spectrogram · flat high-frequency energy at 04.2–07.8s (vocoder signature)"
+                : "Mel spectrogram · log frequency, 0–4 kHz telephony band"
+            }
           />
           <div
             className={
@@ -393,6 +402,14 @@ export default function Analyze() {
                   file
                     ? "Illustrative envelope · playback uses your file"
                     : "Demo signal · 8 kHz · G.711 · Hindi"
+                }
+              />
+              <Spectrogram
+                suspicious={stage === 5 && scenario === "SYNTHETIC"}
+                caption={
+                  file
+                    ? "Illustrative mel spectrogram · playback uses your file"
+                    : "Demo mel spectrogram · 8 kHz · G.711 · log frequency"
                 }
               />
               <div className="analysis-steps">
