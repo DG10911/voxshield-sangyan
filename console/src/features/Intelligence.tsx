@@ -15,6 +15,7 @@ import {
   LineChart,
   Sparkline,
   EvidenceGraph,
+  Spectrogram,
   Waveform,
 } from "../components/charts";
 import {
@@ -772,6 +773,14 @@ export function Speakers() {
               </label>
             )}
             <Waveform />
+            <Spectrogram
+              suspicious={done && tab === "Verify" && scenario === "DIFFERENT"}
+              caption={
+                tab === "Verify"
+                  ? "Pairwise mel spectrogram · speaker comparison"
+                  : "Enrollment mel spectrogram · log frequency"
+              }
+            />
             <button
               className="primary wide"
               onClick={() => {

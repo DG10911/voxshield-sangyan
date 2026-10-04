@@ -25,7 +25,7 @@ import {
   ExportButton,
   CopyButton,
 } from "../components/ui";
-import { LineChart, Sparkline, Waveform } from "../components/charts";
+import { LineChart, Sparkline, Spectrogram, Waveform } from "../components/charts";
 import { datasets, rounds, languages } from "../data/catalog";
 import { useApp, usePreference } from "../store";
 import { config, endpoints, download } from "../services/api";
@@ -168,6 +168,14 @@ export function Products() {
                 </label>
               )}
               <Waveform suspicious={risk >= 80} />
+              <Spectrogram
+                suspicious={risk >= 80}
+                caption={
+                  selected === "Consumer"
+                    ? "Voice-message mel spectrogram · log frequency"
+                    : "Input mel spectrogram · log frequency, 0–4 kHz"
+                }
+              />
               <label className="field">
                 Simulated{" "}
                 {selected === "Voice Identity" ? "similarity" : "risk"} · {risk}

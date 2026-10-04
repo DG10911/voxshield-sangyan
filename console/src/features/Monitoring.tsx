@@ -11,7 +11,7 @@ import {
   ExportButton,
   Bar,
 } from "../components/ui";
-import { LineChart, Waveform } from "../components/charts";
+import { LineChart, Spectrogram, Waveform } from "../components/charts";
 import { VerdictView, DetectorInspector } from "./Analyze";
 import { detectors } from "../data/catalog";
 import { liveConfidence } from "../services/mock";
@@ -131,6 +131,14 @@ export function Live() {
             })}
           </div>
           <Waveform suspicious={time >= 4} />
+          <Spectrogram
+            suspicious={time >= 4}
+            caption={
+              time >= 4
+                ? "Sliding-window mel spectrogram · harmonic energy at 4.0s (flag)"
+                : "Sliding-window mel spectrogram · 3.0s window · 8 kHz G.711"
+            }
+          />
           <div className="padded">
             <DetailList
               items={[
