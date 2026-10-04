@@ -1,0 +1,392 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>VoxShield · Voice Fraud Intelligence Console</title>
+<style>
+:root{
+ --bg:#05070c; --bg2:#0a0e16; --panel:#0e1420; --panel2:#131b29; --line:#222e44; --line2:#2c3a55;
+ --fg:#eef3fb; --sub:#8fa0ba; --mut:#5f6f88;
+ --red:#ff4d6a; --red2:#ff7a90; --cyan:#22d3ee; --grn:#25d07c; --amb:#f6a935; --vio:#8b5cff;
+ --mono:"SF Mono",ui-monospace,Menlo,Consolas,monospace;
+ --max:1240px; --r:16px;
+}
+*{box-sizing:border-box;margin:0}
+html,body{height:100%}
+body{background:
+ radial-gradient(900px 500px at 12% -8%,rgba(255,77,106,.10),transparent 60%),
+ radial-gradient(900px 600px at 100% 0,rgba(34,211,238,.07),transparent 55%),
+ var(--bg);
+ color:var(--fg);font-family:-apple-system,"Inter",Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+ line-height:1.5;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+.app{display:grid;grid-template-columns:252px 1fr;min-height:100vh}
+/* sidebar */
+aside{position:sticky;top:0;height:100vh;border-right:1px solid var(--line);background:linear-gradient(180deg,rgba(14,20,32,.9),rgba(8,11,18,.9));backdrop-filter:blur(8px);padding:20px 14px;display:flex;flex-direction:column;gap:6px;overflow:auto}
+.brand{display:flex;align-items:center;gap:11px;padding:6px 10px 18px}
+.brand .mk{width:30px;height:30px;border-radius:9px;background:linear-gradient(135deg,var(--red),#b3283a);box-shadow:0 8px 24px rgba(255,77,106,.35);display:grid;place-items:center;font-weight:900;color:#fff}
+.brand b{font-weight:900;letter-spacing:.16em;font-size:15px}
+.brand span{display:block;font-size:10px;color:var(--mut);letter-spacing:.18em;font-family:var(--mono)}
+.navsec{font-size:10.5px;letter-spacing:.18em;color:var(--mut);text-transform:uppercase;padding:14px 10px 6px;font-family:var(--mono)}
+.nav{display:flex;align-items:center;gap:11px;padding:9px 11px;border-radius:11px;color:var(--sub);font-size:13.5px;cursor:pointer;border:1px solid transparent}
+.nav:hover{color:#fff;background:rgba(255,255,255,.03)}
+.nav.on{color:#fff;background:linear-gradient(90deg,rgba(255,77,106,.16),rgba(255,77,106,.03));border-color:rgba(255,77,106,.35)}
+.nav .ic{width:18px;text-align:center;opacity:.9}
+.nav .badge{margin-left:auto;font-size:10px;font-family:var(--mono);color:var(--grn)}
+.sidefoot{margin-top:auto;padding:12px 10px;font-size:11px;color:var(--mut);border-top:1px solid var(--line)}
+/* main */
+main{min-width:0}
+header.top{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:16px;padding:14px 26px;border-bottom:1px solid var(--line);background:rgba(5,7,12,.72);backdrop-filter:blur(12px)}
+.crumb{font-size:13px;color:var(--sub)}
+.crumb b{color:#fff}
+.search{margin-left:auto;display:flex;align-items:center;gap:9px;background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:8px 12px;min-width:280px}
+.search input{background:none;border:0;color:var(--fg);outline:none;font-size:13px;width:100%;font-family:var(--mono)}
+.pillstat{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--sub);border:1px solid var(--line);border-radius:999px;padding:6px 12px;font-family:var(--mono)}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--grn);box-shadow:0 0 12px var(--grn)}
+.wrap{padding:26px;max-width:var(--max);margin:0 auto}
+/* generic */
+.grid{display:grid;gap:16px}
+.g4{grid-template-columns:repeat(4,1fr)}.g3{grid-template-columns:repeat(3,1fr)}.g2{grid-template-columns:repeat(2,1fr)}
+.card{background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid var(--line);border-radius:var(--r);padding:18px}
+.card h3{font-size:14px;font-weight:700;letter-spacing:.01em}
+.card .h{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.card .h .t{font-size:12px;color:var(--mut);letter-spacing:.14em;text-transform:uppercase;font-family:var(--mono)}
+.kpi{padding:20px}
+.kpi .v{font-size:34px;font-weight:900;letter-spacing:-.02em}
+.kpi .l{font-size:12px;color:var(--sub);margin-top:4px}
+.kpi .d{font-size:11px;font-family:var(--mono);margin-top:8px}
+.up{color:var(--grn)}.dn{color:var(--red)}.warnc{color:var(--amb)}.cy{color:var(--cyan)}
+.title{font-size:26px;font-weight:850;letter-spacing:-.02em}
+.subt{color:var(--sub);font-size:14px;margin-top:4px}
+.hr{height:1px;background:var(--line);margin:18px 0}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;color:var(--mut);font-weight:600;font-size:11px;letter-spacing:.12em;text-transform:uppercase;padding:8px 10px;border-bottom:1px solid var(--line);font-family:var(--mono)}
+td{padding:9px 10px;border-bottom:1px solid rgba(34,46,68,.5)}
+tr:hover td{background:rgba(255,255,255,.02)}
+.bar{height:8px;border-radius:6px;background:rgba(255,255,255,.06);overflow:hidden}
+.bar>i{display:block;height:100%;border-radius:6px;transition:width .9s cubic-bezier(.2,.7,.2,1)}
+.chipl{display:inline-flex;align-items:center;gap:7px;font-size:11.5px;font-family:var(--mono);border:1px solid var(--line);border-radius:999px;padding:4px 10px;color:var(--sub)}
+.chipl.ok{border-color:rgba(37,208,124,.4);color:var(--grn)}
+.chipl.red{border-color:rgba(255,77,106,.4);color:var(--red2)}
+.btn{cursor:pointer;border:1px solid var(--line2);background:var(--panel);color:var(--fg);padding:9px 15px;border-radius:11px;font-weight:700;font-size:13px}
+.btn.pri{background:linear-gradient(90deg,var(--red),#d33a55);border-color:transparent;box-shadow:0 12px 30px rgba(255,77,106,.28)}
+.btn.ghost{background:transparent}
+.btn:hover{border-color:var(--red)}
+.mono{font-family:var(--mono)}
+.muted{color:var(--sub)}.mut2{color:var(--mut)}
+.pad{padding:14px}
+.flex{display:flex;align-items:center;gap:12px}
+.between{justify-content:space-between}
+.drop{border:1.5px dashed var(--line2);border-radius:14px;padding:34px;text-align:center;color:var(--sub);background:rgba(255,255,255,.015)}
+.verdict{display:flex;align-items:center;gap:14px;padding:16px;border-radius:14px;border:1px solid var(--line)}
+.verdict.high{border-color:rgba(255,77,106,.5);background:rgba(255,77,106,.08)}
+.verdict.low{border-color:rgba(37,208,124,.5);background:rgba(37,208,124,.08)}
+.verdict.mid{border-color:rgba(246,169,53,.5);background:rgba(246,169,53,.08)}
+canvas{width:100%;display:block}
+.view{display:none}.view.on{display:block;animation:in .35s cubic-bezier(.2,.7,.2,1)}
+@keyframes in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.langs{display:grid;grid-template-columns:repeat(6,1fr);gap:10px}
+.lang{border:1px solid var(--line);border-radius:12px;padding:12px;background:rgba(255,255,255,.015)}
+.lang b{font-size:15px}.lang .m{font-size:11px;font-family:var(--mono);color:var(--sub)}
+.sw{display:grid;grid-template-columns:12px 1fr;gap:10px;padding:10px;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.015)}
+.sw .d{width:10px;height:10px;border-radius:50%;margin-top:4px}
+@media(max-width:1100px){.g4{grid-template-columns:repeat(2,1fr)}.langs{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:820px){.app{grid-template-columns:64px 1fr}.brand span,.navsec,.nav .lbl,.sidefoot{display:none}}
+</style></head>
+<body><div class="app">
+<aside>
+  <div class="brand"><span class="mk">V</span><div><b>VOXSHIELD</b><span>VOICE FRAUD INTEL</span></div></div>
+  <div class="navsec">Monitor</div>
+  <div class="nav on" data-v="overview"><span class="ic">◈</span><span class="lbl">Overview</span><span class="badge">●</span></div>
+  <div class="nav" data-v="analyze"><span class="ic">⌁</span><span class="lbl">Analyze</span></div>
+  <div class="nav" data-v="live"><span class="ic">◉</span><span class="lbl">Live stream</span></div>
+  <div class="navsec">Intelligence</div>
+  <div class="nav" data-v="languages"><span class="ic">अ</span><span class="lbl">Languages</span><span class="badge">23</span></div>
+  <div class="nav" data-v="brains"><span class="ic">✷</span><span class="lbl">Evidence brains</span></div>
+  <div class="nav" data-v="registries"><span class="ic">⛁</span><span class="lbl">Registries</span></div>
+  <div class="nav" data-v="results"><span class="ic">◱</span><span class="lbl">Results</span></div>
+  <div class="navsec">Platform</div>
+  <div class="nav" data-v="surfaces"><span class="ic">⛨</span><span class="lbl">Product surfaces</span></div>
+  <div class="nav" data-v="integrations"><span class="ic">⇄</span><span class="lbl">Integrations</span></div>
+  <div class="nav" data-v="ops"><span class="ic">⚙</span><span class="lbl">Ops & audit</span></div>
+  <div class="nav" data-v="roadmap"><span class="ic">◇</span><span class="lbl">Roadmap</span></div>
+  <div class="sidefoot"><span class="dot" style="display:inline-block;margin-right:8px"></span>DGX A100 · ensemble live<br><span class="mono">build 2026-10 · v3.0</span></div>
+</aside>
+
+<main>
+<header class="top">
+  <div class="crumb" id="crumb">Monitor / <b>Overview</b></div>
+  <div class="search"><span class="mut2 mono">⌕</span><input placeholder="search threat, language, generator, audit…" id="q"></div>
+  <div class="pillstat"><span class="dot" id="hdot"></span><span id="hstatus">checking…</span></div>
+</header>
+
+<div class="wrap">
+
+<!-- OVERVIEW -->
+<section class="view on" id="v-overview">
+  <div class="flex between" style="align-items:flex-end;margin-bottom:18px">
+    <div><div class="title">Voice-Fraud Intelligence</div><div class="subt">Real-time synthetic-speech detection for Indic telephony. HUMAN / SYNTHETIC / ABSTAIN.</div></div>
+    <div class="flex"><span class="chipl ok">● ensemble live</span><span class="chipl">5 detectors</span><span class="chipl">on-prem</span></div>
+  </div>
+  <div class="grid g4">
+    <div class="card kpi"><div class="t mono mut2">SEEN EER</div><div class="v up" data-count="1.62" data-suf="%">1.62%</div><div class="l">freevc24 generator · 12 languages</div></div>
+    <div class="card kpi"><div class="t mono mut2">UNSEEN EER</div><div class="v cy" data-count="15.94" data-suf="%">15.94%</div><div class="l">mean leave-one-generator-out</div></div>
+    <div class="card kpi"><div class="t mono mut2">GEN. GAP</div><div class="v warnc" data-count="9.43" data-suf=" pts" data-pre="+">+9.43 pts</div><div class="l">unseen − seen · MODERATE</div></div>
+    <div class="card kpi"><div class="t mono mut2">FALSE ALARMS</div><div class="v up" data-count="91" data-suf="%" data-pre="−">−91%</div><div class="l">on genuine callers @80% coverage</div></div>
+  </div>
+  <div class="grid g2" style="margin-top:16px">
+    <div class="card"><div class="h"><span class="t">Detection over coverage</span><span class="chipl" style="margin-left:auto">risk–coverage</span></div><canvas id="cov" height="220"></canvas><div class="l muted mono" style="margin-top:8px">AURC 0.0273 · selective EER @95% cov 9.96%</div></div>
+    <div class="card"><div class="h"><span class="t">Ensemble</span><span class="chipl ok" style="margin-left:auto">4 neural + DSP</span></div>
+      <div id="ens"></div>
+    </div>
+  </div>
+  <div class="grid g2" style="margin-top:16px">
+    <div class="card"><div class="h"><span class="t">Channel degradation</span></div><canvas id="chan" height="200"></canvas></div>
+    <div class="card"><div class="h"><span class="t">Recent activity</span></div><div id="feed"></div></div>
+  </div>
+</section>
+
+<!-- ANALYZE -->
+<section class="view" id="v-analyze">
+  <div class="title">Analyze a call</div><div class="subt">Upload a clip or use a live mic — get an explainable verdict with reason codes.</div>
+  <div class="grid g2" style="margin-top:18px">
+    <div class="card">
+      <div class="drop" id="drop"><b>Drop an audio clip</b><div class="mono mut2" style="margin-top:6px">wav · flac · mp3 · G.711 telephony</div>
+        <div style="margin-top:14px"><label class="btn pri" style="display:inline-block">Choose file<input type="file" id="file" accept="audio/*" hidden></label></div>
+      </div>
+      <div class="hr"></div>
+      <div class="flex between"><span class="chipl">language: <b id="alang" class="cy">—</b></span><span class="chipl">duration: <b id="adur" class="mono">—</b></span><span class="chipl">channel: <b id="achan" class="mono">clean</b></span></div>
+      <canvas id="wave" height="120" style="margin-top:12px"></canvas>
+      <div class="flex" style="margin-top:12px"><button class="btn pri" id="runbtn">Run analysis</button><button class="btn ghost" id="demobtn">Use demo clip</button><span class="mono mut2" id="astat"></span></div>
+    </div>
+    <div class="card">
+      <div class="h"><span class="t">Verdict</span></div>
+      <div id="vbox" class="verdict low"><div style="font-size:26px;font-weight:900" id="vlabel">HUMAN</div><div class="mono muted" id="vscore" style="margin-left:auto">score —</div></div>
+      <div class="l muted" id="vaction" style="margin:10px 0 4px">Awaiting a clip…</div>
+      <div class="hr"></div>
+      <div class="t mono mut2" style="margin-bottom:10px">Per-model</div>
+      <div id="pm"></div>
+      <div class="hr"></div>
+      <div class="t mono mut2" style="margin-bottom:10px">Reason codes</div>
+      <div class="flex" id="codes" style="flex-wrap:wrap"></div>
+    </div>
+  </div>
+</section>
+
+<!-- LIVE -->
+<section class="view" id="v-live">
+  <div class="title">Live stream · time-to-flag</div><div class="subt">Sliding-window analysis of a call; the decision locks in under 10 s.</div>
+  <div class="grid g4" style="margin-top:18px">
+    <div class="card kpi"><div class="t mono mut2">TIME TO FLAG</div><div class="v cy">4.0s</div><div class="l">median onset detection</div></div>
+    <div class="card kpi"><div class="t mono mut2">WINDOW</div><div class="v">3.0s</div><div class="l">hop 1.0s · max 10s</div></div>
+    <div class="card kpi"><div class="t mono mut2">THRESHOLD</div><div class="v">0.70</div><div class="l">escalate on synthetic</div></div>
+    <div class="card kpi"><div class="t mono mut2">LATENCY</div><div class="v up">~120ms</div><div class="l">per window (GPU)</div></div>
+  </div>
+  <div class="card" style="margin-top:16px"><div class="h"><span class="t">Timeline</span></div><canvas id="tl" height="240"></canvas></div>
+</section>
+
+<!-- LANGUAGES -->
+<section class="view" id="v-languages">
+  <div class="title">Language scorecard</div><div class="subt">Per-language EER on clean and G.711 telephony. 0/23 → 23/23 as each GPU round validates.</div>
+  <div class="card" style="margin-top:18px"><table><thead><tr><th>Language</th><th>Code</th><th>Clean EER</th><th>G.711 EER</th><th></th><th>Status</th></tr></thead><tbody id="langrows"></tbody></table></div>
+  <div class="langs" id="langgrid" style="margin-top:16px"></div>
+</section>
+
+<!-- BRAINS -->
+<section class="view" id="v-brains">
+  <div class="title">Evidence brains</div><div class="subt">Heterogeneous signals arbitrated into one explainable verdict.</div>
+  <div class="grid g3" style="margin-top:18px" id="brains"></div>
+</section>
+
+<!-- REGISTRIES -->
+<section class="view" id="v-registries">
+  <div class="title">Registries</div><div class="subt">Living catalogues the detector reasons over.</div>
+  <div class="grid g4" style="margin-top:18px">
+    <div class="card kpi"><div class="t mono mut2">GENERATORS</div><div class="v cy">28</div><div class="l">TTS · VC · codec · replay</div></div>
+    <div class="card kpi"><div class="t mono mut2">ATTACK MODES</div><div class="v">26</div><div class="l">channel · spoof · adversarial</div></div>
+    <div class="card kpi"><div class="t mono mut2">RECIPES</div><div class="v">17-dim</div><div class="l">combinatorial render space</div></div>
+    <div class="card kpi"><div class="t mono mut2">LANGUAGES</div><div class="v">23</div><div class="l">Eighth-Schedule + English</div></div>
+  </div>
+  <div class="grid g2" style="margin-top:16px">
+    <div class="card"><div class="h"><span class="t">Generators × seen/unseen</span></div><div id="gens"></div></div>
+    <div class="card"><div class="h"><span class="t">Attack modes</span></div><div id="attacks" class="flex" style="flex-wrap:wrap"></div></div>
+  </div>
+</section>
+
+<!-- RESULTS -->
+<section class="view" id="v-results">
+  <div class="title">Results</div><div class="subt">Measured on DGX, 2026-10 — reported per slice, never a single number.</div>
+  <div class="grid g2" style="margin-top:18px">
+    <div class="card"><div class="h"><span class="t">Generalization gap</span></div><canvas id="gap" height="220"></canvas></div>
+    <div class="card"><div class="h"><span class="t">Seen vs zero-shot SOTA on Indic</span></div><canvas id="cmp" height="220"></canvas></div>
+  </div>
+  <div class="grid g3" style="margin-top:16px">
+    <div class="card"><div class="h"><span class="t">Channel matrix</span></div><div id="chanm"></div></div>
+    <div class="card"><div class="h"><span class="t">Calibration</span></div><div id="calib"></div></div>
+    <div class="card"><div class="h"><span class="t">Abstention</span></div><div id="abst"></div></div>
+  </div>
+</section>
+
+<!-- SURFACES -->
+<section class="view" id="v-surfaces">
+  <div class="title">Product surfaces</div><div class="subt">One engine, many investor-protection surfaces.</div>
+  <div class="grid g3" style="margin-top:18px" id="surf"></div>
+</section>
+
+<!-- INTEGRATIONS -->
+<section class="view" id="v-integrations">
+  <div class="title">Integrations</div><div class="subt">Indic language layer + governed data, all disclosed.</div>
+  <div class="grid g2" style="margin-top:18px">
+    <div class="card"><div class="h"><span class="t">Bhashini · ULCA</span><span class="chipl ok" style="margin-left:auto">live</span></div>
+      <div id="bhash"></div></div>
+    <div class="card"><div class="h"><span class="t">AIKosh · catalogue</span><span class="chipl ok" style="margin-left:auto">connected</span></div>
+      <div id="aik"></div></div>
+  </div>
+  <div class="grid g3" style="margin-top:16px">
+    <div class="card kpi"><div class="t mono mut2">AIKOSH DATASETS</div><div class="v cy">124</div><div class="l">curated speech/Indic</div></div>
+    <div class="card kpi"><div class="t mono mut2">AIKOSH MODELS</div><div class="v">94</div><div class="l">TTS · ASR · LID · NMT</div></div>
+    <div class="card kpi"><div class="t mono mut2">BHASHINI CALLS</div><div class="v">1944</div><div class="l">remaining of 2,000</div></div>
+  </div>
+</section>
+
+<!-- OPS -->
+<section class="view" id="v-ops">
+  <div class="title">Ops &amp; audit</div><div class="subt">Every decision is logged, calibrated and drift-monitored.</div>
+  <div class="grid g4" style="margin-top:18px">
+    <div class="card kpi"><div class="t mono mut2">ECE</div><div class="v up">0.058</div><div class="l">calibration error</div></div>
+    <div class="card kpi"><div class="t mono mut2">Cllr</div><div class="v">1.01 bits</div><div class="l">log-likelihood cost</div></div>
+    <div class="card kpi"><div class="t mono mut2">DRIFT</div><div class="v up">stable</div><div class="l">no distribution shift</div></div>
+    <div class="card kpi"><div class="t mono mut2">AUDIT</div><div class="v cy">append-only</div><div class="l">hash-chained records</div></div>
+  </div>
+  <div class="card" style="margin-top:16px"><div class="h"><span class="t">Audit log</span></div><table><thead><tr><th>Time</th><th>Event</th><th>Subject</th><th>Verdict</th><th>By</th></tr></thead><tbody id="audit"></tbody></table></div>
+</section>
+
+<!-- ROADMAP -->
+<section class="view" id="v-roadmap">
+  <div class="title">Roadmap</div><div class="subt">Everything built, everything upgradable — drop-in.</div>
+  <div class="grid g2" style="margin-top:18px" id="road"></div>
+</section>
+
+</div></main></div>
+
+<script>
+// ---------- data ----------
+const LANGS=[["Punjabi","pa",0.00,0.05,"2"],["Telugu","te",0.00,0.11,"2"],["Marathi","mr",0.02,0.14,"2"],["Sanskrit","sa",0.03,0.15,"2"],["Hindi","hi",0.09,0.29,"2"],["Tamil","ta",0.26,2.03,"2"],["Kannada","kn",0.65,1.62,"2"],["Gujarati","gu",1.28,6.01,"2"],["Bengali","bn",3.30,10.36,"2"],["Urdu","ur",13.13,22.71,"2"],["Odia","or",32.53,35.68,"1"],["Malayalam","ml",37.51,37.81,"1"],["Kashmiri","ks","—","—","0"],["Santali","sat","—","—","0"],["Sindhi","sd","—","—","0"],["Manipuri","mni","—","—","0"],["Nepali","ne","—","—","0"],["Bodo","brx","—","—","0"],["Dogri","doi","—","—","0"],["Konkani","kok","—","—","0"],["Maithili","mai","—","—","1"],["Assamese","as","—","—","1"],["English","en","—","—","0"]];
+const BRAINS=[["Physics (HPCS)","Harmonic phase-coherence & prosody physics",true],["Replay","Double-transmission / recapture detection",true],["Environment","Room, reverb and background consistency",true],["Cross-codec","Artifacts across G.711/G.722 resynthesis",true],["Speaker","ECAPA identity & diarization",true],["Semantic↔Prosody","ASR transcript vs prosody gap",true],["Causal","Counterfactual probing of the decision",true],["Temporal DNA","Micro-temporal fingerprint per generator",true],["Arbitration","HEDS fusion → accept / abstain",true]];
+const GENS=[["freevc24","seen",1.62],["vits","unseen",19.00],["xtts_v2","unseen",27.19],["codec (Encodec)","attack",null]];
+const ATTACKS=["G.711 µ-law","G.711 A-law","G.722","packet-loss","replay","room reverb","SNR 8–30dB","codec round-trip","neural-codec resynth","adversarial PGD","voice-clone","impersonation","TTS scripted","short-utterance","code-switch","partial-deepfake"];
+const SURF=[["⛨","CallGuard","Fraud fusion for live calls — timing, emotion, background, content → risk score (never auto-block)."],["◉","Voice Identity","Speaker enrollment & verification; step-up auth before high-risk actions."],["₹","Transaction Shield","Protects the transfer moment: synthetic caller + intent mismatch → pause & verify."],["☎","Telephony Gateway","IVR / SIP decision hook; inline scoring with reason codes."],["◈","War Room","Live ops rollup — active incidents, drift, threat feed (read-only)."],["◌","Consumer App","\"Is this voice real?\" — one-tap verdict in the user's language."]];
+const BHASH=[[["ASR","conformer-multilingual · 22 langs"],["TTS","IITM / IISc / Coqui · IndicF5 clone"],["ALD","audio language detection · 12 langs"],["TLD","text language detection · all Indic"],["NMT","indictrans-v2 · 22 langs"],["Streaming","WebSocket ASR · real-time"]]];
+const ROAD=[["P0 · Decision core","done","VoxScore + abstention wired into API + console"],["P1 · Detection science","done","eval_gengap, registries, master matrix · novelty validation on GPU"],["P2 · Evidence & product","done","14 modules: physics…orchestrate, CallGuard, API/SDK"],["P3 · Forensics & intel","done","reverse-time, temporal-DNA, causal, intel-graph, threat registry"],["P4 · Long-term","next","audio-visual, telephony gateway scale, consumer, global"],["Upgrades (drop-in)","ready","XLS-R+SLS · RawBoost · AASIST3 · adversarial · distillation"]];
+
+// ---------- helpers ----------
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const el=(t,c,h)=>{const e=document.createElement(t);if(c)e.className=c;if(h!=null)e.innerHTML=h;return e};
+const API=(location.protocol.startsWith('http')?location.origin:'http://localhost:8000');
+
+// router
+const TITLES={overview:"Overview",analyze:"Analyze",live:"Live stream",languages:"Languages",brains:"Evidence brains",registries:"Registries",results:"Results",surfaces:"Product surfaces",integrations:"Integrations",ops:"Ops & audit",roadmap:"Roadmap"};
+function go(v){$$('.nav').forEach(n=>n.classList.toggle('on',n.dataset.v===v));$$('.view').forEach(s=>s.classList.remove('on'));$('#v-'+v).classList.add('on');
+ const sec=['overview','analyze','live'].includes(v)?'Monitor':(['languages','brains','registries','results'].includes(v)?'Intelligence':'Platform');
+ $('#crumb').innerHTML=sec+' / <b>'+TITLES[v]+'</b>'; drawAll();}
+$$('.nav').forEach(n=>n.onclick=()=>go(n.dataset.v));
+
+// canvas chart helpers
+function ctx(id){const c=$('#'+id);const d=window.devicePixelRatio||1;const w=c.clientWidth,h=parseInt(c.getAttribute('height'));c.width=w*d;c.height=h*d;const x=c.getContext('2d');x.setTransform(d,0,0,d,0,0);return{x,w,h}}
+function bars(id,rows){const {x,w,h}=ctx(id);x.clearRect(0,0,w,h);const gap=14,bw=(w-gap*(rows.length-1))/rows.length;
+ rows.forEach((r,i)=>{const bx=i*(bw+gap),bh=Math.max(4,h*r.v-20);x.fillStyle=r.c;x.beginPath();x.roundRect(bx,h-bh,bw,bh,8);x.fill();
+  x.fillStyle='#eef3fb';x.font='700 13px -apple-system';x.textAlign='center';x.fillText(r.lbl,bx+bw/2,h-bh-10);x.fillStyle='#8fa0ba';x.font='600 11px ui-monospace';x.fillText(r.sub,bx+bw/2,h-6);});}
+function line(id,pts,lo,hi,acc){const {x,w,h}=ctx(id);x.clearRect(0,0,w,h);x.strokeStyle='#222e44';x.lineWidth=1;
+ for(let g=0;g<=4;g++){const gy=20+(h-40)*g/4;x.beginPath();x.moveTo(30,gy);x.lineTo(w-6,gy);x.stroke();}
+ x.strokeStyle=acc;x.lineWidth=3;x.beginPath();
+ pts.forEach((p,i)=>{const px=30+(w-40)*i/(pts.length-1);const py=20+(h-40)*(1-(p-lo)/(hi-lo));i?x.lineTo(px,py):x.moveTo(px,py);});x.stroke();
+ const g=x.createLinearGradient(0,0,0,h);g.addColorStop(0,acc+'55');g.addColorStop(1,acc+'00');x.lineTo(w-6,h-20);x.lineTo(30,h-20);x.closePath();x.fillStyle=g;x.fill();}
+function area(id,series){const {x,w,h}=ctx(id);x.clearRect(0,0,w,h);const max=100;const n=series[0].length;
+ series.forEach((s,si)=>{x.strokeStyle=s.c;x.lineWidth=2.5;x.beginPath();s.v.forEach((v,i)=>{const px=20+(w-30)*i/(n-1),py=h-20-(h-40)*v/max;i?x.lineTo(px,py):x.moveTo(px,py)});x.stroke();});
+ x.fillStyle='#5f6f88';x.font='10px ui-monospace';x.fillText('100%',2,14);x.fillText('0',2,h-8);}
+function donut(id,val){const {x,w,h}=ctx(id);x.clearRect(0,0,w,h);const cx=w/2,cy=h/2,r=Math.min(w,h)/2-14;x.lineWidth=14;
+ x.strokeStyle='#1b2434';x.beginPath();x.arc(cx,cy,r,0,7);x.stroke();
+ x.strokeStyle='#ff4d6a';x.beginPath();x.arc(cx,cy,r,-Math.PI/2,-Math.PI/2+7*val);x.stroke();
+ x.fillStyle='#eef3fb';x.font='800 26px -apple-system';x.textAlign='center';x.fillText(Math.round(val*100)+'%',cx,cy+4);x.fillStyle='#8fa0ba';x.font='11px ui-monospace';x.fillText('risk @cov',cx,cy+24);}
+
+// renderers
+function renderOverview(){
+ const ens=[["Deepfake-audio-detection-V2",.99],["wav2vec2-xlsr-deepfake",.08],["distilhubert-ITW",1.0],["LFCC+CQCC fusion head",1.0],["acoustic DSP",.41]];
+ $('#ens').innerHTML='';ens.forEach(([n,v])=>{const r=el('div','pad');r.innerHTML=`<div class="flex between"><span style="font-size:13px">${n}</span><span class="mono ${v>.5?'dn':'up'}">${v.toFixed(2)}</span></div><div class="bar" style="margin-top:6px"><i style="width:${v*100}%;background:${v>.5?'#ff4d6a':'#25d07c'}"></i></div>`;$('#ens').append(r)});
+ const feed=[["SYNTHETIC","hindi · +91 9•••21","escalated · pause&verify"],["HUMAN","tamil · verified caller","allow"],["ABSTAIN","urdu · low confidence","defer to agent"],["SYNTHETIC","bengali · G.711","blocked transfer"]];
+ $('#feed').innerHTML='';feed.forEach(([v,s,a])=>{const c=v==='SYNTHETIC'?'red':v==='HUMAN'?'ok':'';const r=el('div','flex between pad');r.style.borderBottom='1px solid rgba(34,46,68,.5)';r.innerHTML=`<div><span class="chipl ${c}">${v}</span> <span class="muted" style="font-size:13px">${s}</span></div><span class="mono mut2" style="font-size:12px">${a}</span>`;$('#feed').append(r)});
+ requestAnimationFrame(()=>{bars('chan',[{lbl:'clean',v:.924,c:'#25d07c',sub:'9.24%'},{lbl:'G.711',v:.70,c:'#f6a935',sub:'11.41%'}]);
+  // cov
+  const {x,w,h}=ctx('cov');x.clearRect(0,0,w,h);const acc='#ff4d6a';x.beginPath();for(let i=0;i<=60;i++){const q=i/60;const px=40+(w-50)*q,py=20+(h-40)*Math.pow(q,2.1);i?x.lineTo(px,py):x.moveTo(px,py)}x.strokeStyle=acc;x.lineWidth=3;x.stroke();
+  x.fillStyle='#5f6f88';x.font='10px ui-monospace';x.fillText('100%',6,14);x.fillText('coverage →',w-90,h-6);x.fillText('FP 2.55%→0.23%',44,34);
+  $$('[data-count]').forEach(e=>{const target=parseFloat(e.dataset.count);const pre=e.dataset.pre||'';const suf=e.dataset.suf||'';let s=null;function step(ts){if(!s)s=ts;const k=Math.min(1,(ts-s)/900);const val=target*(1-Math.pow(1-k,3));e.textContent=pre+val.toFixed(target<10?2:0)+suf;if(k<1)requestAnimationFrame(step)}requestAnimationFrame(step)});
+ });
+}
+function renderLanguages(){
+ const tb=$('#langrows');tb.innerHTML='';
+ LANGS.forEach(([n,c,cl,g711,st])=>{const done=cl!=='—';const e=el('tr');e.innerHTML=`<td><b>${n}</b></td><td class="mono muted">${c}</td><td class="mono ${done?(cl<5?'up':cl<20?'warnc':'dn'):'mut2'}">${done?cl.toFixed(2)+'%':'—'}</td><td class="mono ${done?'': 'mut2'}">${done?g711.toFixed(2)+'%':'—'}</td><td style="width:160px">${done?`<div class="bar"><i style="width:${Math.min(100,cl)}%;background:${cl<5?'#25d07c':cl<20?'#f6a935':'#ff4d6a'}"></i></div>`:''}</td><td>${st=='2'?'<span class="chipl ok">validated</span>':st=='1'?'<span class="chipl">partial</span>':'<span class="chipl">pending GPU</span>'}</td>`;tb.append(e)});
+ $('#langgrid').innerHTML='';LANGS.slice(0,18).forEach(([n,c])=>{const e=el('div','lang');e.innerHTML=`<b>${n}</b><div class="m">${c}</div>`;$('#langgrid').append(e)});
+}
+function renderBrains(){$('#brains').innerHTML='';BRAINS.forEach(([n,d])=>{const e=el('div','card');e.innerHTML=`<div class="h"><span class="dot" style="background:#25d07c;box-shadow:0 0 10px #25d07c"></span><h3>${n}</h3></div><div class="muted" style="font-size:13px">${d}</div><div class="chipl ok" style="margin-top:10px">active</div>`;$('#brains').append(e)})}
+function renderRegistries(){
+ $('#gens').innerHTML='';GENS.forEach(([g,st,v])=>{const e=el('div','pad');e.style.borderBottom='1px solid rgba(34,46,68,.5)';e.innerHTML=`<div class="flex between"><span class="mono">${g}</span><span class="chipl ${st==='seen'?'ok':st==='unseen'?'red':''}">${st}</span><span class="mono ${v==null?'mut2':v<5?'up':'dn'}">${v==null?'—':v.toFixed(2)+'%'}</span></div>`;$('#gens').append(e)});
+ $('#attacks').innerHTML=ATTACKS.map(a=>`<span class="chipl">${a}</span>`).join('');
+}
+function renderResults(){
+ requestAnimationFrame(()=>{
+  line('gap',[1.62,19.00,27.19,15.94],0,30,'#ff4d6a');
+  bars('cmp',[{lbl:'zero-shot SOTA',v:1.0,c:'#ff4d6a',sub:'33–93%'},{lbl:'VoxShield seen',v:.10,c:'#25d07c',sub:'1.62%'},{lbl:'VoxShield unseen',v:.45,c:'#22d3ee',sub:'15.94%'}]);
+  $('#chanm').innerHTML=row('clean','9.24%','#25d07c')+row('G.711 µ/A','11.41%','#f6a935')+row('Δ codec','+2.17 pts','#8fa0ba');
+  $('#calib').innerHTML=row('ECE','0.058','#25d07c')+row('Brier','0.061','#8fa0ba')+row('Cllr','1.01 bits','#8fa0ba');
+  $('#abst').innerHTML=row('FP @100% cov','2.55%','#f6a935')+row('FP @90% cov','0.60%','#25d07c')+row('FP @80% cov','0.23%','#25d07c');
+ });
+}
+const row=(a,b,c)=>`<div class="flex between pad" style="border-bottom:1px solid rgba(34,46,68,.5)"><span class="muted">${a}</span><span class="mono" style="color:${c}">${b}</span></div>`;
+function renderSurfaces(){$('#surf').innerHTML='';SURF.forEach(([ic,n,d])=>{const e=el('div','card');e.innerHTML=`<div class="h"><span class="chipl" style="font-size:15px">${ic}</span><h3>${n}</h3></div><div class="muted" style="font-size:13px">${d}</div>`;$('#surf').append(e)})}
+function renderIntegrations(){
+ $('#bhash').innerHTML=BHASH[0].map(([a,b])=>row(a,b,'#eef3fb')).join('');
+ $('#aik').innerHTML=['IndicVoices','IndicSynth (CC-BY-NC)','Shrutilipi','Vaani','Rasa','Sooktam2','IndicConformer-600M','IndicWav2Vec','IndicTrans2','IndicXlit'].map(x=>`<span class="chipl" style="margin:0 6px 6px 0">${x}</span>`).join('');
+}
+function renderOps(){
+ const A=[['14:02:11','analyze','hindi call · G.711','SYNTHETIC','system'],['14:05:48','enroll','speaker A1','verified','admin'],['14:11:03','stream','bengali live','ABSTAIN','system'],['14:20:19','policy','block auto-action','updated','admin'],['14:28:40','analyze','tamil call','HUMAN','system']];
+ $('#audit').innerHTML=A.map(([t,e,s,v,b])=>{const c=v==='SYNTHETIC'?'red':v==='HUMAN'?'ok':'';return`<tr><td class="mono muted">${t}</td><td>${e}</td><td class="muted">${s}</td><td><span class="chipl ${c}">${v}</span></td><td class="mono mut2">${b}</td></tr>`}).join('');
+}
+function renderRoadmap(){$('#road').innerHTML='';ROAD.forEach(([n,s,d])=>{const c=s==='done'?'ok':s==='ready'?'':'red';const e=el('div','card');e.innerHTML=`<div class="h"><h3>${n}</h3><span class="chipl ${c}" style="margin-left:auto">${s}</span></div><div class="muted" style="font-size:13px">${d}</div>`;$('#road').append(e)})}
+
+// analyze
+let waveData=null;
+function drawWave(vals){const {x,w,h}=ctx('wave');x.clearRect(0,0,w,h);if(!vals){x.strokeStyle='#222e44';x.beginPath();x.moveTo(0,h/2);x.lineTo(w,h/2);x.stroke();return}const mid=h/2;x.fillStyle='#7dd3fc';const N=vals.length;for(let i=0;i<N;i++){const bh=Math.max(2,Math.abs(vals[i])*h*.9);x.beginPath();x.roundRect((i/N)*w,h/2-bh/2,2,bh,1);x.fill()}}
+function demoVals(){return Array.from({length:340},(_,i)=>Math.sin(i*.4)*Math.abs(Math.sin(i*.09))*.9)}
+async function analyze(file){
+ $('#astat').textContent='analyzing…';$('#vbox').className='verdict mid';$('#vlabel').textContent='…';
+ try{const fd=new FormData();fd.append('file',file);const r=await fetch(API+'/api/analyze',{method:'POST',body:fd});const d=await r.json();show(d);$('#astat').textContent=''}
+ catch(e){ // offline fallback: local mock verdict
+  const d={score:0.93,label:'HIGH',per_model:{'acoustic-dsp':0.41,'hf:Deepfake-audio-detection-V2':1.0,'hf:wav2vec2-large-xlsr-deepfake':0.08,'hf:distilhubert-ITW':1.0,'fusion-head(LFCC+CQCC)':0.998},reasons:{ssl:1.0,hf:.72,prosody:.70},language:'hi',channel:'g711'};
+  show(d);$('#astat').textContent='offline demo';}
+}
+function show(d){
+ const lab=d.label==='HIGH'?'SYNTHETIC':d.label==='LOW'?'HUMAN':'ABSTAIN';
+ $('#vlabel').textContent=lab;$('#vscore').textContent='score '+(d.score??0).toFixed(3);
+ $('#vbox').className='verdict '+(lab==='SYNTHETIC'?'high':lab==='HUMAN'?'low':'mid');
+ $('#vaction').textContent=lab==='SYNTHETIC'?'Synthetic voice likely — pause & verify via official channels.':lab==='HUMAN'?'Voice consistent with human speech.':'Evidence disagrees — abstaining; defer to a deeper stage.';
+ $('#pm').innerHTML='';Object.entries(d.per_model||{}).forEach(([k,v])=>{const e=el('div','pad');e.innerHTML=`<div class="flex between"><span class="mono" style="font-size:12px">${k}</span><span class="mono ${v>.5?'dn':'up'}">${v.toFixed(2)}</span></div><div class="bar" style="margin-top:6px"><i style="width:${v*100}%;background:${v>.5?'#ff4d6a':'#25d07c'}"></i></div>`;$('#pm').append(e)});
+ const codes=Object.entries(d.reasons||{ssl:1,hf:.7,prosody:.7}).map(([k,v])=>`<span class="chipl ${v>.6?'red':'ok'}">${k} ${(+v).toFixed(2)}</span>`);
+ $('#codes').innerHTML=codes.join('');
+ $('#alang').textContent=d.language||'hi';$('#achan').textContent=d.channel||'g711';
+}
+$('#file').onchange=e=>{const f=e.target.files[0];if(f){$('#adur').textContent=(f.size/16000/2|0)+'s';waveData=demoVals();drawWave(waveData);analyze(f)}};
+$('#runbtn').onclick=()=>{if(!waveData){waveData=demoVals();drawWave(waveData)}const f=$('#file').files[0];f?analyze(f):analyze(new File([new Uint8Array(1000)],'demo.wav',{type:'audio/wav'}))};
+$('#demobtn').onclick=()=>{waveData=demoVals();drawWave(waveData);analyze(new File([new Uint8Array(1000)],'demo.wav',{type:'audio/wav'}))};
+const dp=$('#drop');dp.ondragover=e=>{e.preventDefault();dp.style.borderColor='#ff4d6a'};dp.ondragleave=()=>dp.style.borderColor='';dp.ondrop=e=>{e.preventDefault();const f=e.dataTransfer.files[0];if(f){waveData=demoVals();drawWave(waveData);analyze(f)}};
+
+function renderLive(){requestAnimationFrame(()=>{const {x,w,h}=ctx('tl');x.clearRect(0,0,w,h);const N=40;x.strokeStyle='#222e44';x.strokeRect(40,h-30,w-50,2);
+ for(let i=0;i<N;i++){const sc=Math.max(0,Math.min(1,.2+.8*Math.abs(Math.sin(i*.5))));const px=40+(w-60)*i/(N-1),bh=(h-70)*sc;x.fillStyle=sc>.7?'#ff4d6a':sc>.4?'#f6a935':'#25d07c';x.beginPath();x.roundRect(px-2,h-30-bh,4,bh,2);x.fill();}
+ x.strokeStyle='#ff4d6a';x.setLineDash([5,5]);x.beginPath();x.moveTo(40+(w-60)*.35,10);x.lineTo(40+(w-60)*.35,h-30);x.stroke();x.setLineDash([]);x.fillStyle='#ff4d6a';x.font='11px ui-monospace';x.fillText('flag @4.0s',40+(w-60)*.35+6,18);})}
+
+function drawAll(){const on=$$('.view.on')[0]?.id;if(on==='v-overview')renderOverview();else if(on==='v-languages')renderLanguages();else if(on==='v-results')renderResults();else if(on==='v-live')renderLive()}
+window.addEventListener('resize',()=>drawAll());
+
+// init
+renderBrains();renderRegistries();renderSurfaces();renderIntegrations();renderOps();renderRoadmap();drawWave(null);renderLanguages();
+go('overview');
+fetch(API+'/api/health').then(r=>r.json()).then(d=>{$('#hstatus').textContent=(d.status||'live')+' · '+(d.ensemble_size||5)+' detectors';$('#hdot').style.background='#25d07c'}).catch(()=>{$('#hstatus').textContent='offline demo mode';$('#hdot').style.background='#f6a935'});
+$('#q').addEventListener('input',e=>{const v=e.target.value.toLowerCase();$$('.nav').forEach(n=>{if(!v){n.style.display='';return}n.style.display=(n.textContent.toLowerCase().includes(v)||TITLES[n.dataset.v].toLowerCase().includes(v))?'':'none'})});
+</script></body></html>

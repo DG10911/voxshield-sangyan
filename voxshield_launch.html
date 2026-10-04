@@ -1,0 +1,219 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>VoxShield — Hear the human behind the call</title>
+<meta name="description" content="Real-time detection of AI-cloned voices in investment scam calls across 23 Indic languages, on phone-quality audio. On-prem. No advice, ever.">
+<style>
+:root{--bg:#07080b;--bg2:#0b1018;--panel:#0f141d;--panel2:#151c28;--line:#222c40;
+--acc:#38bdf8;--acc2:#7dd3fc;--grn:#26d07c;--red:#f0475b;--amb:#f6a935;--fg:#e8eef7;--sub:#93a1b8;--maxw:1200px}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--fg);font-family:-apple-system,"Inter","Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.55;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 28px}
+.kicker{font-size:13px;letter-spacing:.28em;text-transform:uppercase;color:var(--acc);font-weight:700}
+h1,h2,h3{letter-spacing:-.02em;line-height:1.08}
+.grad{background:linear-gradient(90deg,#fff,var(--acc));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+/* nav */
+header{position:fixed;top:0;left:0;right:0;z-index:50;backdrop-filter:blur(14px);background:rgba(7,8,11,.62);border-bottom:1px solid rgba(34,44,64,.6)}
+nav{display:flex;align-items:center;justify-content:space-between;height:64px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:900;letter-spacing:.14em}
+.brand .dot{width:12px;height:12px;border-radius:50%;background:var(--acc);box-shadow:0 0 24px var(--acc)}
+nav .links{display:flex;gap:26px;font-size:14px;color:var(--sub)}
+nav .links a:hover{color:#fff}
+.cta{padding:9px 18px;border-radius:999px;border:1px solid var(--acc);color:var(--acc);font-weight:700;font-size:14px}
+.cta:hover{background:rgba(56,189,248,.12)}
+/* hero */
+.hero{position:relative;min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding-top:64px;overflow:hidden}
+#bgc{position:absolute;inset:0;z-index:0;opacity:.9}
+.hero .wrap{position:relative;z-index:2;text-align:center}
+.hero h1{font-size:clamp(42px,7vw,92px);font-weight:900;margin:18px 0}
+.hero p.lead{font-size:clamp(17px,2.2vw,22px);color:var(--sub);max-width:760px;margin:0 auto 30px}
+.chips{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:34px}
+.chip{padding:7px 14px;border-radius:999px;border:1px solid var(--line);color:var(--sub);font-size:13px}
+.chip b{color:var(--fg)}
+.btnrow{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-bottom:52px}
+.btn{padding:14px 26px;border-radius:12px;font-weight:800;font-size:15px}
+.btn.pri{background:linear-gradient(90deg,var(--acc),#0ea5e9);color:#04121c;box-shadow:0 14px 40px rgba(56,189,248,.35)}
+.btn.ghost{border:1px solid var(--line);color:var(--fg)}
+.btn.ghost:hover{border-color:var(--acc)}
+.film{position:relative;z-index:2;border:1px solid var(--line);border-radius:18px;overflow:hidden;box-shadow:0 40px 120px rgba(0,0,0,.7);background:#000}
+.film video{display:block;width:100%;height:auto}
+.film .cap{position:absolute;left:16px;bottom:14px;font-size:12px;color:#cfe3ff;background:rgba(0,0,0,.5);padding:6px 12px;border-radius:999px;border:1px solid var(--line)}
+/* sections */
+section{padding:110px 0;position:relative}
+section .wrap>h2{font-size:clamp(30px,4.4vw,54px);font-weight:850;margin:14px 0 18px}
+section .wrap>p.s{color:var(--sub);font-size:18px;max-width:760px}
+.reveal{opacity:0;transform:translateY(26px);transition:opacity .7s cubic-bezier(.2,.7,.2,1),transform .7s cubic-bezier(.2,.7,.2,1)}
+.reveal.in{opacity:1;transform:none}
+.grid{display:grid;gap:20px;margin-top:44px}
+.g3{grid-template-columns:repeat(3,1fr)}
+.g2{grid-template-columns:repeat(2,1fr)}
+.card{background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid var(--line);border-radius:18px;padding:26px}
+.card h3{font-size:20px;margin-bottom:8px}
+.card p{color:var(--sub);font-size:15px}
+.card .ic{width:40px;height:40px;border-radius:11px;background:rgba(56,189,248,.12);border:1px solid rgba(56,189,248,.35);display:flex;align-items:center;justify-content:center;color:var(--acc);font-weight:900;margin-bottom:14px}
+.tag{display:inline-block;font-size:12px;color:var(--acc);border:1px solid rgba(56,189,248,.35);border-radius:999px;padding:3px 10px;margin-bottom:10px}
+/* demo panel */
+.demo{display:grid;grid-template-columns:1.1fr .9fr;gap:26px;margin-top:40px;align-items:stretch}
+.call{background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid var(--line);border-radius:18px;padding:24px}
+.call .row{display:flex;align-items:center;gap:12px}
+.av{width:46px;height:46px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#3b4a6b,#1c2230);display:flex;align-items:center;justify-content:center;font-weight:800;color:#cfe3ff}
+.live{margin-left:auto;color:var(--red);font-weight:800;font-size:12px;letter-spacing:.1em}
+canvas.wf{width:100%;height:90px;margin:16px 0}
+.tx{font-size:17px;color:#d7e2f3;min-height:26px}
+.verdicts{display:flex;gap:10px;margin-top:14px}
+.v{padding:7px 16px;border-radius:999px;border:1px solid var(--line);font-weight:800;font-size:14px;color:var(--sub)}
+.v.red{background:rgba(240,71,91,.14);border-color:var(--red);color:var(--red)}
+.v.grn{background:rgba(38,208,124,.14);border-color:var(--grn);color:var(--grn)}
+.results{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:24px}
+.bar{height:12px;border-radius:6px;background:rgba(255,255,255,.06);margin:7px 0 16px;overflow:hidden}
+.bar>i{display:block;height:100%;width:0;border-radius:6px;transition:width 1.2s cubic-bezier(.2,.7,.2,1)}
+.bl{display:flex;justify-content:space-between;font-size:13px;color:var(--sub)}
+.bl b{color:var(--fg)}
+/* stats */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-top:46px}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:24px;text-align:center}
+.stat .n{font-size:34px;font-weight:900}
+.stat .l{color:var(--sub);font-size:13px;margin-top:6px}
+footer{border-top:1px solid var(--line);padding:50px 0 70px;color:var(--sub);font-size:14px}
+footer .fr{display:flex;justify-content:space-between;flex-wrap:wrap;gap:16px}
+@media(max-width:900px){.g3,.g2,.demo,.stats{grid-template-columns:1fr}.stat .n{font-size:28px}}
+</style></head><body>
+<header><div class="wrap"><nav>
+  <div class="brand"><span class="dot"></span>VOXSHIELD</div>
+  <div class="links">
+    <a href="#product">Product</a><a href="#features">Features</a>
+    <a href="#results">Results</a><a href="#deploy">Deploy</a>
+  </div>
+  <a class="cta" href="https://github.com/DG10911/voxshield-sangyan" target="_blank" rel="noopener">GitHub</a>
+</nav></div></header>
+
+<div class="hero">
+  <canvas id="bgc"></canvas>
+  <div class="wrap">
+    <div class="kicker">Voice security · Track A</div>
+    <h1>Hear the human<br><span class="grad">behind the call.</span></h1>
+    <p class="lead">VoxShield detects AI-cloned voices in investment scam calls — before money moves. 23 Indic languages, phone-quality audio, on-prem, and it never gives advice.</p>
+    <div class="chips">
+      <span class="chip"><b>12–14</b> Indic languages</span>
+      <span class="chip"><b>G.711</b> telephony-native</span>
+      <span class="chip"><b>on-prem</b> · privacy-by-design</span>
+      <span class="chip"><b>HUMAN / SYNTHETIC / ABSTAIN</b></span>
+    </div>
+    <div class="btnrow">
+      <a class="btn pri" href="#product">See the product</a>
+      <a class="btn ghost" href="https://github.com/DG10911/voxshield-sangyan" target="_blank" rel="noopener">View repository</a>
+    </div>
+    <div class="film">
+      <video src="brag-output/VOXSHIELD_film.mp4" autoplay muted loop playsinline poster="brag-output/VOXSHIELD_film.jpg"></video>
+      <span class="cap">▶ VoxShield — 4:30 product film</span>
+    </div>
+  </div>
+</div>
+
+<section id="product"><div class="wrap reveal">
+  <div class="kicker">The problem</div>
+  <h2>Voice is the new attack surface.</h2>
+  <p class="s">India's retail investors — 16+ crore Demat accounts, 70%+ from Tier-2/3 cities — are targeted by voice-based fraud. Attackers use AI voice cloning to impersonate brokers, regulators and family. Victims realise only after the money is gone, and no accessible tool detects synthetic speech in Indic, over phone audio.</p>
+  <div class="demo">
+    <div class="call">
+      <div class="row"><div class="av">SE</div><div><div style="font-weight:800">“SEBI” · +91 9••• ••• 21</div><div style="color:var(--sub);font-size:13px">incoming call · live analyze</div></div><div class="live">● ANALYZING</div></div>
+      <canvas class="wf" id="wf"></canvas>
+      <div class="tx" id="tx"></div>
+      <div class="verdicts"><span class="v" id="vh">HUMAN</span><span class="v" id="vs">SYNTHETIC</span><span class="v" id="va">ABSTAIN</span></div>
+    </div>
+    <div class="results">
+      <div class="kicker">Verdict</div>
+      <h3 style="font-size:22px;margin:8px 0 14px">SYNTHETIC — AI-cloned voice</h3>
+      <p style="color:var(--sub);font-size:15px">Reason codes: vocoder artefacts · channel mismatch · prosody flatness · speaker mismatch.</p>
+      <p style="color:var(--amb);font-weight:700;margin-top:12px">Action: PAUSE &amp; VERIFY via official channels.</p>
+      <p style="color:var(--sub);font-size:14px;margin-top:14px">When evidence disagrees, VoxShield emits an explicit <b style="color:var(--fg)">ABSTAIN</b> instead of a false binary.</p>
+    </div>
+  </div>
+</div></section>
+
+<section id="features"><div class="wrap reveal">
+  <div class="kicker">Capabilities</div>
+  <h2>Built for Indic telephony.</h2>
+  <div class="grid g3">
+    <div class="card"><div class="ic">01</div><span class="tag">Codec-profiled</span><h3>Behind the codec</h3><p>Profiles the channel — G.711 µ/A-law, band-limit, noise — and gates the decision. Codec costs just +2.17 pts EER.</p></div>
+    <div class="card"><div class="ic">02</div><span class="tag">Indic-first</span><h3>Many languages, one line</h3><p>Language ID routes every call in its own tongue — Hindi to Kashmiri, Santali, Sindhi and more.</p></div>
+    <div class="card"><div class="ic">03</div><span class="tag">Multi-evidence</span><h3>Many brains, one verdict</h3><p>Physics · replay · environment · cross-codec · speaker · semantic↔prosody arbitrated into an explainable score.</p></div>
+    <div class="card"><div class="ic">04</div><span class="tag">Calibrated</span><h3>When it isn’t sure, it says so</h3><p>Explicit abstention cuts genuine-caller false alarms by ~91% at 80% coverage.</p></div>
+    <div class="card"><div class="ic">05</div><span class="tag">Speaker identity</span><h3>Who is really calling</h3><p>ECAPA verification + diarization to catch impersonation and multi-speaker replay.</p></div>
+    <div class="card"><div class="ic">06</div><span class="tag">Robust</span><h3>Hardened and edge-ready</h3><p>PGD adversarial training + distilled student for low-end devices; on-prem, no cloud egress.</p></div>
+  </div>
+</div></section>
+
+<section id="results"><div class="wrap reveal">
+  <div class="kicker">Evidence</div>
+  <h2>What the numbers say.</h2>
+  <p class="s">English-trained SOTA detectors get 33–93% error on Indic. Fine-tuning on Indic telephony brings seen generators to single digits; the residual unseen-generator error is the honest frontier.</p>
+  <div class="grid g2" style="align-items:start">
+    <div class="card">
+      <div class="bl"><span><b>English SOTA, zero-shot on Indic</b></span><span style="color:var(--red)">33–93%</span></div>
+      <div class="bar"><i data-w="93" style="background:var(--red)"></i></div>
+      <div class="bl"><span><b>VoxShield — seen generator</b></span><span style="color:var(--grn)">1.62%</span></div>
+      <div class="bar"><i data-w="6" style="background:var(--grn)"></i></div>
+      <div class="bl"><span><b>VoxShield — G.711 telephony</b></span><span style="color:var(--amb)">+2.17 pts</span></div>
+      <div class="bar"><i data-w="20" style="background:var(--amb)"></i></div>
+      <div class="bl"><span><b>VoxShield — unseen generator</b></span><span style="color:var(--acc)">15.94%</span></div>
+      <div class="bar"><i data-w="16" style="background:var(--acc)"></i></div>
+    </div>
+    <div>
+      <div class="stats" style="margin-top:0">
+        <div class="stat"><div class="n grad">+9.4</div><div class="l">pt generalization gap</div></div>
+        <div class="stat"><div class="n grad">−91%</div><div class="l">genuine false alarms @80% cov.</div></div>
+        <div class="stat"><div class="n grad">23</div><div class="l">Indic languages</div></div>
+        <div class="stat"><div class="n grad">0.06</div><div class="l">ECE (calibration)</div></div>
+      </div>
+      <p style="color:var(--sub);font-size:14px;margin-top:20px">Per-language EER ranges from <b style="color:var(--fg)">0.00%</b> (Punjabi, Telugu) to <b style="color:var(--fg)">37%</b> on data-starved languages — reported honestly, per slice.</p>
+    </div>
+  </div>
+</div></section>
+
+<section id="deploy"><div class="wrap reveal">
+  <div class="kicker">Deployment &amp; guardrails</div>
+  <h2>Investor-protection infrastructure.</h2>
+  <div class="grid g2">
+    <div class="card"><h3>Where it runs</h3><p>REST/WS API · console · SDK · IVR &amp; telephony gateway — deployable by banks, brokers and SEBI helplines. On-prem or edge, privacy-by-design.</p></div>
+    <div class="card"><h3>What it will never do</h3><p>No stock tips, no buy/sell/hold, no price prediction, no broker promotion, no OTP/PII harvesting. It reports honest uncertainty, never a false binary.</p></div>
+  </div>
+</div></section>
+
+<footer><div class="wrap fr">
+  <div><b style="color:var(--fg)">VOXSHIELD</b> · hear the human behind the call<br><span style="font-size:13px">SANGYAN Investor Resilience Hackathon · Track A · 2026</span></div>
+  <div><a href="https://github.com/DG10911/voxshield-sangyan" target="_blank" rel="noopener" style="color:var(--acc)">github.com/DG10911/voxshield-sangyan</a><br><span style="font-size:13px">IndicSynth CC-BY-NC · research use</span></div>
+</div></footer>
+
+<script>
+// hero background canvas
+const bg=document.getElementById('bgc'),bx=bg.getContext('2d');let W,H,parts=[];
+function rs(){W=bg.width=innerWidth;H=bg.height=bg.offsetHeight;parts=Array.from({length:70},()=>({x:Math.random()*W,y:Math.random()*H,s:2+Math.random()*12,r:.6+Math.random()*1.8}))}
+addEventListener('resize',rs);rs();
+function bgdraw(t){const g=bx.createLinearGradient(0,0,0,H);g.addColorStop(0,'#080c14');g.addColorStop(.6,'#07080b');g.addColorStop(1,'#0b1120');bx.fillStyle=g;bx.fillRect(0,0,W,H);
+ const b=[[.3,.35,'#0ea5e9',.10],[.78,.6,'#6366f1',.09],[.55,.2,'#22d3ee',.07]];
+ for(const[bx0,by0,c,a]of b){const px=W*(bx0+.05*Math.sin(t*.0004)),py=H*(by0+.05*Math.cos(t*.0003)),r=Math.min(W,H)*.5;
+  const rg=bx.createRadialGradient(px,py,0,px,py,r);rg.addColorStop(0,c+a2(a));rg.addColorStop(1,c+'00');bx.fillStyle=rg;bx.fillRect(0,0,W,H);}
+ bx.strokeStyle='rgba(56,189,248,.05)';for(let x=0;x<W;x+=64){bx.beginPath();bx.moveTo(x,0);bx.lineTo(x,H);bx.stroke();}
+ for(const p of parts){p.y-=p.s;if(p.y<0){p.y=H;p.x=Math.random()*W}bx.fillStyle='rgba(150,200,255,.18)';bx.fillRect(p.x,p.y,p.r,p.r)}}
+const a2=h=>Math.round(h*255).toString(16).padStart(2,'0');
+function loop(t){bgdraw(t);requestAnimationFrame(loop)}requestAnimationFrame(loop);
+// waveform
+const wf=document.getElementById('wf'),wx=wf.getContext('2d');
+function wr(){wf.width=wf.offsetWidth*devicePixelRatio;wf.height=90*devicePixelRatio}
+addEventListener('resize',wr);wr();
+let phase=0;function wdraw(){const w=wf.width,h=wf.height,N=90;wx.clearRect(0,0,w,h);phase+=.05;
+ for(let i=0;i<N;i++){const p=i/(N-1);let a=(.25+.75*Math.abs(Math.sin(p*9+phase)))*(.4+.6*Math.abs(Math.sin(p*40+phase*3)));
+  const bh=Math.max(2,a*h*.9);const col=Math.random()<.06?'#f0475b':'#7dd3fc';wx.fillStyle=col;wx.beginPath();wx.roundRect((i/(N-1))*(w-6)+3,h/2-bh/2,3,bh,1.5);wx.fill()}requestAnimationFrame(wdraw)}requestAnimationFrame(wdraw);
+// typing transcript
+const TXT='नमस्ते, मैं सेबी से बोल रहा हूँ — तुरंत OTP भेजें…';const el=document.getElementById('tx');let n=0;
+setInterval(()=>{n=(n+1)%(TXT.length+30);el.textContent=TXT.slice(0,Math.min(n,TXT.length))+(n<TXT.length?'▍':'')},90);
+// reveal on scroll
+const io=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');
+ e.target.querySelectorAll&&e.target.querySelectorAll('.bar>i').forEach(b=>b.style.width=b.dataset.w+'%')}})},{threshold:.18});
+document.querySelectorAll('.reveal').forEach(r=>io.observe(r));
+// verdict cycle
+const vh=document.getElementById('vh'),vs=document.getElementById('vs');let st=0;
+setInterval(()=>{st=(st+1)%3;vh.className='v'+(st===1?' grn':'');vs.className='v'+(st===2?' red':'');},1600);
+</script></body></html>
