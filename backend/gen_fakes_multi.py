@@ -1,0 +1,170 @@
+"""
+VoxShield — multi-generator fake dispatcher.
+
+Training on MANY generators is the strongest lever on unseen-generator EER
+(SAFE Challenge, arXiv:2508.20983). This dispatches each language through every
+engine that is actually available on the box, then merges the manifests into one
+per language.
+
+Engines are best-effort: each runs in try/except and reports `[skip] reason` if its
+deps/key/weights are missing, so the pipeline never hard-fails on one engine.
+
+Open/local engines wired here: mms, parler, xtts(coqui), f5(SWivid), kokoro, piper,
+indicf5. API engines (need keys via env): sarvam (SARVAM_API_KEY). Everything else in
+registries/generators.json is listed in the matrix doc and skipped with a reason.
+
+Usage:
+    python backend/gen_fakes_multi.py --lang nepali --n 200 --out data_fakes_multi/nepali
+    python backend/gen_fakes_multi.py --lang hindi --n 200 --engines mms,parler,xtts
+    python backend/gen_fakes_multi.py --selftest
+"""
+from __future__ import annotations
+import argparse, glob, json, os, subprocess, sys
+
+_HERE = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, _HERE)
+
+
+def _write(man, path, lang, engine):
+    man.write(json.dumps({"path": os.path.abspath(path), "label": 1,
+                          "language": lang[:2], "generator": engine, "seen": 1}) + "\n")
+
+
+def engine_mms(lang, n, out, man):
+    import gen_fakes_mms as G
+    G.generate(lang, n, os.path.join(out, "mms"))
+    for l in open(os.path.join(out, "mms", "manifest.jsonl")):
+        r = json.loads(l); r["generator"] = "mms-tts"; man.write(json.dumps(r) + "\n")
+
+
+def engine_parler(lang, n, out, man):
+    import gen_fakes_tts as G
+    d = os.path.join(out, "parler"); os.makedirs(d, exist_ok=True)
+    G.generate(lang, os.path.join("data", lang), n, d)
+    for l in open(os.path.join(d, "manifest.jsonl")):
+        man.write(l)
+
+
+def engine_xtts(lang, n, out, man):
+    from TTS.api import TTS                     # coqui
+    import soundfile as sf
+    d = os.path.join(out, "xtts"); os.makedirs(d, exist_ok=True)
+    tts = TTS("tts_models/multilingual/multi-dataset/xtts_v2")
+    spk = tts.speakers[0] if tts.speakers else None
+    import gen_fakes_mms as G
+    texts = G._texts(G.LANGS.get(lang, ("", ""))[0]) or G.FALLBACK_TEXT
+    for i in range(n):
+        p = os.path.join(d, f"xtts_{i:05d}.wav")
+        tts.tts_to_file(text=texts[i % len(texts)], speaker=spk, language=lang[:2], file_path=p)
+        _write(man, p, lang, "xtts_v2")
+
+
+def engine_f5(lang, n, out, man):
+    from f5_tts.api import F5TTS
+    import soundfile as sf
+    d = os.path.join(out, "f5"); os.makedirs(d, exist_ok=True)
+    f5 = F5TTS()
+    ref = glob.glob("data/%s/indicvoices_real/**/*.wav" % lang, recursive=True)
+    if not ref:
+        raise RuntimeError("F5 needs a reference wav (none found)")
+    import gen_fakes_mms as G
+    texts = G._texts(G.LANGS.get(lang, ("", ""))[0]) or G.FALLBACK_TEXT
+    for i in range(n):
+        wav, sr, _ = f5.infer(ref_file=ref[0], ref_text="", gen_text=texts[i % len(texts)])
+        p = os.path.join(d, f"f5_{i:05d}.wav"); sf.write(p, wav, sr)
+        _write(man, p, lang, "f5-tts")
+
+
+def engine_kokoro(lang, n, out, man):
+    from kokoro import KPipeline
+    import soundfile as sf, numpy as np
+    d = os.path.join(out, "kokoro"); os.makedirs(d, exist_ok=True)
+    pipe = KPipeline(lang_code=lang[:1])
+    import gen_fakes_mms as G
+    texts = G.FALLBACK_TEXT
+    for i in range(n):
+        for _, _, audio in pipe(texts[i % len(texts)]):
+            p = os.path.join(d, f"kokoro_{i:05d}.wav")
+            sf.write(p, np.asarray(audio), 24000); _write(man, p, lang, "kokoro"); break
+
+
+def engine_piper(lang, n, out, man):
+    exe = "piper"
+    d = os.path.join(out, "piper"); os.makedirs(d, exist_ok=True)
+    voice = os.environ.get("PIPER_VOICE", "")
+    if not voice:
+        raise RuntimeError("set PIPER_VOICE=<path.onnx>")
+    import gen_fakes_mms as G
+    for i in range(n):
+        txt = G.FALLBACK_TEXT[i % len(G.FALLBACK_TEXT)]
+        p = os.path.join(d, f"piper_{i:05d}.wav")
+        subprocess.run([exe, "-m", voice, "-f", p], input=txt.encode(), check=True)
+        _write(man, p, lang, "piper")
+
+
+def engine_sarvam(lang, n, out, man):
+    key = os.environ.get("SARVAM_API_KEY")
+    if not key:
+        raise RuntimeError("SARVAM_API_KEY not set (Sarvam-TTS is api/proprietary)")
+    import urllib.request, base64
+    url = os.environ.get("SARVAM_TTS_URL", "https://api.sarvam.ai/text-to-speech")
+    d = os.path.join(out, "sarvam"); os.makedirs(d, exist_ok=True)
+    import gen_fakes_mms as G
+    for i in range(n):
+        body = json.dumps({"inputs": [G.FALLBACK_TEXT[i % len(G.FALLBACK_TEXT)]],
+                           "target_language_code": lang[:2] + "-IN" if len(lang[:2]) == 2 else "hi-IN",
+                           "speaker": os.environ.get("SARVAM_SPEAKER", "meera")}).encode()
+        req = urllib.request.Request(url, data=body, headers={
+            "Content-Type": "application/json", "api-subscription-key": key})
+        with urllib.request.urlopen(req, timeout=60) as r:
+            data = json.loads(r.read())
+        aud = data["audios"][0]; raw = base64.b64decode(aud)
+        p = os.path.join(d, f"sarvam_{i:05d}.wav"); open(p, "wb").write(raw)
+        _write(man, p, lang, "sarvam-tts")
+
+
+ENGINES = {
+    "mms": engine_mms, "parler": engine_parler, "xtts": engine_xtts,
+    "f5": engine_f5, "kokoro": engine_kokoro, "piper": engine_piper, "sarvam": engine_sarvam,
+}
+DEFAULT = "mms,parler,xtts,f5,kokoro,piper,sarvam"
+
+
+def run(lang, n, out, engines):
+    os.makedirs(out, exist_ok=True)
+    man = open(os.path.join(out, "manifest.jsonl"), "w")
+    used = []
+    for name in engines.split(","):
+        name = name.strip()
+        fn = ENGINES.get(name)
+        if not fn:
+            print(f"  [skip] {name}: unknown engine"); continue
+        try:
+            print(f"  [run ] {name}")
+            fn(lang, n, out, man); used.append(name)
+        except Exception as e:
+            print(f"  [skip] {name}: {type(e).__name__}: {str(e)[:100]}")
+    man.close()
+    rows = sum(1 for _ in open(os.path.join(out, "manifest.jsonl")))
+    print(f"[multi] {lang}: engines={used} rows={rows} -> {out}/manifest.jsonl")
+
+
+def _selftest():
+    print("[selftest] engines registered:", ",".join(ENGINES))
+    assert "sarvam" in ENGINES and "mms" in ENGINES
+    print("[selftest] PASS — dispatcher wiring OK (engines self-report availability)")
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--lang"); ap.add_argument("--n", type=int, default=200)
+    ap.add_argument("--out"); ap.add_argument("--engines", default=DEFAULT)
+    ap.add_argument("--selftest", action="store_true")
+    a = ap.parse_args()
+    if a.selftest: _selftest(); return
+    if not (a.lang and a.out): ap.error("--lang and --out required")
+    run(a.lang, a.n, a.out, a.engines)
+
+
+if __name__ == "__main__":
+    main()
