@@ -183,6 +183,43 @@ def _sarvam(self, texts, out_dir):
         open(p, "wb").write(base64.b64decode(data["audios"][0])); paths.append(p)
     return paths
 
+def _cartesia(self, texts, out_dir):
+    import urllib.request, json
+    os.makedirs(out_dir, exist_ok=True)
+    key = os.environ["CARTESIA_API_KEY"]; ver = os.environ.get("CARTESIA_VERSION", "2025-04-16")
+    # resolve a voice id
+    vid = os.environ.get("CARTESIA_VOICE_ID", "")
+    if not vid:
+        req = urllib.request.Request("https://api.cartesia.ai/voices",
+              headers={"X-API-Key": key, "Cartesia-Version": ver})
+        with urllib.request.urlopen(req, timeout=30) as r:
+            vs = json.loads(r.read()); vid = vs[0]["id"]
+    paths = []
+    for i, t in enumerate(texts):
+        body = json.dumps({"model_id": "sonic-2", "transcript": t,
+                           "voice": {"mode": "id", "id": vid},
+                           "output_format": {"container": "wav", "sample_rate": 24000,
+                                             "encoding": "pcm_s16le"}}).encode()
+        req = urllib.request.Request("https://api.cartesia.ai/tts/bytes", data=body,
+              headers={"X-API-Key": key, "Cartesia-Version": ver, "Content-Type": "application/json"})
+        with urllib.request.urlopen(req, timeout=90) as r:
+            p = os.path.join(out_dir, f"cartesia_{i:05d}.wav"); open(p, "wb").write(r.read()); paths.append(p)
+    return paths
+
+def _hume(self, texts, out_dir):
+    import urllib.request, base64, json
+    os.makedirs(out_dir, exist_ok=True)
+    key = os.environ["HUME_API_KEY"]; paths = []
+    for i, t in enumerate(texts):
+        body = json.dumps({"utterances": [{"text": t}], "format": {"type": "wav"}}).encode()
+        req = urllib.request.Request("https://api.hume.ai/v0/tts", data=body,
+              headers={"X-Hume-Api-Key": key, "Content-Type": "application/json"})
+        with urllib.request.urlopen(req, timeout=90) as r:
+            data = json.loads(r.read())
+        aud = data["generations"][0]["audio"]
+        p = os.path.join(out_dir, f"hume_{i:05d}.wav"); open(p, "wb").write(base64.b64decode(aud)); paths.append(p)
+    return paths
+
 def _elevenlabs(self, texts, out_dir):
     import urllib.request
     os.makedirs(out_dir, exist_ok=True)
@@ -230,8 +267,8 @@ def _reg():
     # Tier 2 — API
     GEREG["sarvam_tts"] = _api("sarvam_tts", "SARVAM_API_KEY", _sarvam)
     GEREG["elevenlabs"] = _api("elevenlabs", "ELEVENLABS_API_KEY", _elevenlabs)
-    GEREG["cartesia"] = _api("cartesia", "CARTESIA_API_KEY", None)
-    GEREG["hume"] = _api("hume", "HUME_API_KEY", None)
+    GEREG["cartesia"] = _api("cartesia", "CARTESIA_API_KEY", _cartesia)
+    GEREG["hume"] = _api("hume", "HUME_API_KEY", _hume)
     GEREG["playht"] = _api("playht", "PLAYHT_API_KEY", None)
     # real (human) — not a generator
     GEREG["real"] = Adapter("real"); GEREG["real"].kind = "human"
