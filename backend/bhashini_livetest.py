@@ -22,16 +22,15 @@ def tts_clip(text="नमस्ते, मैं बैंक से बोल �
 
 
 def resample16(b64):
+    import soundfile as sf
     raw = base64.b64decode(b64)
-    with wave.open(io.BytesIO(raw)) as w:
-        sr, n = w.getframerate(), w.getnframes()
-        y = np.frombuffer(w.readframes(n), dtype="<i2").astype(np.float32) / 32768.0
-    m = int(len(y) * 16000 / sr)
+    y, sr = sf.read(io.BytesIO(raw), dtype="float32", always_2d=False)
+    if getattr(y, "ndim", 1) > 1:
+        y = y.mean(1)
+    m = int(len(y) * 16000 / sr) if sr else len(y)
     y16 = np.interp(np.linspace(0, 1, m, endpoint=False), np.linspace(0, 1, len(y), endpoint=False), y)
     buf = io.BytesIO()
-    with wave.open(buf, "wb") as w:
-        w.setnchannels(1); w.setsampwidth(2); w.setframerate(16000)
-        w.writeframes((np.clip(y16, -1, 1) * 32767).astype("<i2").tobytes())
+    sf.write(buf, np.clip(y16, -1, 1).astype(np.float32), 16000, format="WAV", subtype="PCM_16")
     return base64.b64encode(buf.getvalue()).decode()
 
 
