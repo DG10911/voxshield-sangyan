@@ -123,9 +123,67 @@ def fetch(entry, root):
         return _run(["git", "clone", "--depth", "1", ref, dest])
     if access == "mendeley":
         return _run(["bash", "-lc", f"echo 'open https://data.mendeley.com/datasets/{ref}/1 and download' > {dest}/README_DOWNLOAD.txt"])
+    if access == "kaggle":
+        if not os.path.exists(os.path.expanduser("~/.kaggle/kaggle.json")):
+            print(f"  [gated] kaggle {ref} — put kaggle.json at ~/.kaggle/kaggle.json")
+            return 1
+        return _run(["kaggle", "datasets", "download", "-d", ref, "-p", dest, "--unzip"])
+    if access == "aikosh":
+        return _aikosh_fetch(kind, ref, dest, note)
     # gated
     print(f"  [gated] {access} {ref} — needs credentials/SDK: {note}")
     return 1
+
+
+def _aikosh_fetch(kind, ref, dest, note):
+    """Resolve + download an AIKosh dataset/model via the aikosh SDK (API key required)."""
+    key = os.environ.get("AIKOSH_API_KEY")
+    if not key:
+        print(f"  [gated] aikosh {ref} — set AIKOSH_API_KEY")
+        return 1
+    try:
+        import aikosh
+    except Exception:
+        print("  [gated] aikosh — pip install aikosh")
+        return 1
+    aikosh.set_api_key(key)
+    is_model = "model" in kind
+    rtype = "model" if is_model else "dataset"
+    ident = ref if (len(ref) == 36 and ref.count("-") == 4) else None
+    if not ident:                                   # resolve slug/name -> id
+        import re
+        words = [w for w in re.split(r"[_\s]+", ref) if w and not w.isdigit()
+                 and w.lower() not in ("phase3", "phase", "1")]
+        cands = [" ".join(words)]
+        if len(words) > 3: cands.append(" ".join(words[:3]))
+        if len(words) > 2: cands.append(" ".join(words[:2]))
+        if words: cands.append(words[0])                  # single-token fallback (e.g. "Vaani")
+        for kw in cands:
+            for typ in ([rtype + "s"] if rtype == "model" else ["datasets", "models"]):
+                try:
+                    found = aikosh.list_directory(typ, {"keyword": kw}, limit=5)
+                    rows = found.get("data", {}).get("data", []) if isinstance(found, dict) else []
+                    if rows:
+                        ident = rows[0].get("id"); rtype = "model" if typ == "models" else "dataset"
+                        print(f"  [res ] '{kw}' -> {rows[0].get('name','')[:40]}")
+                        break
+                except Exception:
+                    pass
+            if ident: break
+    if not ident:
+        print(f"  [miss] aikosh {ref}: no match"); return 1
+    try:
+        files = aikosh.list_files(rtype, ident).get("data", {}).get("files", [])
+        reqs = [{"identifier": ident, "type": rtype, "file_path": f["relativeUrl"],
+                 "destination_path": dest} for f in files]
+        if not reqs:
+            print(f"  [miss] aikosh {ref}: no files"); return 1
+        aikosh.download(reqs)
+        print(f"  [ok  ] aikosh {ref} -> {dest} ({len(reqs)} files)")
+        return 0
+    except Exception as e:
+        print(f"  [err ] aikosh {ref}: {type(e).__name__}: {str(e)[:100]}")
+        return 1
 
 
 def main():
@@ -145,7 +203,7 @@ def main():
         want = set(a.download.split(","))
         sel = [e for e in sel if e[2] in want or e[2].startswith("hf") and "hf" in want]
     for e in sel:
-        if e[2] in OPEN:
+        if e[2] in OPEN or e[2] in ("aikosh", "kaggle"):
             print(f"== {e[0]} {e[2]} {e[3]}")
             try:
                 fetch(e, a.root)
