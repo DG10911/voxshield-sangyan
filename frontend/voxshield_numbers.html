@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>VoxShield — All Numbers</title>
+<style>
+  :root{--bg:#05070c;--panel:#0e1420;--panel2:#131b29;--line:#222e44;--fg:#eef3fb;--sub:#8fa0ba;--mut:#5f6f88;--red:#ff4d6a;--red2:#ff7a90;--cyan:#22d3ee;--grn:#25d07c;--amb:#f6a935;--vio:#8b5cff}
+  *{box-sizing:border-box}
+  body{margin:0;background:radial-gradient(1200px 600px at 80% -10%,#0d1826 0,var(--bg) 55%);color:var(--fg);font:14px/1.5 -apple-system,BlinkMacSystemFont,"Inter",Segoe UI,Roboto,sans-serif;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1280px;margin:0 auto;padding:34px 26px 80px}
+  .mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+  .eyebrow{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--mut);font-weight:700}
+  header.top{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;border-bottom:1px solid var(--line);padding-bottom:18px}
+  h1{font-size:34px;margin:6px 0 4px;font-weight:900;letter-spacing:-.02em}
+  h1 .dot{color:var(--red)}
+  .lede{color:var(--sub);max-width:620px}
+  .tag{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);background:var(--panel);color:var(--sub);border-radius:999px;padding:5px 12px;font-size:12px}
+  .dot-live{width:7px;height:7px;border-radius:50%;background:var(--grn);box-shadow:0 0 10px var(--grn)}
+  h2{font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--sub);margin:36px 0 12px;font-weight:800}
+  .kpis{display:grid;grid-template-columns:repeat(6,1fr);gap:14px;margin-top:22px}
+  @media(max-width:1050px){.kpis{grid-template-columns:repeat(3,1fr)}}
+  @media(max-width:620px){.kpis{grid-template-columns:repeat(2,1fr)}}
+  .card{background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid var(--line);border-radius:16px;padding:16px}
+  .kpi .v{font-size:30px;font-weight:900;letter-spacing:-.02em;margin-top:6px}
+  .kpi .l{color:var(--mut);font-size:11px;letter-spacing:.12em;text-transform:uppercase;font-weight:700}
+  .kpi .s{color:var(--sub);font-size:12px;margin-top:4px}
+  .red{color:var(--red)}.cyan{color:var(--cyan)}.grn{color:var(--grn)}.amb{color:var(--amb)}.vio{color:var(--vio)}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line)}
+  th{color:var(--mut);font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700}
+  td.num,th.num{text-align:right;font-family:ui-monospace,monospace}
+  tr:hover td{background:rgba(34,211,238,.04)}
+  .bar{position:relative;height:7px;border-radius:999px;background:#1a2436;overflow:hidden;min-width:70px}
+  .bar > i{position:absolute;inset:0 auto 0 0;border-radius:999px}
+  .bar.clean > i{background:linear-gradient(90deg,#22d3ee,#25d07c)}
+  .bar.g711 > i{background:linear-gradient(90deg,#f6a935,#ff4d6a)}
+  .pill{display:inline-block;padding:2px 9px;border-radius:999px;font-size:11px;font-weight:700;letter-spacing:.04em}
+  .pill.ok{background:rgba(37,208,124,.14);color:var(--grn);border:1px solid rgba(37,208,124,.35)}
+  .pill.pend{background:rgba(246,169,53,.12);color:var(--amb);border:1px solid rgba(246,169,53,.35)}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  @media(max-width:900px){.grid2{grid-template-columns:1fr}}
+  .foot{margin-top:46px;border-top:1px solid var(--line);padding-top:16px;color:var(--mut);font-size:12px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+  .barrow{display:flex;align-items:center;gap:10px}
+  .barrow .bar{flex:1}
+  code{background:#0b1120;border:1px solid var(--line);border-radius:6px;padding:1px 6px;font-size:12px;color:var(--cyan)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div>
+      <div class="eyebrow">VoxShield · Voice Fraud Intelligence</div>
+      <h1>All Numbers<span class="dot">.</span></h1>
+      <p class="lede">One digest: every language, every detector/model, every metric — from <span class="mono">results/report_all_norm.txt</span> (DGX A100, Oct 2026).</p>
+    </div>
+    <span class="tag"><span class="dot-live"></span> n = 1,639,372 · real 1,211,904 / fake 427,468</span>
+  </header>
+
+  <div class="kpis">
+    <div class="card kpi"><div class="l">Overall EER</div><div class="v red">10.25%</div><div class="s">AUC 0.949</div></div>
+    <div class="card kpi"><div class="l">Seen generators</div><div class="v cyan">9.57%</div><div class="s">aggregate</div></div>
+    <div class="card kpi"><div class="l">Unseen generators</div><div class="v amb">19.00%</div><div class="s">LOGO mean 15.94%</div></div>
+    <div class="card kpi"><div class="l">Generalization gap</div><div class="v red">+9.43</div><div class="s">pts · MODERATE</div></div>
+    <div class="card kpi"><div class="l">G.711 penalty</div><div class="v amb">+2.17</div><div class="s">9.24% → 11.41%</div></div>
+    <div class="card kpi"><div class="l">False-alarm cut</div><div class="v grn">−91%</div><div class="s">2.55% → 0.23%</div></div>
+  </div>
+
+  <h2>Generalization · Leave-One-Generator-Out</h2>
+  <div class="grid2">
+    <div class="card">
+      <table>
+        <thead><tr><th>Held-out generator</th><th class="num">EER vs real</th><th class="num">n_fake</th><th>Bar</th></tr></thead>
+        <tbody>
+          <tr><td>freevc24</td><td class="num grn">1.62%</td><td class="num">321,512</td><td><div class="bar clean"><i style="width:6%"></i></div></td></tr>
+          <tr><td>vits</td><td class="num amb">19.00%</td><td class="num">30,900</td><td><div class="bar g711"><i style="width:70%"></i></div></td></tr>
+          <tr><td>xtts_v2</td><td class="num red">27.19%</td><td class="num">75,056</td><td><div class="bar g711"><i style="width:100%"></i></div></td></tr>
+          <tr><td><b>MEAN unseen</b></td><td class="num red"><b>15.94%</b></td><td class="num">—</td><td></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card">
+      <table>
+        <thead><tr><th>Channel</th><th class="num">EER</th><th class="num">AUC</th><th class="num">Δ</th></tr></thead>
+        <tbody>
+          <tr><td>clean</td><td class="num grn">9.24%</td><td class="num">0.955</td><td class="num">+0.00</td></tr>
+          <tr><td>G.711 μ-law</td><td class="num red">11.41%</td><td class="num">0.943</td><td class="num red">+2.17</td></tr>
+        </tbody>
+      </table>
+      <table style="margin-top:14px">
+        <thead><tr><th>Calibration</th><th class="num">Value</th></tr></thead>
+        <tbody>
+          <tr><td>ECE</td><td class="num">0.058</td></tr>
+          <tr><td>Brier</td><td class="num">0.061</td></tr>
+          <tr><td>Cllr</td><td class="num">1.010 bits</td></tr>
+          <tr><td>AURC</td><td class="num">0.0273</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <h2>All Languages · clean vs G.711 EER (12 validated)</h2>
+  <div class="card">
+    <table>
+      <thead><tr><th>Language</th><th class="num">Overall</th><th class="num">Clean</th><th>Clean bar</th><th class="num">G.711</th><th>G.711 bar</th><th class="num">n</th></tr></thead>
+      <tbody id="langRows"></tbody>
+    </table>
+  </div>
+
+  <h2>Single-class · awaiting real TTS fakes (5)</h2>
+  <div class="card">
+    <table>
+      <thead><tr><th>Code</th><th>Likely language</th><th class="num">n</th><th class="num">n_fake</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">as</td><td>Assamese</td><td class="num">10,644</td><td class="num">0</td><td><span class="pill pend">awaiting fakes</span></td></tr>
+        <tr><td class="mono">ks</td><td>Kashmiri</td><td class="num">25,726</td><td class="num">0</td><td><span class="pill pend">awaiting fakes</span></td></tr>
+        <tr><td class="mono">mn</td><td>Manipuri</td><td class="num">15,114</td><td class="num">0</td><td><span class="pill pend">awaiting fakes</span></td></tr>
+        <tr><td class="mono">ma</td><td>Maithili</td><td class="num">9,026</td><td class="num">0</td><td><span class="pill pend">awaiting fakes</span></td></tr>
+        <tr><td class="mono">ko</td><td>Konkani</td><td class="num">13,890</td><td class="num">0</td><td><span class="pill pend">awaiting fakes</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>Selective Prediction · abstention</h2>
+  <div class="card">
+    <table>
+      <thead><tr><th class="num">Coverage</th><th class="num">Risk (err)</th><th class="num">EER@cov</th><th class="num">FP (genuine)</th><th>FP bar</th></tr></thead>
+      <tbody id="covRows"></tbody>
+    </table>
+  </div>
+
+  <h2>All Detectors &amp; Models</h2>
+  <div class="grid2">
+    <div class="card">
+      <div class="eyebrow" style="margin-bottom:8px">Runtime ensemble (5, fused)</div>
+      <table>
+        <thead><tr><th>Detector</th><th>Type</th><th class="num">Weight</th></tr></thead>
+        <tbody>
+          <tr><td><code>acoustic-dsp</code></td><td>hand-crafted DSP</td><td class="num">0.30</td></tr>
+          <tr><td><code>Deepfake-audio-detection-V2</code></td><td>neural</td><td class="num">0.50</td></tr>
+          <tr><td><code>wav2vec2-large-xlsr-deepfake</code></td><td>neural SSL</td><td class="num">0.50</td></tr>
+          <tr><td><code>distilhubert-audio-deepfake</code></td><td>neural SSL</td><td class="num">0.50</td></tr>
+          <tr><td><code>fusion-head (LFCC+CQCC)</code></td><td>trainable head</td><td class="num">0.40</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card">
+      <div class="eyebrow" style="margin-bottom:8px">Trained backends (Phase 4 · 12 languages)</div>
+      <table>
+        <thead><tr><th>Model</th><th>Checkpoint</th><th>Role</th></tr></thead>
+        <tbody>
+          <tr><td>AASIST</td><td><code>aasist_*</code></td><td>anti-spoofing backbone</td></tr>
+          <tr><td>Adversarial Conformer</td><td><code>adv_*</code></td><td>PGD robustness</td></tr>
+          <tr><td>Distilled student</td><td><code>student_*</code></td><td>compact / edge</td></tr>
+          <tr><td>XLS-R finetuned</td><td><code>models/xlsr-*</code></td><td>SSL detector</td></tr>
+          <tr><td>C2 ablation</td><td><code>phase4/c2_*.txt</code></td><td>component contribution</td></tr>
+        </tbody>
+      </table>
+      <div class="eyebrow" style="margin:16px 0 8px">Evidence brains (9)</div>
+      <div style="color:var(--sub);font-size:12.5px">Physics/HPCS · Replay · Environment · Cross-codec · Speaker · Semantic↔Prosody · Causal · Temporal-DNA · Arbitration</div>
+    </div>
+  </div>
+
+  <div class="foot">
+    <span>VoxShield · single numbers digest · generated from DGX results</span>
+    <span class="mono">overall EER 10.25% · AUC 0.949 · ECE 0.058</span>
+  </div>
+</div>
+<script>
+const langs=[
+ ["Punjabi","pa",0.03,0.00,0.05,135048],["Telugu","te",0.06,0.00,0.11,136822],
+ ["Marathi","mr",0.08,0.02,0.14,113952],["Sanskrit","sa",0.09,0.03,0.15,129166],
+ ["Hindi","hi",0.19,0.09,0.29,185580],["Kannada","kn",1.16,0.65,1.62,108830],
+ ["Tamil","ta",1.21,0.26,2.03,121456],["Gujarati","gu",3.95,1.28,6.01,143940],
+ ["Bengali","bn",6.88,3.30,10.36,117210],["Urdu","ur",17.92,13.13,22.71,135288],
+ ["Odia","or",34.09,32.53,35.68,129300],["Malayalam","ml",36.26,37.51,37.81,108380]];
+const max=40;
+const fmt=n=>n.toFixed(2)+"%";
+document.getElementById("langRows").innerHTML=langs.map(([nm,code,ov,c,g,n])=>
+ `<tr><td><b>${nm}</b> <span class="mono" style="color:var(--mut)">${code}</span></td>
+  <td class="num">${fmt(ov)}</td><td class="num grn">${fmt(c)}</td>
+  <td><div class="barrow"><div class="bar clean"><i style="width:${Math.min(100,c/max*100)}%"></i></div><span class="mono" style="color:var(--mut);min-width:52px">${fmt(c)}</span></div></td>
+  <td class="num red">${fmt(g)}</td>
+  <td><div class="barrow"><div class="bar g711"><i style="width:${Math.min(100,g/max*100)}%"></i></div><span class="mono" style="color:var(--mut);min-width:52px">${fmt(g)}</span></div></td>
+  <td class="num">${n.toLocaleString()}</td></tr>`).join("");
+const cov=[[100,6.57,10.25,2.55],[95,4.82,9.96,1.24],[90,3.91,10.30,0.60],[80,2.79,8.45,0.23],[70,1.73,5.84,0.06],[50,2.04,9.76,0.04]];
+document.getElementById("covRows").innerHTML=cov.map(([c,r,e,f])=>
+ `<tr><td class="num">${c}%</td><td class="num">${r.toFixed(2)}%</td><td class="num">${e.toFixed(2)}%</td>
+  <td class="num ${f<1?'grn':'amb'}">${f.toFixed(2)}%</td>
+  <td><div class="bar" style="background:#1a2436"><i style="width:${f/2.6*100}%;background:linear-gradient(90deg,#25d07c,#f6a935)"></i></div></td></tr>`).join("");
+</script>
+</body>
+</html>
