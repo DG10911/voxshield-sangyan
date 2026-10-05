@@ -124,8 +124,11 @@ def fetch(entry, root):
     if access == "mendeley":
         return _run(["bash", "-lc", f"echo 'open https://data.mendeley.com/datasets/{ref}/1 and download' > {dest}/README_DOWNLOAD.txt"])
     if access == "kaggle":
-        if not os.path.exists(os.path.expanduser("~/.kaggle/kaggle.json")):
-            print(f"  [gated] kaggle {ref} — put kaggle.json at ~/.kaggle/kaggle.json")
+        have = (os.environ.get("KAGGLE_API_TOKEN")
+                or os.path.exists(os.path.expanduser("~/.kaggle/access_token"))
+                or os.path.exists(os.path.expanduser("~/.kaggle/kaggle.json")))
+        if not have:
+            print(f"  [gated] kaggle {ref} — set KAGGLE_API_TOKEN or ~/.kaggle/access_token")
             return 1
         return _run(["kaggle", "datasets", "download", "-d", ref, "-p", dest, "--unzip"])
     if access == "aikosh":
