@@ -82,3 +82,32 @@ Consequences:
 2. Write paper Results/Discussion + fold in `c2_*.txt`.
 3. Run Bhashini live smoke → record pass/fail.
 4. Submit (video + deck) and apply the EER-label fix.
+
+---
+## UPDATE — 2026-10-05 10:00 (after actions)
+
+### Low-res TTS: unblocked 3 of 8
+- **Root cause fixed:** Indic-Parler tokenizer bug (spoken text was tokenized with the description
+  tokenizer → CUDA `indexSelectSmallIndex` assert). After fix, Parler generates correctly.
+- **Running now (GPUs 1–3):** `kashmiri`, `nepali`, `sindhi` → real Parler fakes + two-class retrain.
+- **Coverage reality:**
+  - Feasible: **ks, ne, sd** (Indic-Parler) · **as, mai** (MMS) · **bodo** (community piper) .
+  - **No TTS exists anywhere public:** **dogri, konkani, manipuri, santali** → cannot be made
+    two-class without a new TTS or recorded spoofs.
+  - Realistic final: **~12 core + ks/ne/sd (+as/mai/bodo) ≈ 15–18 of 23**.
+
+### Bhashini: LIVE verified 11/13
+- OK: config, NMT, transliteration, NER, TLD, TTS, **ASR**, **ALD**, denoiser,
+  **IndicF5 voice-clone**, **streaming ASR**.
+- FAIL: `speaker_diarization`, `language_diarization` → **HTTP 500 from Bhashini's server**
+  (not our bug); harness WAV-reader fixed (soundfile).
+- Quota: used 237 / 2000.
+
+### AIKosh
+- Adapter `backend/aikosh_ingest.py` + `VOXSHIELD_AIKOSH_MASTER_LIST.md` (**256 catalogue rows**)
+  in place; MCP URL configured.
+
+### Single-digit EER — honest scorecard (12 core)
+- Under 10%: **pa te mr sa hi kn ta gu bn** (9/12) ✅
+- Above: **ur 17.92%**, **or 34.09%**, **ml 36.26%** → need more data + XLS-R/RawBoost fine-tune;
+  not guaranteed to reach single digit.
