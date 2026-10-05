@@ -48,7 +48,10 @@ class Adapter:
                     return False, f"pip install {p.strip()}"
         return True, "ok"
     def synth(self, texts, out_dir):
-        raise NotImplementedError
+        fn = getattr(self, "_fn", None)
+        if fn is None:
+            raise NotImplementedError(f"{self.name}: no synth implementation ({self.kind})")
+        return fn(self, texts, out_dir)
 
 
 def _local(name, fn):  a = Adapter(name); a._fn = fn; return a

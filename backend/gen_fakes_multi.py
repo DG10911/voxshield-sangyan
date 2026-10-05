@@ -25,6 +25,15 @@ _HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, _HERE)
 
 
+def _texts(lang, n):
+    try:
+        import gen_fakes_mms as G
+        t = G._texts(G.LANGS.get(lang, ("", ""))[0]) or G.FALLBACK_TEXT
+    except Exception:
+        t = ["नमस्ते, यह एक परीक्षण है।"]
+    return [t[i % len(t)] for i in range(n)]
+
+
 def _write(man, path, lang, engine):
     man.write(json.dumps({"path": os.path.abspath(path), "label": 1,
                           "language": lang[:2], "generator": engine, "seen": 1}) + "\n")
@@ -137,13 +146,38 @@ def run(lang, n, out, engines):
     for name in engines.split(","):
         name = name.strip()
         fn = ENGINES.get(name)
-        if not fn:
-            print(f"  [skip] {name}: unknown engine"); continue
+        sub = os.path.join(out, name)
+        have = glob.glob(os.path.join(sub, "*.wav"))
+        if have:                                   # cache: reuse already-generated fakes
+            for p in have:
+                _write(man, p, lang, name)
+            print(f"  [cache] {name}: {len(have)} wavs"); used.append(name + ":cached"); continue
         try:
             print(f"  [run ] {name}")
+            if not fn:
+                raise RuntimeError("not in local registry — trying adapter")
             fn(lang, n, out, man); used.append(name)
         except Exception as e:
-            print(f"  [skip] {name}: {type(e).__name__}: {str(e)[:100]}")
+            print(f"  [..  ] {name}: {type(e).__name__}: {str(e)[:80]}")
+            # delegate to the full 28-generator adapter registry (Sarvam/Cartesia/Hume/…)
+            try:
+                import generator_adapters as GA
+                amap = {"cartesia": "cartesia", "hume": "hume", "elevenlabs": "elevenlabs",
+                        "sarvam": "sarvam_tts", "bark": "bark", "indicf5": "indicf5",
+                        "openaudio": "openaudio_s2"}
+                key = amap.get(name)
+                if key and key in GA.GEREG:
+                    a = GA.GEREG[key]; ok, why = a.available()
+                    if not ok:
+                        print(f"  [skip] {name} (adapter): {why}")
+                    else:
+                        os.makedirs(sub, exist_ok=True)
+                        paths = a.synth(_texts(lang, n), sub)
+                        for p in paths:
+                            _write(man, p, lang, name)
+                        used.append(name + ":adapter"); print(f"  [ok  ] {name} (adapter): {len(paths)}")
+            except Exception as e2:
+                print(f"  [skip] {name} (adapter): {type(e2).__name__}: {str(e2)[:80]}")
     man.close()
     rows = sum(1 for _ in open(os.path.join(out, "manifest.jsonl")))
     print(f"[multi] {lang}: engines={used} rows={rows} -> {out}/manifest.jsonl")
