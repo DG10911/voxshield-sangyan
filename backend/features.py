@@ -15,8 +15,19 @@ Feature families chosen from the anti-spoofing literature:
   - HF energy / regularity, spectral flatness, silence/breath cues.
 """
 from __future__ import annotations
-import io, base64
+import io, base64, os as _os
 import numpy as np
+# Ensure an ffmpeg/ffprobe exists for compressed formats (mp3/m4a/webm from the mic) on hosts
+# without system ffmpeg — use the pip-bundled static binaries if present.
+try:
+    import static_ffmpeg as _sf
+    _ff, _fp = _sf.run.get_or_fetch_platform_executables_else_raise()
+    _os.environ["PATH"] = _os.path.dirname(_ff) + _os.pathsep + _os.environ.get("PATH", "")
+    from pydub import AudioSegment as _AS
+    _AS.converter = _ff
+    _AS.ffprobe = _fp
+except Exception:
+    pass
 import librosa
 
 import matplotlib

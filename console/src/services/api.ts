@@ -41,7 +41,7 @@ export async function request<T>(
 ): Promise<T> {
   const response = await fetch(config.api + path, {
     ...init,
-    signal: init.signal ?? AbortSignal.timeout(8000),
+    signal: init.signal ?? AbortSignal.timeout(180000),
   });
   if (!response.ok) throw new Error(`API request failed (${response.status})`);
   return response.json() as Promise<T>;
