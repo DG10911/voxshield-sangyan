@@ -48,18 +48,35 @@ class HFDetector:
         self.name = "hf:" + model_id.split("/")[-1]
         self.model_id = model_id
         self._pipe = None
+        self._ort = None
+        self._ext = None
         self._tried = False
+
+    def _onnx_dir(self):
+        base = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "models", "onnx")
+        return os.path.normpath(os.path.join(base, self.model_id.replace("/", "_")))
 
     def _load(self):
         if self._tried:
-            return self._pipe
+            return self._pipe if self._pipe is not None else ("onnx" if self._ort is not None else None)
         self._tried = True
         if os.environ.get("VOXSHIELD_DISABLE_ML") == "1":
             return None
+        d = self._onnx_dir()
+        if os.path.isfile(os.path.join(d, "model.onnx")):   # fast int8/ONNX CPU path
+            try:
+                from optimum.onnxruntime import ORTModelForAudioClassification
+                from transformers import AutoFeatureExtractor
+                self._ort = ORTModelForAudioClassification.from_pretrained(d)
+                self._ext = AutoFeatureExtractor.from_pretrained(d)
+                print(f"[VoxShield] loaded ONNX {self.model_id}")
+                return "onnx"
+            except Exception as e:
+                print(f"[VoxShield] ONNX failed {self.model_id}: {str(e)[:70]}")
         try:
             from transformers import pipeline
             import torch
-            dev = 0 if torch.cuda.is_available() else -1   # CPU/MPS when no CUDA
+            dev = 0 if torch.cuda.is_available() else -1
             self._pipe = pipeline("audio-classification", model=self.model_id, device=dev)
             print(f"[VoxShield] loaded {self.model_id} (device={dev})")
         except Exception as e:
@@ -68,7 +85,28 @@ class HFDetector:
         return self._pipe
 
     def fake_prob(self, y, sr):
-        pipe = self._load()
+        loaded = self._load()
+        if loaded == "onnx" and self._ort is not None:
+            try:
+                import torch
+                inputs = self._ext(y.astype("float32"), sampling_rate=sr, return_tensors="pt")
+                logits = self._ort(**inputs).logits
+                probs = torch.softmax(logits, -1)[0].cpu().numpy()
+                id2 = self._ort.config.id2label
+                fake = 0.0
+                for i, lab in id2.items():
+                    l = str(lab).lower()
+                    if any(t in l for t in ("fake", "spoof", "synthetic", "deepfake", "ai")):
+                        fake = max(fake, float(probs[i]))
+                if fake == 0.0:
+                    for i, lab in id2.items():
+                        if any(t in str(lab).lower() for t in ("real", "bona", "genuine", "human")):
+                            fake = max(fake, 1.0 - float(probs[i]))
+                return float(fake)
+            except Exception as e:
+                print(f"[VoxShield] onnx inference failed {self.model_id}: {str(e)[:70]}")
+                return None
+        pipe = self._pipe
         if pipe is None:
             return None
         try:
