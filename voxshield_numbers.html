@@ -107,18 +107,22 @@
     </table>
   </div>
 
-  <h2>Single-class · awaiting real TTS fakes (5)</h2>
+  <h2>Low-resource 8 · Bhashini TTS fakes · all sub-1% EER</h2>
   <div class="card">
     <table>
-      <thead><tr><th>Code</th><th>Likely language</th><th class="num">n</th><th class="num">n_fake</th><th>Status</th></tr></thead>
+      <thead><tr><th>Language</th><th class="num">test-clean EER</th><th class="num">test-G.711 EER</th><th>Status</th></tr></thead>
       <tbody>
-        <tr><td class="mono">as</td><td>Assamese</td><td class="num">10,644</td><td class="num">0</td><td><span class="pill pend">awaiting fakes</span></td></tr>
-        <tr><td class="mono">ks</td><td>Kashmiri</td><td class="num">25,726</td><td class="num">0</td><td><span class="pill pend">awaiting fakes</span></td></tr>
-        <tr><td class="mono">mn</td><td>Manipuri</td><td class="num">15,114</td><td class="num">0</td><td><span class="pill pend">awaiting fakes</span></td></tr>
-        <tr><td class="mono">ma</td><td>Maithili</td><td class="num">9,026</td><td class="num">0</td><td><span class="pill pend">awaiting fakes</span></td></tr>
-        <tr><td class="mono">ko</td><td>Konkani</td><td class="num">13,890</td><td class="num">0</td><td><span class="pill pend">awaiting fakes</span></td></tr>
+        <tr><td>Bodo</td><td class="num grn">0.16%</td><td class="num grn">0.00%</td><td><span class="pill ok">two-class ✅</span></td></tr>
+        <tr><td>Dogri</td><td class="num grn">0.00%</td><td class="num grn">0.00%</td><td><span class="pill ok">two-class ✅</span></td></tr>
+        <tr><td>Kashmiri</td><td class="num grn">0.00%</td><td class="num grn">0.17%</td><td><span class="pill ok">two-class ✅</span></td></tr>
+        <tr><td>Konkani</td><td class="num grn">0.00%</td><td class="num grn">0.08%</td><td><span class="pill ok">two-class ✅</span></td></tr>
+        <tr><td>Manipuri</td><td class="num grn">0.00%</td><td class="num grn">0.00%</td><td><span class="pill ok">two-class ✅</span></td></tr>
+        <tr><td>Nepali</td><td class="num grn">0.29%</td><td class="num grn">0.58%</td><td><span class="pill ok">two-class ✅</span></td></tr>
+        <tr><td>Santali</td><td class="num grn">0.06%</td><td class="num grn">0.06%</td><td><span class="pill ok">two-class ✅</span></td></tr>
+        <tr><td>Sindhi</td><td class="num grn">0.00%</td><td class="num grn">0.19%</td><td><span class="pill ok">two-class ✅</span></td></tr>
       </tbody>
     </table>
+    <p style="color:var(--sub);font-size:12px">Fakes via Bhashini TTS (govt ULCA). Small test sets (~700–1,000) → optimistic vs the full-corpus core table.</p>
   </div>
 
   <h2>Selective Prediction · abstention</h2>
@@ -168,12 +172,12 @@
 </div>
 <script>
 const langs=[
- ["Punjabi","pa",0.03,0.00,0.05,135048],["Telugu","te",0.06,0.00,0.11,136822],
- ["Marathi","mr",0.08,0.02,0.14,113952],["Sanskrit","sa",0.09,0.03,0.15,129166],
- ["Hindi","hi",0.19,0.09,0.29,185580],["Kannada","kn",1.16,0.65,1.62,108830],
- ["Tamil","ta",1.21,0.26,2.03,121456],["Gujarati","gu",3.95,1.28,6.01,143940],
- ["Bengali","bn",6.88,3.30,10.36,117210],["Urdu","ur",17.92,13.13,22.71,135288],
- ["Odia","or",34.09,32.53,35.68,129300],["Malayalam","ml",36.26,37.51,37.81,108380]];
+ ["Bengali","bn",0.11,0.01,0.21,100780],["Gujarati","gu",0.20,0.01,0.39,143940],
+ ["Kannada","kn",0.23,0.03,0.38,96480],["Tamil","ta",0.23,0.05,0.40,104720],
+ ["Punjabi","pa",0.28,0.02,0.55,116980],["Hindi","hi",0.28,0.06,0.51,185580],
+ ["Sanskrit","sa",0.51,0.03,1.00,95620],["Marathi","mr",0.58,0.11,1.05,101220],
+ ["Telugu","te",0.59,0.08,1.05,114640],["Urdu","ur",19.60,15.58,23.20,117016],
+ ["Odia","or",34.39,33.42,35.14,129300],["Malayalam","ml",39.33,40.76,38.25,108380]];
 const max=40;
 const fmt=n=>n.toFixed(2)+"%";
 document.getElementById("langRows").innerHTML=langs.map(([nm,code,ov,c,g,n])=>

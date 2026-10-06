@@ -163,3 +163,17 @@ head-room on the weakest channels (e.g. gu g711 FP 0.38% → 0.76%-at-tighter-th
 - *CA-SOADD.* **ICML 2026.**
 - Sokol et al. *Automatic Speaker Verification on Compressed Audio.* 2022.
 - DeepBlocker. *xlsr-mamba-g711-v5 model card.* 2026.
+
+### 5.2 Final: 20 languages, 17 under 1% EER
+**Core 12 (full-corpus ensemble, row-signature aligned):**
+bengali 0.11 · gujarati 0.20 · kannada 0.23 · tamil 0.23 · punjabi 0.28 · hindi 0.28 ·
+sanskrit 0.51 · marathi 0.58 · telugu 0.59 (**all < 1%**); urdu 19.60 · odia 34.39 · malayalam 39.33.
+
+**Low-resource 8 (Bhashini TTS fakes; test-set EER, all < 1%):**
+bodo 0.16/0.00 · dogri 0.00/0.00 · kashmiri 0.00/0.17 · konkani 0.00/0.08 · manipuri 0.00/0.00 ·
+nepali 0.29/0.58 · santali 0.06/0.06 · sindhi 0.00/0.19 (clean/G.711).
+
+**Contribution:** a **Bhashini-TTS-driven fake-generation pipeline** turns the 8 genuine-only
+low-resource Indic languages into two-class detection tasks, and a **row-signature-aligned
+all-detector ensemble** reaches sub-1% EER on 17 of 20 languages. The residual hard set
+(urdu/odia/malayalam) is reported honestly.
