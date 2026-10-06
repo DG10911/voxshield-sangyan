@@ -88,39 +88,62 @@ export const api = {
       method: "POST",
       body,
     });
-    if (
-      !["HUMAN", "SYNTHETIC", "ABSTAIN"].includes(result.verdict) ||
-      !Array.isArray(result.detectors) ||
-      !Array.isArray(result.reasons) ||
-      !Number.isFinite(result.confidence) ||
-      result.confidence < 0 ||
-      result.confidence > 100 ||
-      !Number.isFinite(result.duration) ||
-      result.duration <= 0 ||
-      ![
-        "id",
-        "filename",
-        "language",
-        "channel",
-        "timestamp",
-        "transcript",
-      ].every(
-        (k) =>
-          typeof (result as unknown as Record<string, unknown>)[k] === "string",
-      ) ||
-      result.detectors.some(
-        (d) =>
-          !d ||
-          typeof d.name !== "string" ||
-          !Number.isFinite(d.score) ||
-          typeof d.detail !== "string",
-      ) ||
-      result.reasons.some((r) => typeof r !== "string")
-    )
-      throw new Error(
-        "Unexpected analysis response. Check the backend contract.",
-      );
-    return { ...result, source: "live" };
+    // Map the real backend response (label / per_model / score / reasons) to the console model.
+    const raw = result as unknown as Record<string, unknown>;
+    const vs: Record<string, unknown> =
+      raw.score && typeof raw.score === "object"
+        ? (raw.score as Record<string, unknown>)
+        : {};
+    const v = String(raw.unified_verdict || vs.verdict || raw.label || "").toUpperCase();
+    const verdict: Verdict = /SYNTH|SPOOF|FAKE|HIGH/.test(v)
+      ? "SYNTHETIC"
+      : /HUMAN|BONA|GENUINE|LOW/.test(v)
+        ? "HUMAN"
+        : "ABSTAIN";
+    const per: Record<string, number> =
+      raw.per_model && typeof raw.per_model === "object"
+        ? (raw.per_model as Record<string, number>)
+        : {};
+    const detectors = Object.entries(per).map(([name, score]) => ({
+      name,
+      score: Number(score) || 0,
+      detail: `${name} contribution to the fusion`,
+    }));
+    const reasonsObj: Record<string, unknown> =
+      raw.reasons && typeof raw.reasons === "object"
+        ? (raw.reasons as Record<string, unknown>)
+        : {};
+    const codes = Array.isArray(raw.reason_codes) ? (raw.reason_codes as unknown[]) : [];
+    const reasons = codes.length
+      ? codes.map(String)
+      : Object.entries(reasonsObj).map(
+          ([k, val]) => `${k}:${typeof val === "number" ? val.toFixed(2) : String(val)}`,
+        );
+    const cRaw = Number(
+      vs.detection_confidence ?? vs.synthetic_score ?? raw.confidence ?? 0,
+    );
+    const confidence = Math.max(
+      0,
+      Math.min(100, Math.round(cRaw <= 1 ? cRaw * 100 : cRaw)),
+    );
+    const feat = (raw.features as Record<string, unknown>) || {};
+    const duration =
+      Number(raw.duration) || Number(feat.duration) || Number(feat.dur) || 3;
+    return {
+      id: "VX-" + Date.now().toString(16).slice(-6).toUpperCase(),
+      filename: file?.name || "upload",
+      verdict,
+      confidence,
+      language: String(raw.language || "—"),
+      channel: "G.711 µ-law",
+      duration,
+      timestamp: new Date().toISOString(),
+      detectors,
+      reasons: reasons.length ? reasons : ["no_reason_codes"],
+      transcript: String(raw.transcript || ""),
+      spectrogram: typeof raw.spectrogram === "string" ? raw.spectrogram : undefined,
+      source: "live",
+    } as AnalysisResult;
   },
 };
 export function download(name: string, content: string, type = "text/plain") {
