@@ -139,7 +139,7 @@ def load_corpus(root, holdout_gen, langs, limit_per=None):
                 if not p or not os.path.isfile(p): continue
                 lg = str(m.get("language", "x"))[:2].lower()
                 gen = str(m.get("generator", "bhashini/tts")).lower()
-                sp = f"wai_{lg}"
+                sp = f"wai_{lg}_{n}"      # vary speaker id so fakes spread across train/val/test
                 rows.append(dict(store=None, idx=-1, wavpath=p, audiocol=None, label=1,
                                  speaker=sp, lang=lg, generator=gen, dataset="worst_ai",
                                  split=_split_of(sp, holdout_gen, gen, "worst_ai")))
