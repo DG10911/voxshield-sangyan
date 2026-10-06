@@ -167,16 +167,26 @@ def engine_bhashini(lang, n, out, man):
     code = BHASHINI_CODE.get(lang, lang[:2])
     d = os.path.join(out, "bhashini"); os.makedirs(d, exist_ok=True)
     texts = _texts(lang, n); made = 0
+    import contextlib as _c, signal as _s
+
+    @_c.contextmanager
+    def _alarm(sec):
+        def _h(a, b): raise TimeoutError()
+        old = _s.signal(_s.SIGALRM, _h); _s.alarm(sec)
+        try: yield
+        finally: _s.alarm(0); _s.signal(_s.SIGALRM, old)
+
     for i, t in enumerate(texts):
-        for attempt in range(5):
+        for attempt in range(3):
             try:
-                r = B.synthesize(t, code, "female")
+                with _alarm(int(os.environ.get("BHASHINI_CALL_TIMEOUT", "90"))):
+                    r = B.synthesize(t, code, "female")
                 aud = r["pipelineResponse"][0]["audio"][0]["audioContent"]
                 p = os.path.join(d, f"bhashini_{i:05d}.wav")
                 open(p, "wb").write(base64.b64decode(aud)); _write(man, p, lang, "bhashini")
                 made += 1; break
             except Exception as e:
-                if attempt == 4:
+                if attempt == 2:
                     print(f"  bhashini err {i}: {str(e)[:70]}"); break
                 time.sleep(2 * (attempt + 1))
         if made and made % 25 == 0: print(f"  bhashini ...{made}")
