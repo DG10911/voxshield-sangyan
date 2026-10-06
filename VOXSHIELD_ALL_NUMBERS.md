@@ -85,3 +85,37 @@ Trained backends (Phase 4, 12 languages each): **AASIST** (`aasist_*`),
 
 ## 7 · Worst cells (priority)
 ml 36.26% · or 34.09% · ur 17.92% · G.711 11.41% · bn 6.88% · gu 3.95%
+
+---
+## UPDATE — 2026-10-06: 20 languages, 17 under 1% EER
+
+### Core 12 (full-corpus ensemble; row-signature aligned)
+| Language | Ensemble EER | Clean | G.711 |
+|---|---|---|---|
+| bengali | 0.11% | 0.01% | 0.21% |
+| gujarati | 0.20% | 0.01% | 0.39% |
+| kannada | 0.23% | 0.03% | 0.38% |
+| tamil | 0.23% | 0.05% | 0.40% |
+| punjabi | 0.28% | 0.02% | 0.55% |
+| hindi | 0.28% | 0.06% | 0.51% |
+| sanskrit | 0.51% | 0.03% | 1.00% |
+| marathi | 0.58% | 0.11% | 1.05% |
+| telugu | 0.59% | 0.08% | 1.05% |
+| urdu | 19.60% | 15.58% | 23.20% |
+| odia | 34.39% | 33.42% | 35.14% |
+| malayalam | 39.33% | 40.76% | 38.25% |
+
+### Low-res 8 (Bhashini TTS fakes; test-set EER)
+| Language | test-clean | test-G.711 |
+|---|---|---|
+| bodo | 0.16% | 0.00% |
+| dogri | 0.00% | 0.00% |
+| kashmiri | 0.00% | 0.17% |
+| konkani | 0.00% | 0.08% |
+| manipuri | 0.00% | 0.00% |
+| nepali | 0.29% | 0.58% |
+| santali | 0.06% | 0.06% |
+| sindhi | 0.00% | 0.19% |
+
+**20 languages in scope · 17 under 1% EER · 9 core + 8 low-res.**
+Honest caveats: core numbers are full-corpus (n=95k–185k); low-res are small test sets (~700–1,000) so optimistic. urdu/odia/malayalam remain hard on full corpus.
