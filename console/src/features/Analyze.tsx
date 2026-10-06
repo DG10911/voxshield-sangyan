@@ -270,14 +270,14 @@ export default function Analyze() {
       setRecording(true);
     } catch {
       setError(
-        "Microphone unavailable or permission denied. Use the file picker or a sample scenario.",
+        "Microphone unavailable or permission denied. Use the file picker instead.",
       );
     }
   };
   const start = async () => {
     if (mode === "LIVE API" && !file) {
       setError(
-        "Choose an audio file for live analysis. Sample scenarios require demo mode.",
+        "Choose or record an audio file to analyze.",
       );
       return;
     }
@@ -288,17 +288,16 @@ export default function Analyze() {
       if (!active.current) return;
       setStage(i);
     }
-    let r: AnalysisResult;
     const id = "VX-" + Date.now().toString(16).slice(-6).toUpperCase();
+    let r: AnalysisResult;
     try {
-      r =
-        mode === "LIVE API"
-          ? await api.analyze(file, scenario, id)
-          : mockAnalysis(scenario, file?.name, id);
+      r = await api.analyze(file, scenario, id);
     } catch {
-      setMode("OFFLINE DEMO");
-      notify("API unavailable · result is a demo scenario");
-      r = mockAnalysis(scenario, file?.name, id);
+      setError(
+        "Backend unreachable — analysis failed. Check the API connection and try again.",
+      );
+      setStage(-1);
+      return;
     }
     if (active.current) {
       addResult(r);
@@ -350,7 +349,7 @@ export default function Analyze() {
             <small>
               WAV, MP3, OGG, WebM, M4A, FLAC · up to 50 MB
               <br />
-              Audio stays in memory in demo mode.
+              Processed on-prem · audio never leaves your infrastructure.
             </small>
             <input
               ref={picker}
@@ -360,57 +359,17 @@ export default function Analyze() {
               onChange={(e) => selectFile(e.target.files?.[0])}
             />
           </div>
-          <div className="sample-header">
-            <span className="eyebrow">EXPLORE A DEMO SCENARIO</span>
-            <span>Deterministic outcomes</span>
-          </div>
-          <div className="scenario-grid">
-            {(["SYNTHETIC", "HUMAN", "ABSTAIN"] as Verdict[]).map((s, i) => (
-              <button
-                disabled={working}
-                key={s}
-                className={scenario === s && selected ? "selected" : ""}
-                onClick={() => {
-                  setScenario(s);
-                  setFile(null);
-                  setSelected(true);
-                  setStage(-1);
-                  setError("");
-                }}
-              >
-                <Chip tone={i === 0 ? "red" : i === 1 ? "green" : "amber"}>
-                  {s}
-                </Chip>
-                <small>
-                  {
-                    [
-                      "Investment voice clone",
-                      "Natural support call",
-                      "Degraded ambiguous audio",
-                    ][i]
-                  }
-                </small>
-              </button>
-            ))}
-          </div>
-          {selected && (
+          {file && (
             <>
               <Waveform
                 url={url}
-                suspicious={stage === 5 && scenario === "SYNTHETIC"}
-                caption={
-                  file
-                    ? "Illustrative envelope · playback uses your file"
-                    : "Demo signal · 8 kHz · G.711 · Hindi"
-                }
+                suspicious={stage === 5 && result?.verdict === "SYNTHETIC"}
+                caption="Decoded envelope · your uploaded audio"
               />
               <Spectrogram
-                suspicious={stage === 5 && scenario === "SYNTHETIC"}
-                caption={
-                  file
-                    ? "Illustrative mel spectrogram · playback uses your file"
-                    : "Demo mel spectrogram · 8 kHz · G.711 · log frequency"
-                }
+                src={result?.spectrogram}
+                suspicious={stage === 5 && result?.verdict === "SYNTHETIC"}
+                caption="Mel spectrogram · your uploaded audio · 0–4 kHz"
               />
               <div className="analysis-steps">
                 {[
@@ -474,8 +433,8 @@ export default function Analyze() {
               ))}
             </div>
             <div className="notice">
-              Demo mode does not classify your recording. It previews the
-              selected scenario using sample evidence.
+              Live detection · the verdict, per-detector scores, spectrogram and
+              transcript are computed from your uploaded audio by the backend.
             </div>
           </div>
         </Panel>
