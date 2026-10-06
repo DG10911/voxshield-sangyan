@@ -15,7 +15,7 @@ HF=$(command -v hf || command -v huggingface-cli)
 
 LANGS="${LANGS:-bodo dogri kashmiri konkani manipuri nepali santali sindhi}"
 N=${N:-80}
-ENGINES=${ENGINES:-sarvam,cartesia,mms}
+ENGINES=${ENGINES:-bhashini}
 
 worker(){ local L=$1 DEV=${2:-0}
   { echo "==== lowres-api $L (GPU $DEV) ===="
