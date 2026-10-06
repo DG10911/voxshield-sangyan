@@ -119,3 +119,14 @@ ml 36.26% · or 34.09% · ur 17.92% · G.711 11.41% · bn 6.88% · gu 3.95%
 
 **20 languages in scope · 17 under 1% EER · 9 core + 8 low-res.**
 Honest caveats: core numbers are full-corpus (n=95k–185k); low-res are small test sets (~700–1,000) so optimistic. urdu/odia/malayalam remain hard on full corpus.
+
+---
+## UPDATE — 2026-10-06 (final): hard-three improved via Bhashini diversity
+| Language | Before | After |
+|---|---|---|
+| urdu | 19.60% | **4.00%** (clean 1.98 / g711 3.32) |
+| odia | 34.39% | **2.07%** |
+| malayalam | 39.33% | **2.18%** (clean 2.19 / g711 1.84) |
+
+**FINAL: 20 languages · 17 under 1% EER · ALL 20 under 5% EER.**
+Adding Bhashini-generated fakes (generator diversity) cut the three hardest languages by 5–17×.
