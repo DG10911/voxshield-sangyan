@@ -112,6 +112,13 @@ for lg in langs:
     except Exception as e: print("gen err", lg, str(e)[:120])
 PY
 
+# ---- 2b. RE-inject pre-generated fakes (step 2 above can overwrite worst_ai/manifest) ----
+if [ -n "${FAKES_MANIFEST:-}" ] && [ -f "$FAKES_MANIFEST" ]; then
+  grep -qxF "$(head -1 "$FAKES_MANIFEST")" "$DATA/worst_ai/manifest.jsonl" 2>/dev/null || \
+    cat "$FAKES_MANIFEST" >> "$DATA/worst_ai/manifest.jsonl"
+  echo "[fakes] (re)injected $(wc -l < "$DATA/worst_ai/manifest.jsonl" | tr -d ' ') total fake rows"
+fi
+
 # ---- 3. train (GPU) ----  (pass the SLOT's GPU, never a hardcoded 0)
 echo "[3/5] training XLS-R + RawBoost on gpu=${GPU:-auto}"
 TRAIN_OK=0
