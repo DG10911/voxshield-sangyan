@@ -19,7 +19,16 @@ Usage:
     python backend/gen_fakes_multi.py --selftest
 """
 from __future__ import annotations
-import argparse, glob, json, os, subprocess, sys
+import argparse, base64, glob, json, os, subprocess, sys, time
+
+# VoxShield language -> Bhashini TTS language code (IITM TTS: 25 Indic languages)
+BHASHINI_CODE = {
+    "hindi": "hi", "bengali": "bn", "marathi": "mr", "telugu": "te", "tamil": "ta",
+    "gujarati": "gu", "kannada": "kn", "malayalam": "ml", "odia": "or", "punjabi": "pa",
+    "urdu": "ur", "sanskrit": "sa", "assamese": "as", "maithili": "mai",
+    "bodo": "brx", "dogri": "doi", "kashmiri": "ks", "konkani": "kok",
+    "manipuri": "mni", "nepali": "ne", "santali": "sat", "sindhi": "sd", "english": "en",
+}
 
 _HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, _HERE)
@@ -152,9 +161,33 @@ def engine_sarvam(lang, n, out, man):
         _write(man, p, lang, "sarvam-tts")
 
 
+def engine_bhashini(lang, n, out, man):
+    """Bhashini TTS (govt ULCA) — covers all Indic incl. the low-res 8. Govt quota."""
+    import bhashini as B
+    code = BHASHINI_CODE.get(lang, lang[:2])
+    d = os.path.join(out, "bhashini"); os.makedirs(d, exist_ok=True)
+    texts = _texts(lang, n); made = 0
+    for i, t in enumerate(texts):
+        for attempt in range(5):
+            try:
+                r = B.synthesize(t, code, "female")
+                aud = r["pipelineResponse"][0]["audio"][0]["audioContent"]
+                p = os.path.join(d, f"bhashini_{i:05d}.wav")
+                open(p, "wb").write(base64.b64decode(aud)); _write(man, p, lang, "bhashini")
+                made += 1; break
+            except Exception as e:
+                if attempt == 4:
+                    print(f"  bhashini err {i}: {str(e)[:70]}"); break
+                time.sleep(2 * (attempt + 1))
+        if made and made % 25 == 0: print(f"  bhashini ...{made}")
+    if made == 0:
+        raise RuntimeError("bhashini produced no audio (check BHASHINI keys/code)")
+
+
 ENGINES = {
     "mms": engine_mms, "parler": engine_parler, "xtts": engine_xtts,
-    "f5": engine_f5, "kokoro": engine_kokoro, "piper": engine_piper, "sarvam": engine_sarvam,
+    "f5": engine_f5, "kokoro": engine_kokoro, "piper": engine_piper,
+    "sarvam": engine_sarvam, "bhashini": engine_bhashini,
 }
 DEFAULT = "mms,parler,xtts,f5,kokoro,piper,sarvam"
 
