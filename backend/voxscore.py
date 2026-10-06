@@ -103,9 +103,12 @@ def voxscore(
     # Never force a call when evidence is weak or the input looks novel: the
     # vision (and banking reality) require step-up verification, not auto-block.
     weak = evidence_confidence < 0.45 or novelty >= 0.45
-    if fused_score >= hi and not weak:
+    # A DECISIVE fused score wins even when evidence is weak: a genuine voice scored
+    # near-0 must be HUMAN (not abstained). Abstention is reserved for the ambiguous
+    # MIDDLE band, where forcing a call is what causes false alarms.
+    if fused_score >= hi:
         risk = "HIGH"
-    elif fused_score <= lo and not weak:
+    elif fused_score <= lo:
         risk = "LOW"
     elif weak:
         risk = "REVIEW"          # abstain band -> human / step-up verification
