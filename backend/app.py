@@ -35,6 +35,19 @@ import warroom                                       # §28 live ops rollup
 from consumer import answer as consumer_answer       # §28 P4 "is this voice real?"
 
 app = FastAPI(title="VoxShield Audio Forensics API", version="3.0.0")
+
+
+@app.middleware("http")
+async def _no_cache_html(request, call_next):
+    """Never let browsers serve a stale console build."""
+    resp = await call_next(request)
+    p = request.url.path
+    if p.endswith("/") or p.endswith(".html"):
+        resp.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
+        resp.headers["Pragma"] = "no-cache"
+    return resp
+from fastapi.middleware.cors import CORSMiddleware
+app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
 FRONTEND = Path(__file__).resolve().parent.parent / "frontend"
 AUDIT: list[dict] = []
 
