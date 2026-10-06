@@ -14,7 +14,7 @@ source "$HOME/.config/voxshield.env" 2>/dev/null || true
 HF=$(command -v hf || command -v huggingface-cli)
 
 LANGS="${LANGS:-bodo dogri kashmiri konkani manipuri nepali santali sindhi}"
-N=${N:-200}
+N=${N:-80}
 ENGINES=${ENGINES:-sarvam,cartesia,mms}
 
 worker(){ local L=$1 DEV=${2:-0}

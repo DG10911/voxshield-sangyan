@@ -31,6 +31,25 @@ def _mod(name):
 def _import(name):
     return __import__(name)
 
+def _post(url, data, headers, tries=6, base=4.0):
+    """POST with exponential backoff on 429/5xx (API rate limits)."""
+    import urllib.request, urllib.error, time
+    last = None
+    for k in range(tries):
+        try:
+            req = urllib.request.Request(url, data=data, headers=headers)
+            with urllib.request.urlopen(req, timeout=90) as r:
+                return r.read()
+        except urllib.error.HTTPError as e:
+            last = e
+            if e.code in (429, 500, 502, 503, 504):
+                time.sleep(base * (2 ** k)); continue
+            raise
+        except Exception as e:
+            last = e; time.sleep(base * (2 ** k))
+    raise last
+
+
 def _texts(lang, n):
     try:
         import gen_fakes_mms as G
@@ -181,11 +200,9 @@ def _sarvam(self, texts, out_dir):
     key = os.environ["SARVAM_API_KEY"]; paths = []
     for i, t in enumerate(texts):
         body = json.dumps({"inputs": [t], "target_language_code": "hi-IN",
-                           "speaker": os.environ.get("SARVAM_SPEAKER", "meera")}).encode()
-        req = urllib.request.Request(url, data=body, headers={"Content-Type": "application/json",
-                                   "api-subscription-key": key})
-        with urllib.request.urlopen(req, timeout=60) as r:
-            data = json.loads(r.read())
+                           "speaker": os.environ.get("SARVAM_SPEAKER", "priya")}).encode()
+        raw = _post(url, body, {"Content-Type": "application/json", "api-subscription-key": key})
+        data = json.loads(raw)
         p = os.path.join(out_dir, f"sarvam_{i:05d}.wav")
         open(p, "wb").write(base64.b64decode(data["audios"][0])); paths.append(p)
     return paths
@@ -207,10 +224,9 @@ def _cartesia(self, texts, out_dir):
                            "voice": {"mode": "id", "id": vid},
                            "output_format": {"container": "wav", "sample_rate": 24000,
                                              "encoding": "pcm_s16le"}}).encode()
-        req = urllib.request.Request("https://api.cartesia.ai/tts/bytes", data=body,
-              headers={"X-API-Key": key, "Cartesia-Version": ver, "Content-Type": "application/json"})
-        with urllib.request.urlopen(req, timeout=90) as r:
-            p = os.path.join(out_dir, f"cartesia_{i:05d}.wav"); open(p, "wb").write(r.read()); paths.append(p)
+        raw = _post("https://api.cartesia.ai/tts/bytes", body,
+                    {"X-API-Key": key, "Cartesia-Version": ver, "Content-Type": "application/json"})
+        p = os.path.join(out_dir, f"cartesia_{i:05d}.wav"); open(p, "wb").write(raw); paths.append(p)
     return paths
 
 def _hume(self, texts, out_dir):
