@@ -137,7 +137,7 @@ def load_corpus(root, holdout_gen, langs, limit_per=None):
                 except Exception: continue
                 p = m.get("path")
                 if not p or not os.path.isfile(p): continue
-                lg = str(m.get("language", "x"))[:2].lower()
+                lg = str(m.get("language", "x")).lower()   # full name so fakes group with real
                 gen = str(m.get("generator", "bhashini/tts")).lower()
                 sp = f"wai_{lg}_{n}"      # vary speaker id so fakes spread across train/val/test
                 rows.append(dict(store=None, idx=-1, wavpath=p, audiocol=None, label=1,

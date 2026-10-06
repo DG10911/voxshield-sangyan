@@ -65,7 +65,7 @@ def _texts(lang, n):
 
 def _write(man, path, lang, engine):
     man.write(json.dumps({"path": os.path.abspath(path), "label": 1,
-                          "language": lang[:2], "generator": engine, "seen": 1}) + "\n")
+                          "language": lang, "generator": engine, "seen": 1}) + "\n")
 
 
 def engine_mms(lang, n, out, man):
