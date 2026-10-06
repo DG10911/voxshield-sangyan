@@ -74,13 +74,18 @@ def _verdict(score):
 def analyze(y, sr):
     """Full fusion on a whole clip."""
     _load_trained()
+    if len(y) > int(6 * sr):                 # cap length: enough evidence, much faster
+        y = y[: int(6 * sr)]
     feats = extract_features(y, sr)
 
-    # --- model fusion: collect per-detector probabilities ---
+    # --- model fusion: collect per-detector probabilities (PARALLEL) ---
     per_model = {}
     weighted, wsum = 0.0, 0.0
-    for det in get_registry():
-        p = det.fake_prob(y, sr)
+    registry = list(get_registry())
+    from concurrent.futures import ThreadPoolExecutor
+    with ThreadPoolExecutor(max_workers=min(6, max(1, len(registry)))) as ex:
+        probs = list(ex.map(lambda d: d.fake_prob(y, sr), registry))
+    for det, p in zip(registry, probs):
         if p is None:
             continue
         per_model[det.name] = round(float(p), 4)
