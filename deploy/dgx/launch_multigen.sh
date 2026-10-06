@@ -7,6 +7,8 @@ set -uo pipefail
 ROOT=${VOXSHIELD_ROOT:-$HOME/voxshield}; cd "$ROOT" || exit 1
 export PATH="$HOME/miniconda3/envs/voxshield/bin:$HOME/miniconda3/bin:$PATH"
 export COQUI_TOS_AGREED=1
+export SSL_CERT_FILE=${SSL_CERT_FILE:-$HOME/miniconda3/envs/voxshield/lib/python3.11/site-packages/certifi/cacert.pem}
+export REQUESTS_CA_BUNDLE=$SSL_CERT_FILE
 export ENGINE_TIMEOUT=900
 ENVF=${VOXSHIELD_ENV:-$HOME/.config/voxshield.env}; [ -f "$ENVF" ] && . "$ENVF"
 [ -n "${HF_TOKEN:-}" ] && export HF_TOKEN
