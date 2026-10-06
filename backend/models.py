@@ -58,8 +58,10 @@ class HFDetector:
             return None
         try:
             from transformers import pipeline
-            self._pipe = pipeline("audio-classification", model=self.model_id, device=0)
-            print(f"[VoxShield] loaded {self.model_id}")
+            import torch
+            dev = 0 if torch.cuda.is_available() else -1   # CPU/MPS when no CUDA
+            self._pipe = pipeline("audio-classification", model=self.model_id, device=dev)
+            print(f"[VoxShield] loaded {self.model_id} (device={dev})")
         except Exception as e:
             print(f"[VoxShield] skip {self.model_id} ({e.__class__.__name__})")
             self._pipe = None
