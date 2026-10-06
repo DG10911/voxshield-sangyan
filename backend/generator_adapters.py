@@ -19,6 +19,10 @@ skipped, so the pipeline degrades gracefully. `install_hints()` prints what to a
 from __future__ import annotations
 import os, shutil, subprocess, tempfile
 
+# Coqui XTTS prompts "[y/n]" on stdin for its CPML license and BLOCKS forever in a
+# headless job — auto-accept via env so it never hangs.
+os.environ.setdefault("COQUI_TOS_AGREED", "1")
+
 # --- helpers ---------------------------------------------------------------
 def _mod(name):
     import importlib.util

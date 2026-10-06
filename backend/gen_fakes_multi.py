@@ -25,6 +25,26 @@ _HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, _HERE)
 
 
+import contextlib, signal
+
+
+@contextlib.contextmanager
+def _deadline(name, secs):
+    """Hard per-engine timeout so one hanging engine can never stall the pipeline."""
+    if not hasattr(signal, "SIGALRM") or secs <= 0:
+        yield; return
+
+    def _h(signum, frame):
+        raise TimeoutError(f"engine {name} exceeded {secs}s")
+
+    old = signal.signal(signal.SIGALRM, _h)
+    signal.alarm(secs)
+    try:
+        yield
+    finally:
+        signal.alarm(0); signal.signal(signal.SIGALRM, old)
+
+
 def _texts(lang, n):
     try:
         import gen_fakes_mms as G
@@ -156,7 +176,9 @@ def run(lang, n, out, engines):
             print(f"  [run ] {name}")
             if not fn:
                 raise RuntimeError("not in local registry — trying adapter")
-            fn(lang, n, out, man); used.append(name)
+            with _deadline(name, int(os.environ.get("ENGINE_TIMEOUT", "900"))):
+                fn(lang, n, out, man)
+            used.append(name)
         except Exception as e:
             print(f"  [..  ] {name}: {type(e).__name__}: {str(e)[:80]}")
             # delegate to the full 28-generator adapter registry (Sarvam/Cartesia/Hume/…)

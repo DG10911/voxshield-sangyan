@@ -6,12 +6,14 @@
 set -uo pipefail
 ROOT=${VOXSHIELD_ROOT:-$HOME/voxshield}; cd "$ROOT" || exit 1
 export PATH="$HOME/miniconda3/envs/voxshield/bin:$HOME/miniconda3/bin:$PATH"
+export COQUI_TOS_AGREED=1
+export ENGINE_TIMEOUT=900
 ENVF=${VOXSHIELD_ENV:-$HOME/.config/voxshield.env}; [ -f "$ENVF" ] && . "$ENVF"
 [ -n "${HF_TOKEN:-}" ] && export HF_TOKEN
 
 LANGS="${LANGS:-hindi bengali marathi telugu tamil gujarati kannada malayalam odia punjabi urdu sanskrit bodo dogri kashmiri konkani manipuri nepali santali sindhi}"
 N=${N:-200}
-ENGINES=${ENGINES:-mms,parler,xtts,f5,kokoro,piper,sarvam}
+ENGINES=${ENGINES:-sarvam,cartesia,mms}
 
 evaldir(){ for d in "data/$1_eval" "data/$1"; do [ -d "$d/indicsynth" ] && { echo "$d"; return; }; done; echo ""; }
 
